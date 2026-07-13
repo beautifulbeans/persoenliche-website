@@ -1,0 +1,141 @@
+---
+import PhotoPlaceholder from "./PhotoPlaceholder.astro";
+---
+
+<article class="play-card camera-card" data-reveal="up">
+  <div class="camera-viewer" data-camera-viewer data-simulation="provia">
+    <div class="camera-flash" aria-hidden="true" data-camera-flash></div>
+    <div class="camera-screen-top" aria-hidden="true">
+      <span>FUJIFILM X-T30 III</span>
+      <span>ISO 400&nbsp;&nbsp;F2.8&nbsp;&nbsp;1/250</span>
+    </div>
+
+    <div class="camera-frames">
+      <PhotoPlaceholder label="Favorite Shot 01" note="Eigenes Foto folgt" class="camera-shot is-active" />
+      <PhotoPlaceholder label="Favorite Shot 02" note="Eigenes Foto folgt" class="camera-shot" />
+      <PhotoPlaceholder label="Favorite Shot 03" note="Eigenes Foto folgt" class="camera-shot" />
+      <span class="focus-frame" aria-hidden="true"></span>
+    </div>
+
+    <div class="camera-screen-bottom">
+      <button type="button" data-camera-previous aria-label="Vorheriges Foto">
+        <i class="ph ph-caret-left" aria-hidden="true"></i>
+      </button>
+      <span data-camera-counter>1 / 3</span>
+      <button type="button" data-camera-next aria-label="Nächstes Foto">
+        <i class="ph ph-caret-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="camera-copy">
+    <div class="play-card-heading">
+      <span class="play-icon"><i class="ph ph-camera" aria-hidden="true"></i></span>
+      <h3>Fotografie</h3>
+    </div>
+    <p class="camera-personal">Meine aktuellen Favorite Shots kommen später hier hinein. Fotografiert wird mit einer Fujifilm X-T30 III.</p>
+
+    <div class="camera-fact-panel">
+      <p class="fact-kicker" data-camera-kicker>Meine Kamera</p>
+      <h4 data-camera-fact-title>Kompakt und bewusst analog bedienbar</h4>
+      <p aria-live="polite" data-camera-fact-copy>Die spiegellose X-T30 III wiegt 378 Gramm und kombiniert einen 26,1-Megapixel-Sensor mit Fujifilms aktuellem X-Processor 5.</p>
+    </div>
+
+    <div class="camera-fact-switch" role="group" aria-label="Kamerafakt auswählen">
+      <button class="is-selected" type="button" data-camera-fact="model">X-T30 III</button>
+      <button type="button" data-camera-fact="mirrorless">Spiegellos</button>
+      <button type="button" data-camera-fact="simulation">Filmsimulation</button>
+    </div>
+
+    <div class="simulation-controls">
+      <span>Look testen</span>
+      <div role="group" aria-label="Filmsimulation auswählen">
+        <button class="is-selected" type="button" data-film-simulation="provia">Provia</button>
+        <button type="button" data-film-simulation="classic">Classic Chrome</button>
+        <button type="button" data-film-simulation="acros">Acros</button>
+      </div>
+    </div>
+
+    <div class="camera-actions">
+      <button class="camera-shutter" type="button" data-camera-shutter>
+        <i class="ph ph-aperture" aria-hidden="true"></i>
+        Auslösen
+      </button>
+      <a class="fact-source" href="https://www.fujifilm-x.com/global/products/cameras/x-t30-iii/" target="_blank" rel="noreferrer">
+        Kamera: Fujifilm <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+</article>
+
+<script>
+  const cameraFacts = {
+    model: {
+      kicker: "Meine Kamera",
+      title: "Kompakt und bewusst analog bedienbar",
+      copy: "Die spiegellose X-T30 III wiegt 378 Gramm und kombiniert einen 26,1-Megapixel-Sensor mit Fujifilms aktuellem X-Processor 5.",
+    },
+    mirrorless: {
+      kicker: "Spiegellos",
+      title: "Das Ergebnis schon vor dem Auslösen sehen",
+      copy: "Ohne Spiegel gelangt das Licht direkt zum Sensor. Der elektronische Sucher kann Belichtung, Weißabgleich und Farblook deshalb schon vor der Aufnahme zeigen.",
+    },
+    simulation: {
+      kicker: "Fujifilm-Farben",
+      title: "Zwanzig Looks direkt in der Kamera",
+      copy: "Die X-T30 III bietet 20 Filmsimulationen. Drei eigene Rezepte lassen sich zusätzlich auf FS1 bis FS3 am Film-Simulationsrad speichern.",
+    },
+  } as const;
+
+  document.querySelectorAll<HTMLElement>(".camera-card").forEach((card) => {
+    const viewer = card.querySelector<HTMLElement>("[data-camera-viewer]");
+    const flash = card.querySelector<HTMLElement>("[data-camera-flash]");
+    const frames = Array.from(card.querySelectorAll<HTMLElement>(".camera-shot"));
+    const counter = card.querySelector<HTMLElement>("[data-camera-counter]");
+    const previous = card.querySelector<HTMLButtonElement>("[data-camera-previous]");
+    const next = card.querySelector<HTMLButtonElement>("[data-camera-next]");
+    const shutter = card.querySelector<HTMLButtonElement>("[data-camera-shutter]");
+    const factButtons = card.querySelectorAll<HTMLButtonElement>("[data-camera-fact]");
+    const kicker = card.querySelector<HTMLElement>("[data-camera-kicker]");
+    const title = card.querySelector<HTMLElement>("[data-camera-fact-title]");
+    const copy = card.querySelector<HTMLElement>("[data-camera-fact-copy]");
+    const simulationButtons = card.querySelectorAll<HTMLButtonElement>("[data-film-simulation]");
+    let frameIndex = 0;
+
+    const showFrame = (index: number) => {
+      if (!frames.length) return;
+      frameIndex = (index + frames.length) % frames.length;
+      frames.forEach((frame, itemIndex) => frame.classList.toggle("is-active", itemIndex === frameIndex));
+      if (counter) counter.textContent = `${frameIndex + 1} / ${frames.length}`;
+    };
+
+    previous?.addEventListener("click", () => showFrame(frameIndex - 1));
+    next?.addEventListener("click", () => showFrame(frameIndex + 1));
+    shutter?.addEventListener("click", () => {
+      flash?.classList.remove("is-flashing");
+      requestAnimationFrame(() => flash?.classList.add("is-flashing"));
+      showFrame(frameIndex + 1);
+    });
+
+    factButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const key = button.dataset.cameraFact as keyof typeof cameraFacts;
+        const fact = cameraFacts[key];
+        if (!fact) return;
+        factButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+        if (kicker) kicker.textContent = fact.kicker;
+        if (title) title.textContent = fact.title;
+        if (copy) copy.textContent = fact.copy;
+      });
+    });
+
+    simulationButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        simulationButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+        if (viewer) viewer.dataset.simulation = button.dataset.filmSimulation ?? "provia";
+        flash?.classList.remove("is-flashing");
+        requestAnimationFrame(() => flash?.classList.add("is-flashing"));
+      });
+    });
+  });
+</script>

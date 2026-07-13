@@ -1,0 +1,202 @@
+---
+import { education, work } from "../data/profile";
+---
+
+<section class="journey section-shell" id="laufbahn" aria-labelledby="journey-title">
+  <header class="section-heading" data-reveal="up">
+    <h2 id="journey-title">Mein Weg, klar in zwei Spuren.</h2>
+    <p>
+      Beruf und Ausbildung bleiben getrennt. Beim Scrollen begleitet eine Kapitelkarte die jeweilige Station.
+    </p>
+  </header>
+
+  <nav class="journey-switcher" aria-label="Bereiche der Laufbahn" data-reveal="up">
+    <a href="#beruf">
+      <i class="ph ph-briefcase" aria-hidden="true"></i>
+      Beruf
+      <span>{work.length} Stationen</span>
+    </a>
+    <a href="#ausbildung">
+      <i class="ph ph-graduation-cap" aria-hidden="true"></i>
+      Ausbildung
+      <span>{education.length} Stationen</span>
+    </a>
+  </nav>
+
+  <div class="journey-layout">
+    <aside class="journey-companion" aria-live="polite" data-journey-companion data-mode="work">
+      <i class="ph ph-arrow-up-right companion-watermark" aria-hidden="true"></i>
+      <div class="companion-icon" aria-hidden="true">
+        <i class="ph ph-briefcase" data-companion-icon></i>
+      </div>
+      <p class="companion-kind" data-companion-kind>Beruf</p>
+      <p class="companion-period" data-companion-period>{work[0].period}</p>
+      <h3 data-companion-title>{work[0].title}</h3>
+      <p class="companion-hint">Die Karte verändert sich mit der aktiven Station.</p>
+    </aside>
+
+    <div class="journey-stories">
+      <section class="journey-group" id="beruf" aria-labelledby="work-title">
+        <header class="journey-group-heading">
+          <span class="group-icon"><i class="ph ph-briefcase" aria-hidden="true"></i></span>
+          <div>
+            <p>Beruf</p>
+            <h3 id="work-title">Marketing und Kommunikation</h3>
+          </div>
+        </header>
+
+        <div class="journey-cards">
+          {work.map((entry) => (
+            <article
+              class:list={["journey-card", entry.current && "is-current", entry.backDetails && "has-flip"]}
+              data-story-card
+              data-story-kind="Beruf"
+              data-story-period={entry.period}
+              data-story-title={entry.title}
+              data-story-icon={entry.icon}
+              data-reveal="up"
+            >
+              <div class="journey-card-inner">
+                <div class="journey-card-face journey-card-front" data-flip-front>
+                  <div class="journey-card-top">
+                    <span class="journey-date">{entry.period}</span>
+                    <span class="journey-card-icon" aria-hidden="true"><i class:list={["ph", entry.icon]}></i></span>
+                  </div>
+                  {entry.context && (
+                    <p class="journey-context"><i class="ph ph-link-simple-horizontal" aria-hidden="true"></i>{entry.context}</p>
+                  )}
+                  <h4>{entry.title}</h4>
+                  {entry.organization && <p class="journey-organization">{entry.organization}</p>}
+                  <p class="journey-description">{entry.description}</p>
+                  {entry.details && (
+                    <ul class="journey-details">
+                      {entry.details.map((detail) => (
+                        <li><i class="ph ph-arrow-bend-down-right" aria-hidden="true"></i>{detail}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {entry.backDetails && (
+                    <button class="journey-flip-button" type="button" data-flip-open aria-expanded="false" aria-label={`Details zu ${entry.title} anzeigen`}>
+                      Genauer ansehen <i class="ph ph-arrow-clockwise" aria-hidden="true"></i>
+                    </button>
+                  )}
+                </div>
+
+                {entry.backDetails && (
+                  <div class="journey-card-face journey-card-back" data-flip-back aria-hidden="true" inert>
+                    <div class="journey-back-top">
+                      <span><i class="ph ph-list-magnifying-glass" aria-hidden="true"></i>Ein Blick dahinter</span>
+                      <button type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
+                        <i class="ph ph-x" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <h4>{entry.backTitle}</h4>
+                    <p class="journey-back-intro">{entry.backIntro}</p>
+                    <div class="journey-back-grid">
+                      {entry.backDetails.map((detail) => (
+                        <article>
+                          <i class:list={["ph", detail.icon]} aria-hidden="true"></i>
+                          <h5>{detail.title}</h5>
+                          <p>{detail.text}</p>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="journey-group" id="ausbildung" aria-labelledby="education-title">
+        <header class="journey-group-heading">
+          <span class="group-icon"><i class="ph ph-graduation-cap" aria-hidden="true"></i></span>
+          <div>
+            <p>Ausbildung</p>
+            <h3 id="education-title">Studium und Schule</h3>
+          </div>
+        </header>
+
+        <div class="journey-cards journey-cards-education">
+          {education.map((entry) => (
+            <article
+              class:list={["journey-card", "journey-card-education", entry.backDetails && "has-flip"]}
+              data-story-card
+              data-story-kind="Ausbildung"
+              data-story-period={entry.period}
+              data-story-title={entry.title}
+              data-story-icon={entry.icon}
+              data-reveal="up"
+            >
+              <div class="journey-card-inner">
+                <div class="journey-card-face journey-card-front" data-flip-front>
+                  <div class="journey-card-top">
+                    <span class="journey-date">{entry.period}</span>
+                    <span class="journey-card-icon" aria-hidden="true"><i class:list={["ph", entry.icon]}></i></span>
+                  </div>
+                  {entry.context && (
+                    <p class="journey-context"><i class="ph ph-link-simple-horizontal" aria-hidden="true"></i>{entry.context}</p>
+                  )}
+                  <h4>{entry.title}</h4>
+                  {entry.organization && <p class="journey-organization">{entry.organization}</p>}
+                  <p class="journey-description">{entry.description}</p>
+                  {entry.backDetails && (
+                    <button class="journey-flip-button" type="button" data-flip-open aria-expanded="false" aria-label={`Details zu ${entry.title} anzeigen`}>
+                      Genauer ansehen <i class="ph ph-arrow-clockwise" aria-hidden="true"></i>
+                    </button>
+                  )}
+                </div>
+
+                {entry.backDetails && (
+                  <div class="journey-card-face journey-card-back" data-flip-back aria-hidden="true" inert>
+                    <div class="journey-back-top">
+                      <span><i class="ph ph-list-magnifying-glass" aria-hidden="true"></i>Ein Blick dahinter</span>
+                      <button type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
+                        <i class="ph ph-x" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <h4>{entry.backTitle}</h4>
+                    <p class="journey-back-intro">{entry.backIntro}</p>
+                    <div class="journey-back-grid">
+                      {entry.backDetails.map((detail) => (
+                        <article>
+                          <i class:list={["ph", detail.icon]} aria-hidden="true"></i>
+                          <h5>{detail.title}</h5>
+                          <p>{detail.text}</p>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".journey-card.has-flip").forEach((card) => {
+    const openButton = card.querySelector<HTMLButtonElement>("[data-flip-open]");
+    const closeButton = card.querySelector<HTMLButtonElement>("[data-flip-close]");
+    const front = card.querySelector<HTMLElement>("[data-flip-front]");
+    const back = card.querySelector<HTMLElement>("[data-flip-back]");
+
+    const setFlipped = (flipped: boolean) => {
+      card.classList.toggle("is-flipped", flipped);
+      openButton?.setAttribute("aria-expanded", String(flipped));
+      front?.setAttribute("aria-hidden", String(flipped));
+      back?.setAttribute("aria-hidden", String(!flipped));
+      front?.toggleAttribute("inert", flipped);
+      back?.toggleAttribute("inert", !flipped);
+      if (flipped) closeButton?.focus({ preventScroll: true });
+      else openButton?.focus({ preventScroll: true });
+    };
+
+    openButton?.addEventListener("click", () => setFlipped(true));
+    closeButton?.addEventListener("click", () => setFlipped(false));
+  });
+</script>

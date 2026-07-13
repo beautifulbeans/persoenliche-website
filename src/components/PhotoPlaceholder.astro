@@ -1,0 +1,21 @@
+---
+interface Props {
+  label: string;
+  note?: string;
+  class?: string;
+}
+
+const { label, note = "Eigenes Foto folgt", class: className = "" } = Astro.props;
+---
+
+<figure class:list={["photo-placeholder", className]} aria-label={`${label}: ${note}`}>
+  <div class="photo-placeholder-frame" aria-hidden="true">
+    <span class="placeholder-line placeholder-line-one"></span>
+    <span class="placeholder-line placeholder-line-two"></span>
+    <i class="ph ph-camera placeholder-camera"></i>
+  </div>
+  <figcaption>
+    <span>{label}</span>
+    <small>{note}</small>
+  </figcaption>
+</figure>

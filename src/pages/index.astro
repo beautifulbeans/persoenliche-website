@@ -1,0 +1,435 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CameraPlayground from "../components/CameraPlayground.astro";
+import PhotoPlaceholder from "../components/PhotoPlaceholder.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import TeaRitual from "../components/TeaRitual.astro";
+import Timeline from "../components/Timeline.astro";
+import { profile } from "../data/profile";
+---
+
+<BaseLayout>
+  <SiteHeader />
+
+  <main id="inhalt">
+    <section class="hero section-shell" id="oben" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="hero-kicker">{profile.role}</p>
+        <h1 id="hero-title"><span>Fabian</span><span>Deragisch</span></h1>
+        <p class="hero-statement">{profile.statement}</p>
+        <div class="hero-actions">
+          <a class="primary-button" href="#laufbahn">Mein Weg <i class="ph ph-arrow-down-right" aria-hidden="true"></i></a>
+          <a class="secondary-button" href="#persoenlich">Mehr Persönlichkeit</a>
+        </div>
+      </div>
+
+      <div class="hero-scene" aria-label="Porträt und aktuelle berufliche Rolle">
+        <div class="hero-shape hero-shape-one" aria-hidden="true"></div>
+        <div class="hero-shape hero-shape-two" aria-hidden="true"></div>
+        <PhotoPlaceholder label="Porträt" class="hero-photo" />
+
+        <article class="hero-role-card">
+          <span class="role-card-icon"><i class="ph ph-briefcase" aria-hidden="true"></i></span>
+          <div>
+            <p>Aktuell</p>
+            <strong>Marketing und E-Commerce</strong>
+          </div>
+        </article>
+
+        <span class="hero-float hero-float-camera" aria-hidden="true"><i class="ph ph-camera"></i></span>
+        <span class="hero-float hero-float-music" aria-hidden="true"><i class="ph ph-vinyl-record"></i></span>
+        <span class="hero-float hero-float-leaf" aria-hidden="true"><i class="ph ph-leaf"></i></span>
+      </div>
+    </section>
+
+    <Timeline />
+
+    <section class="thesis-section" id="arbeit" aria-labelledby="thesis-title">
+      <div class="section-shell thesis-layout">
+        <div class="thesis-copy" data-reveal="left">
+          <h2 id="thesis-title">Wenn KI auf Kunst trifft.</h2>
+          <p>{profile.thesis.summary}</p>
+          <div class="thesis-facts" aria-label="Angaben zur Bachelorarbeit">
+            <span><i class="ph ph-graduation-cap" aria-hidden="true"></i>B.A. Medien und Kommunikation</span>
+            <span><i class="ph ph-buildings" aria-hidden="true"></i>Universität Passau, 2024</span>
+            <span class="thesis-future-link"><i class="ph ph-link-simple" aria-hidden="true"></i>PDF und Leseansicht folgen</span>
+          </div>
+        </div>
+
+        <article class="thesis-cover" data-reveal="scale">
+          <div class="cover-icons" aria-hidden="true">
+            <i class="ph ph-brain"></i>
+            <i class="ph ph-plus"></i>
+            <i class="ph ph-paint-brush"></i>
+          </div>
+          <p>Bachelorarbeit</p>
+          <h3>{profile.thesis.title}</h3>
+          <span>Fabian Deragisch</span>
+        </article>
+      </div>
+
+      <div class="thesis-takeaways section-shell" data-reveal="up">
+        <div class="takeaway-selector" role="group" aria-label="Gedanken aus der Bachelorarbeit">
+          <button class="is-selected" type="button" data-thesis-note="collaboration">Zusammenarbeit</button>
+          <button type="button" data-thesis-note="critical">Kritischer Blick</button>
+          <button type="button" data-thesis-note="early">Mein Einstieg</button>
+        </div>
+        <div class="takeaway-statement">
+          <span aria-hidden="true"><i class="ph ph-intersect-three"></i></span>
+          <div>
+            <p data-thesis-kicker>Mensch und Maschine</p>
+            <h3 aria-live="polite" data-thesis-copy>
+              Interessant wird KI dort, wo sie künstlerische Entscheidungen erweitert, statt sie einfach zu ersetzen.
+            </h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="personal-section" id="persoenlich" aria-labelledby="personal-title">
+      <div class="section-shell personal-heading" data-reveal="up">
+        <h2 id="personal-title">Abseits der Arbeit.</h2>
+        <p>Fünf Interessen, persönliche Empfehlungen und ein paar Dinge zum Ausprobieren.</p>
+      </div>
+
+      <div class="interest-marquee" aria-label="Persönliche Interessen">
+        <div class="interest-track">
+          <div class="interest-row">
+            <span><i class="ph ph-leaf"></i>Grüner Tee</span>
+            <span><i class="ph ph-barbell"></i>Training</span>
+            <span><i class="ph ph-vinyl-record"></i>Vinyl</span>
+            <span><i class="ph ph-cards-three"></i>Spielkarten</span>
+            <span><i class="ph ph-camera"></i>Fotografie</span>
+          </div>
+          <div class="interest-row" aria-hidden="true">
+            <span><i class="ph ph-leaf"></i>Grüner Tee</span>
+            <span><i class="ph ph-barbell"></i>Training</span>
+            <span><i class="ph ph-vinyl-record"></i>Vinyl</span>
+            <span><i class="ph ph-cards-three"></i>Spielkarten</span>
+            <span><i class="ph ph-camera"></i>Fotografie</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-shell personal-grid">
+        <TeaRitual />
+
+        <article class="play-card training-card" data-reveal="right">
+          <div class="play-card-heading">
+            <span class="play-icon"><i class="ph ph-barbell" aria-hidden="true"></i></span>
+            <h3>Training</h3>
+          </div>
+          <p class="training-personal">Nicht jeder Tag startet motiviert. Regelmäßigkeit heißt für mich oft einfach: hingehen und anfangen.</p>
+          <button class="training-visual" type="button" data-training-move aria-label="Trainingsanimation starten">
+            <i class="ph ph-bone" data-training-icon></i>
+            <span></span><span></span><span></span>
+            <small><i class="ph ph-hand-tap" aria-hidden="true"></i>Antippen</small>
+          </button>
+          <p class="training-move-status" aria-live="polite" data-training-move-status>Der schwierigste Teil ist oft der Weg bis zur Tür.</p>
+          <p class="fact-kicker" data-training-kicker>Knochen</p>
+          <p class="training-fact" aria-live="polite" data-training-copy>
+            Krafttraining belastet nicht nur Muskeln. Der gezielte Widerstand setzt auch an den Knochen einen Reiz und kann sie stärken.
+          </p>
+          <div class="fact-switch" role="group" aria-label="Trainingsfakt auswählen">
+            <button class="is-selected" type="button" data-training-fact="bone">Knochen</button>
+            <button type="button" data-training-fact="neural">Nerven</button>
+            <button type="button" data-training-fact="rhythm">Rhythmus</button>
+          </div>
+          <a class="fact-source" data-training-source href="https://www.niams.nih.gov/health-topics/exercise-your-bone-health" target="_blank" rel="noreferrer">
+            Quelle: NIH <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+          </a>
+        </article>
+
+        <article class="play-card sound-card" data-reveal="left" data-sound-card data-album-theme="pink-floyd">
+          <div class="sound-stage">
+            <button class="vinyl-button" type="button" aria-pressed="false" data-vinyl-button>
+              <i class="ph ph-vinyl-record" aria-hidden="true"></i>
+              <span class="sr-only">Plattenspieler starten oder stoppen</span>
+            </button>
+            <span class="turntable-arm" aria-hidden="true"><span></span></span>
+            <div class="vinyl-market">
+              <strong>3,3×</strong>
+              <span>mehr US-Umsatz als CDs, 2025</span>
+            </div>
+          </div>
+          <p class="fact-kicker">Vier Platten für den Anfang</p>
+          <h3 data-album-title>The Dark Side of the Moon</h3>
+          <p class="album-artist" data-album-artist>Pink Floyd, 1973</p>
+          <p class="album-note" aria-live="polite" data-album-note>Ein durchgehendes Konzept über Zeit, Druck, Geld und Vergänglichkeit. Übergänge und Sounddesign machen es für mich zu einem Album am Stück.</p>
+          <div class="album-switch" role="group" aria-label="Album auswählen">
+            <button class="is-selected" type="button" data-album="pink-floyd">Pink Floyd</button>
+            <button type="button" data-album="dire-straits">Dire Straits</button>
+            <button type="button" data-album="frank-ocean">Frank Ocean</button>
+            <button type="button" data-album="tyler">Tyler</button>
+          </div>
+          <a class="fact-source" href="https://www.riaa.com/wp-content/uploads/2026/03/RIAA-Year-End-Revenue-2025.pdf" target="_blank" rel="noreferrer">
+            Vinyl-Zahl: RIAA <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+          </a>
+        </article>
+
+        <article class="play-card cards-card" data-reveal="scale">
+          <div class="cards-heading">
+            <div>
+              <p class="fact-kicker">Am Kartentisch</p>
+              <h3 data-card-game-title>Durak</h3>
+            </div>
+            <span class="cards-icon"><i class="ph ph-cards-three" aria-hidden="true"></i></span>
+          </div>
+          <p class="card-game-copy" aria-live="polite" data-card-game-copy>Angreifen, verteidigen, Trumpf im Blick behalten. Verloren hat, wer am Ende noch Karten hält.</p>
+          <div class="card-game-switch" role="group" aria-label="Kartenspiel auswählen">
+            <button class="is-selected" type="button" data-card-game="durak">Durak</button>
+            <button type="button" data-card-game="president">Präsident</button>
+            <button type="button" data-card-game="neunern">Neunern</button>
+            <button type="button" data-card-game="poker">Poker</button>
+            <button type="button" data-card-game="schafkopf">Schafkopf</button>
+          </div>
+          <div class="card-deck" aria-hidden="true">
+            <span class="playing-card card-back"></span>
+            <span class="playing-card card-middle" data-hand-card>A<span>♣</span></span>
+            <span class="playing-card card-front" data-hand-card>Q<span>♥</span></span>
+          </div>
+          <div class="cards-action-row">
+            <button class="play-card-action" type="button" data-draw-card>
+              Neu mischen <i class="ph ph-arrows-clockwise" aria-hidden="true"></i>
+            </button>
+            <p class="play-status" aria-live="polite" data-card-status>Die Runde ist eröffnet.</p>
+          </div>
+        </article>
+
+        <CameraPlayground />
+      </div>
+
+      <details class="genealogy-teaser section-shell" data-reveal="up">
+        <summary>
+          <span class="genealogy-icon"><i class="ph ph-tree-structure" aria-hidden="true"></i></span>
+          <span>
+            <small>Ein Kapitel für später</small>
+            <strong>Ahnenforschung</strong>
+          </span>
+          <span class="genealogy-state">Interaktiver Stammbaum folgt <i class="ph ph-caret-down" aria-hidden="true"></i></span>
+        </summary>
+        <div class="genealogy-content">
+          <div class="family-tree-preview" aria-label="Vorschau auf den geplanten Stammbaum">
+            <span><i class="ph ph-users-three" aria-hidden="true"></i>Namen</span>
+            <span><i class="ph ph-map-trifold" aria-hidden="true"></i>Orte</span>
+            <span><i class="ph ph-book-open-text" aria-hidden="true"></i>Geschichten</span>
+          </div>
+          <p>Die Forschung meines Opas soll später als kompakter Stammbaum erkundbar werden. Namen und Daten kommen erst dazu, wenn alles ausgewählt und geprüft ist.</p>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>
+
+<script>
+  const revealItems = document.querySelectorAll<HTMLElement>("[data-reveal]");
+
+  if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -8%" },
+    );
+    revealItems.forEach((item) => revealObserver.observe(item));
+  } else {
+    revealItems.forEach((item) => item.classList.add("is-visible"));
+  }
+
+  const storyCards = document.querySelectorAll<HTMLElement>("[data-story-card]");
+  const companion = document.querySelector<HTMLElement>("[data-journey-companion]");
+  const companionKind = companion?.querySelector<HTMLElement>("[data-companion-kind]");
+  const companionPeriod = companion?.querySelector<HTMLElement>("[data-companion-period]");
+  const companionTitle = companion?.querySelector<HTMLElement>("[data-companion-title]");
+  const companionIcon = companion?.querySelector<HTMLElement>("[data-companion-icon]");
+
+  if ("IntersectionObserver" in window && companion) {
+    const storyObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          storyCards.forEach((card) => card.classList.toggle("is-active", card === entry.target));
+          const card = entry.target as HTMLElement;
+          if (companionKind) companionKind.textContent = card.dataset.storyKind ?? "Laufbahn";
+          if (companionPeriod) companionPeriod.textContent = card.dataset.storyPeriod ?? "";
+          if (companionTitle) companionTitle.textContent = card.dataset.storyTitle ?? "";
+          if (companionIcon) companionIcon.className = `ph ${card.dataset.storyIcon ?? "ph-briefcase"}`;
+          companion.dataset.mode = card.dataset.storyKind === "Ausbildung" ? "study" : "work";
+          companion.classList.remove("has-changed");
+          requestAnimationFrame(() => companion.classList.add("has-changed"));
+        });
+      },
+      { rootMargin: "-28% 0px -52%", threshold: 0 },
+    );
+    storyCards.forEach((card) => storyObserver.observe(card));
+  }
+
+  const thesisNotes = {
+    collaboration: {
+      kicker: "Mensch und Maschine",
+      copy: "Interessant wird KI dort, wo sie künstlerische Entscheidungen erweitert, statt sie einfach zu ersetzen.",
+    },
+    critical: {
+      kicker: "Nicht nur Potenzial",
+      copy: "Zur Zusammenarbeit gehören auch Fragen nach Urheberschaft, Kontrolle und dem Wert kreativer Arbeit.",
+    },
+    early: {
+      kicker: "Mein Einstieg in das Thema",
+      copy: "Mit der Arbeit habe ich mich 2024 systematisch mit Funktionsweise, Möglichkeiten und Grenzen generativer KI beschäftigt.",
+    },
+  } as const;
+  const thesisButtons = document.querySelectorAll<HTMLButtonElement>("[data-thesis-note]");
+  const thesisKicker = document.querySelector<HTMLElement>("[data-thesis-kicker]");
+  const thesisCopy = document.querySelector<HTMLElement>("[data-thesis-copy]");
+  thesisButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.thesisNote as keyof typeof thesisNotes;
+      const note = thesisNotes[key];
+      if (!note) return;
+      thesisButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+      if (thesisKicker) thesisKicker.textContent = note.kicker;
+      if (thesisCopy) thesisCopy.textContent = note.copy;
+    });
+  });
+
+  const trainingFacts = {
+    bone: {
+      kicker: "Knochen",
+      copy: "Krafttraining belastet nicht nur Muskeln. Der gezielte Widerstand setzt auch an den Knochen einen Reiz und kann sie stärken.",
+      icon: "ph-bone",
+      label: "Quelle: NIH",
+      href: "https://www.niams.nih.gov/health-topics/exercise-your-bone-health",
+    },
+    neural: {
+      kicker: "Nervensystem",
+      copy: "Kraft entsteht nicht nur durch mehr Muskelmasse. Auch neuronale Anpassungen können dazu beitragen, motorische Einheiten besser zu aktivieren.",
+      icon: "ph-brain",
+      label: "Quelle: PubMed",
+      href: "https://pubmed.ncbi.nlm.nih.gov/31993949/",
+    },
+    rhythm: {
+      kicker: "Rhythmus",
+      copy: "Für zusätzliche gesundheitliche Vorteile empfehlen offizielle Leitlinien muskelstärkende Aktivität an mindestens zwei Tagen pro Woche.",
+      icon: "ph-calendar-check",
+      label: "Quelle: NIH",
+      href: "https://www.niams.nih.gov/health-topics/exercise-your-bone-health",
+    },
+  } as const;
+  const trainingButtons = document.querySelectorAll<HTMLButtonElement>("[data-training-fact]");
+  const trainingKicker = document.querySelector<HTMLElement>("[data-training-kicker]");
+  const trainingCopy = document.querySelector<HTMLElement>("[data-training-copy]");
+  const trainingIcon = document.querySelector<HTMLElement>("[data-training-icon]");
+  const trainingSource = document.querySelector<HTMLAnchorElement>("[data-training-source]");
+  trainingButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.trainingFact as keyof typeof trainingFacts;
+      const fact = trainingFacts[key];
+      if (!fact) return;
+      trainingButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+      if (trainingKicker) trainingKicker.textContent = fact.kicker;
+      if (trainingCopy) trainingCopy.textContent = fact.copy;
+      if (trainingIcon) trainingIcon.className = `ph ${fact.icon}`;
+      if (trainingSource) {
+        trainingSource.href = fact.href;
+        trainingSource.innerHTML = `${fact.label} <i class="ph ph-arrow-up-right" aria-hidden="true"></i>`;
+      }
+      trainingIcon?.closest(".training-visual")?.classList.remove("is-changing");
+      requestAnimationFrame(() => trainingIcon?.closest(".training-visual")?.classList.add("is-changing"));
+    });
+  });
+
+  const trainingMove = document.querySelector<HTMLButtonElement>("[data-training-move]");
+  const trainingMoveStatus = document.querySelector<HTMLElement>("[data-training-move-status]");
+  const trainingSteps = [
+    "Tasche gepackt. Der erste Widerstand ist erledigt.",
+    "Angefangen. Ab hier wird es meistens leichter.",
+    "Training läuft. Nicht spektakulär, aber regelmäßig.",
+  ];
+  let trainingStep = 0;
+  trainingMove?.addEventListener("click", () => {
+    trainingMove.classList.remove("is-training");
+    requestAnimationFrame(() => trainingMove.classList.add("is-training"));
+    if (trainingMoveStatus) trainingMoveStatus.textContent = trainingSteps[trainingStep % trainingSteps.length];
+    trainingStep += 1;
+  });
+
+  const vinylButton = document.querySelector<HTMLButtonElement>("[data-vinyl-button]");
+  vinylButton?.addEventListener("click", () => {
+    const playing = vinylButton.getAttribute("aria-pressed") !== "true";
+    vinylButton.setAttribute("aria-pressed", String(playing));
+  });
+
+  const albums = {
+    "pink-floyd": ["The Dark Side of the Moon", "Pink Floyd, 1973", "Ein durchgehendes Konzept über Zeit, Druck, Geld und Vergänglichkeit. Übergänge und Sounddesign machen es für mich zu einem Album am Stück."],
+    "dire-straits": ["Brothers in Arms", "Dire Straits, 1985", "Groß und präzise produziert, aber nie überladen. Besonders das Titelstück lebt von Raum, Dynamik und einer sehr zurückhaltenden Spannung."],
+    "frank-ocean": ["Blonde", "Frank Ocean, 2016", "Reduziert, intim und stellenweise fast fragmentarisch. Viele Details und Perspektivwechsel fallen erst nach mehreren Durchläufen auf."],
+    tyler: ["IGOR", "Tyler, the Creator, 2019", "Synthesizer, Soul und verzerrte Texturen erzählen eine geschlossene Geschichte. Für mich funktioniert IGOR stärker als Album als in einzelnen Songs."],
+  } as const;
+  const albumButtons = document.querySelectorAll<HTMLButtonElement>("[data-album]");
+  const albumTitle = document.querySelector<HTMLElement>("[data-album-title]");
+  const albumArtist = document.querySelector<HTMLElement>("[data-album-artist]");
+  const albumNote = document.querySelector<HTMLElement>("[data-album-note]");
+  const soundCard = document.querySelector<HTMLElement>("[data-sound-card]");
+  albumButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.album as keyof typeof albums;
+      const album = albums[key];
+      if (!album) return;
+      albumButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+      if (albumTitle) albumTitle.textContent = album[0];
+      if (albumArtist) albumArtist.textContent = album[1];
+      if (albumNote) albumNote.textContent = album[2];
+      if (soundCard) soundCard.dataset.albumTheme = key;
+      vinylButton?.setAttribute("aria-pressed", "true");
+    });
+  });
+
+  const cardGames = {
+    durak: ["Durak", "Angreifen, verteidigen, Trumpf im Blick behalten. Verloren hat, wer am Ende noch Karten hält."],
+    president: ["Präsident", "Karten so schnell wie möglich loswerden. Das Spiel ist auch unter einem deutlich direkteren Namen bekannt."],
+    neunern: ["Neunern", "Ein schneller Klassiker für die Runde. Die genaue Variante gehört bei regionalen Kartenspielen meistens schon zur Diskussion dazu."],
+    poker: ["Poker", "Wahrscheinlichkeit, Timing und die Frage, was die anderen aus wenigen Informationen machen."],
+    schafkopf: ["Schafkopf", "Ein bayerischer Klassiker, bei dem ich noch dazulerne. Gerade das macht die nächste Runde interessant."],
+  } as const;
+  const cardGameButtons = document.querySelectorAll<HTMLButtonElement>("[data-card-game]");
+  const cardGameTitle = document.querySelector<HTMLElement>("[data-card-game-title]");
+  const cardGameCopy = document.querySelector<HTMLElement>("[data-card-game-copy]");
+  cardGameButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.cardGame as keyof typeof cardGames;
+      const game = cardGames[key];
+      if (!game) return;
+      cardGameButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+      if (cardGameTitle) cardGameTitle.textContent = game[0];
+      if (cardGameCopy) cardGameCopy.textContent = game[1];
+    });
+  });
+
+  const cardHands = [
+    [["A", "♠"], ["Q", "♥"], "Ass und Dame. Die Karten liegen neu."],
+    [["10", "♦"], ["K", "♣"], "Zehn und König. Noch sagt die Hand wenig."],
+    [["9", "♥"], ["J", "♠"], "Neun und Bube. Neu gemischt."],
+    [["7", "♣"], ["A", "♦"], "Sieben und Ass. Die nächste Runde kann beginnen."],
+  ] as const;
+  const drawButton = document.querySelector<HTMLButtonElement>("[data-draw-card]");
+  const handCards = document.querySelectorAll<HTMLElement>("[data-hand-card]");
+  const cardStatus = document.querySelector<HTMLElement>("[data-card-status]");
+  let cardIndex = 0;
+  drawButton?.addEventListener("click", () => {
+    const hand = cardHands[cardIndex % cardHands.length];
+    cardIndex += 1;
+    handCards.forEach((card, index) => {
+      card.innerHTML = `${hand[index][0]}<span>${hand[index][1]}</span>`;
+      card.classList.remove("is-drawn");
+      requestAnimationFrame(() => card.classList.add("is-drawn"));
+    });
+    if (cardStatus) cardStatus.textContent = hand[2];
+  });
+</script>

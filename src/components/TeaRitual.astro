@@ -1,0 +1,111 @@
+<article class="tea-ritual" data-reveal="left" data-tea-profile="sencha">
+  <div class="tea-copy">
+    <p class="tea-label"><i class="ph ph-leaf" aria-hidden="true"></i> Mein tägliches Ritual</p>
+    <h3>Grüner Tee.</h3>
+    <p class="tea-intro">Lose Blätter, eine ganze Kanne und je nach Sorte ein völlig anderer Charakter.</p>
+
+    <div class="tea-profile-heading">
+      <p class="tea-fact-value" data-tea-value>Sencha</p>
+      <span data-tea-badge>Mein Favorit</span>
+    </div>
+    <p class="tea-taste" data-tea-taste>Frisch, grasig, klar</p>
+    <p class="tea-fact-copy" aria-live="polite" data-tea-copy>
+      Mein Tee für fast jeden Tag. Er kann von leicht herb bis deutlich umami reichen und funktioniert gut über mehrere Aufgüsse.
+    </p>
+
+    <div class="tea-fact-switch" role="group" aria-label="Grüntee-Sorte auswählen">
+      <button class="is-selected" type="button" data-tea-kind="sencha">Sencha</button>
+      <button type="button" data-tea-kind="jasmine">Jasmin</button>
+      <button type="button" data-tea-kind="matcha">Matcha</button>
+      <button type="button" data-tea-kind="genmaicha">Genmaicha</button>
+      <button type="button" data-tea-kind="gyokuro">Gyokuro</button>
+    </div>
+    <a class="tea-source" href="https://www.tea.co.uk/make-a-perfect-brew" target="_blank" rel="noreferrer">
+      Zubereitung: für viele Grüntees rund 80 °C <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+    </a>
+  </div>
+
+  <div class="tea-visual">
+    <button class="teapot" type="button" data-teapot aria-label="Nächste Teesorte probieren">
+      <i class="ph ph-leaf tea-leaf tea-leaf-one" aria-hidden="true"></i>
+      <i class="ph ph-leaf tea-leaf tea-leaf-two" aria-hidden="true"></i>
+      <span class="teapot-lid" aria-hidden="true"></span>
+      <span class="teapot-body" aria-hidden="true"><span class="tea-liquid"></span></span>
+      <span class="teapot-handle" aria-hidden="true"></span>
+      <span class="teapot-spout" aria-hidden="true"></span>
+      <span class="steam steam-one" aria-hidden="true"></span>
+      <span class="steam steam-two" aria-hidden="true"></span>
+    </button>
+    <p><i class="ph ph-hand-tap" aria-hidden="true"></i>Kanne antippen und weiterprobieren</p>
+  </div>
+</article>
+
+<script>
+  const teaProfiles = {
+    sencha: {
+      value: "Sencha",
+      badge: "Mein Favorit",
+      taste: "Frisch, grasig, klar",
+      copy: "Mein Tee für fast jeden Tag. Er kann von leicht herb bis deutlich umami reichen und funktioniert gut über mehrere Aufgüsse.",
+    },
+    jasmine: {
+      value: "Jasmin-Grüntee",
+      badge: "Floral",
+      taste: "Duftig, leicht, weich",
+      copy: "Grüntee wird mit Jasminblüten aromatisiert. Das macht ihn zugänglich, ohne dass der eigentliche Tee ganz in den Hintergrund rückt.",
+    },
+    matcha: {
+      value: "Matcha",
+      badge: "Intensiv",
+      taste: "Cremig, vegetal, kräftig",
+      copy: "Hier wird das fein gemahlene Blatt mitgetrunken und nicht wieder entfernt. Konsistenz und Geschmack sind deshalb deutlich intensiver.",
+    },
+    genmaicha: {
+      value: "Genmaicha",
+      badge: "Geröstet",
+      taste: "Nussig, warm, mild",
+      copy: "Grüntee trifft auf gerösteten Reis. Dadurch entsteht ein weicher, fast brotiger Charakter, der sich klar von Sencha absetzt.",
+    },
+    gyokuro: {
+      value: "Gyokuro",
+      badge: "Umami",
+      taste: "Dicht, süßlich, konzentriert",
+      copy: "Die Blätter werden vor der Ernte beschattet. Gyokuro wird meist kühler und ruhiger aufgegossen, damit sein ausgeprägtes Umami zur Geltung kommt.",
+    },
+  } as const;
+
+  document.querySelectorAll<HTMLElement>(".tea-ritual").forEach((ritual) => {
+    const pot = ritual.querySelector<HTMLButtonElement>("[data-teapot]");
+    const value = ritual.querySelector<HTMLElement>("[data-tea-value]");
+    const badge = ritual.querySelector<HTMLElement>("[data-tea-badge]");
+    const taste = ritual.querySelector<HTMLElement>("[data-tea-taste]");
+    const copy = ritual.querySelector<HTMLElement>("[data-tea-copy]");
+    const buttons = Array.from(ritual.querySelectorAll<HTMLButtonElement>("[data-tea-kind]"));
+    const keys = Object.keys(teaProfiles) as Array<keyof typeof teaProfiles>;
+    let activeIndex = 0;
+
+    const showTea = (key: keyof typeof teaProfiles) => {
+      const profile = teaProfiles[key];
+      activeIndex = keys.indexOf(key);
+      ritual.dataset.teaProfile = key;
+      buttons.forEach((item) => item.classList.toggle("is-selected", item.dataset.teaKind === key));
+      if (value) value.textContent = profile.value;
+      if (badge) badge.textContent = profile.badge;
+      if (taste) taste.textContent = profile.taste;
+      if (copy) copy.textContent = profile.copy;
+      pot?.classList.remove("is-brewing");
+      requestAnimationFrame(() => pot?.classList.add("is-brewing"));
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const key = button.dataset.teaKind as keyof typeof teaProfiles;
+        if (teaProfiles[key]) showTea(key);
+      });
+    });
+
+    pot?.addEventListener("click", () => {
+      showTea(keys[(activeIndex + 1) % keys.length]);
+    });
+  });
+</script>

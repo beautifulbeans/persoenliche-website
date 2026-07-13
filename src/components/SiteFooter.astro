@@ -1,0 +1,74 @@
+<footer class="site-footer" id="kontakt">
+  <section class="pigeon-contact section-shell" aria-labelledby="contact-title" data-reveal="up">
+    <div class="contact-copy">
+      <p class="contact-eyebrow">Kontakt</p>
+      <h2 id="contact-title">Sag einfach Hallo.</h2>
+      <p>Wähle den passenden Kanal. Die Taube kümmert sich nur um den kleinen Abflug.</p>
+    </div>
+
+    <div class="contact-panel">
+      <div class="contact-routes" role="group" aria-label="Kontaktwege als Vorschau">
+        <button type="button" data-contact-route="E-Mail">
+          <i class="ph ph-envelope-simple" aria-hidden="true"></i>
+          E-Mail
+        </button>
+        <button type="button" data-contact-route="LinkedIn">
+          <i class="ph ph-linkedin-logo" aria-hidden="true"></i>
+          LinkedIn
+        </button>
+        <button type="button" data-contact-route="Instagram">
+          <i class="ph ph-instagram-logo" aria-hidden="true"></i>
+          Instagram
+        </button>
+        <a href="https://github.com/beautifulbeans" target="_blank" rel="noreferrer">
+          <i class="ph ph-github-logo" aria-hidden="true"></i>
+          GitHub
+          <i class="ph ph-arrow-up-right route-arrow" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <div class="pigeon-stage" data-pigeon-stage>
+        <div class="pigeon-route" aria-hidden="true">
+          <span class="route-start"><i class="ph ph-envelope-simple"></i></span>
+          <span class="route-line"></span>
+          <span class="pigeon" data-pigeon>
+            <i class="ph ph-bird"></i>
+            <i class="ph ph-envelope-simple pigeon-letter"></i>
+          </span>
+          <span class="route-finish"><span>FD</span></span>
+        </div>
+        <p class="pigeon-status" aria-live="polite" data-pigeon-status>Die direkten Links folgen vor der Veröffentlichung.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-bottom section-shell">
+    <p>Fabian Deragisch <span data-current-year></span></p>
+    <p class="privacy-note">Private Kontaktdaten bleiben bis zur Veröffentlichung geschützt.</p>
+    <nav aria-label="Rechtliche Hinweise">
+      <a href="/impressum/">Impressum</a>
+      <a href="/datenschutz/">Datenschutz</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  const year = document.querySelector<HTMLElement>("[data-current-year]");
+  if (year) year.textContent = String(new Date().getFullYear());
+
+  const pigeon = document.querySelector<HTMLElement>("[data-pigeon]");
+  const pigeonStatus = document.querySelector<HTMLElement>("[data-pigeon-status]");
+  const routeButtons = document.querySelectorAll<HTMLButtonElement>("[data-contact-route]");
+
+  routeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const route = button.dataset.contactRoute ?? "Kontakt";
+      routeButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+      pigeon?.classList.remove("is-flying");
+      requestAnimationFrame(() => pigeon?.classList.add("is-flying"));
+      if (pigeonStatus) {
+        pigeonStatus.textContent = `${route} ausgewählt. Der echte Link folgt vor der Veröffentlichung.`;
+      }
+    });
+  });
+</script>

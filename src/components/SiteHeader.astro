@@ -1,0 +1,55 @@
+---
+import { profile } from "../data/profile";
+---
+
+<header class="site-header" data-site-header>
+  <div class="header-identity">
+    <a class="wordmark" href="#oben" aria-label="Zurück zum Anfang">
+      <span aria-hidden="true">FD</span>
+      <span class="wordmark-name">Fabian Deragisch</span>
+    </a>
+
+    <button
+      class="header-note"
+      type="button"
+      data-header-note
+      data-notes={JSON.stringify(profile.statusNotes)}
+      aria-label="Aktuelle Notiz wechseln"
+    >
+      <i class:list={["ph", profile.statusNotes[0].icon]} aria-hidden="true" data-header-note-icon></i>
+      <span aria-live="polite">
+        <small data-header-note-label>{profile.statusNotes[0].label}</small>
+        <strong data-header-note-text>{profile.statusNotes[0].text}</strong>
+      </span>
+      <i class="ph ph-arrows-clockwise note-cycle" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <nav aria-label="Hauptnavigation">
+    <a href="#laufbahn"><span class="nav-long">Laufbahn</span><span class="nav-short">Weg</span></a>
+    <a href="#arbeit"><span class="nav-long">Bachelorarbeit</span><span class="nav-short">Arbeit</span></a>
+    <a href="#persoenlich"><span class="nav-long">Persönlich</span><span class="nav-short">Privat</span></a>
+    <a href="#kontakt"><span class="nav-long">Brieftaube</span><span class="nav-short">Kontakt</span></a>
+  </nav>
+</header>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-header-note]").forEach((button) => {
+    const notes = JSON.parse(button.dataset.notes ?? "[]") as Array<{ icon: string; label: string; text: string }>;
+    const icon = button.querySelector<HTMLElement>("[data-header-note-icon]");
+    const label = button.querySelector<HTMLElement>("[data-header-note-label]");
+    const text = button.querySelector<HTMLElement>("[data-header-note-text]");
+    let noteIndex = 0;
+
+    button.addEventListener("click", () => {
+      if (!notes.length) return;
+      noteIndex = (noteIndex + 1) % notes.length;
+      const note = notes[noteIndex];
+      button.classList.remove("is-changing");
+      requestAnimationFrame(() => button.classList.add("is-changing"));
+      if (icon) icon.className = `ph ${note.icon}`;
+      if (label) label.textContent = note.label;
+      if (text) text.textContent = note.text;
+    });
+  });
+</script>

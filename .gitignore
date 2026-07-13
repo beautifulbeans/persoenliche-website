@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Lokale Codex- und Design-Werkzeuge
+.codex/
+.impeccable/
+
+# Rohmaterial mit privaten Angaben bleibt immer außerhalb des Repositories.
+private/
+content-private/
