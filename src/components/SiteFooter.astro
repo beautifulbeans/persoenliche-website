@@ -3,41 +3,46 @@
     <div class="contact-copy">
       <p class="contact-eyebrow">Kontakt</p>
       <h2 id="contact-title">Sag einfach Hallo.</h2>
-      <p>Wähle den passenden Kanal. Die Taube kümmert sich nur um den kleinen Abflug.</p>
+      <p>E-Mail, LinkedIn oder Instagram. Beim Klick fliegt die Taube mit.</p>
     </div>
 
     <div class="contact-panel">
-      <div class="contact-routes" role="group" aria-label="Kontaktwege als Vorschau">
-        <button type="button" data-contact-route="E-Mail">
+      <div class="contact-routes" aria-label="Kontaktwege">
+        <button type="button" data-contact-route="E-Mail" data-route-kind="mail">
+          <span class="contact-route-number">01</span>
           <i class="ph ph-envelope-simple" aria-hidden="true"></i>
-          E-Mail
+          <span>E-Mail</span>
+          <i class="ph ph-arrow-up-right route-arrow" aria-hidden="true"></i>
         </button>
-        <button type="button" data-contact-route="LinkedIn">
+        <a href="https://at.linkedin.com/in/fabian-deragisch-57769a2a2" target="_blank" rel="noreferrer" data-contact-route="LinkedIn" data-route-kind="linkedin">
+          <span class="contact-route-number">02</span>
           <i class="ph ph-linkedin-logo" aria-hidden="true"></i>
-          LinkedIn
-        </button>
-        <button type="button" data-contact-route="Instagram">
+          <span>LinkedIn</span>
+          <i class="ph ph-arrow-up-right route-arrow" aria-hidden="true"></i>
+        </a>
+        <a href="https://www.instagram.com/fabian.deragisch/" target="_blank" rel="noreferrer" data-contact-route="Instagram" data-route-kind="instagram">
+          <span class="contact-route-number">03</span>
           <i class="ph ph-instagram-logo" aria-hidden="true"></i>
-          Instagram
-        </button>
-        <a href="https://github.com/beautifulbeans" target="_blank" rel="noreferrer">
-          <i class="ph ph-github-logo" aria-hidden="true"></i>
-          GitHub
+          <span>Instagram</span>
           <i class="ph ph-arrow-up-right route-arrow" aria-hidden="true"></i>
         </a>
       </div>
 
       <div class="pigeon-stage" data-pigeon-stage>
         <div class="pigeon-route" aria-hidden="true">
-          <span class="route-start"><i class="ph ph-envelope-simple"></i></span>
+          <span class="route-cloud route-cloud-one"><i class="ph ph-cloud"></i></span>
+          <span class="route-cloud route-cloud-two"><i class="ph ph-cloud"></i></span>
+          <span class="route-feather route-feather-one"><i class="ph ph-feather"></i></span>
+          <span class="route-feather route-feather-two"><i class="ph ph-feather"></i></span>
+          <span class="route-start"><i class="ph ph-envelope-simple"></i><small>Los</small></span>
           <span class="route-line"></span>
           <span class="pigeon" data-pigeon>
             <i class="ph ph-bird"></i>
             <i class="ph ph-envelope-simple pigeon-letter"></i>
           </span>
-          <span class="route-finish"><span>FD</span></span>
+          <span class="route-finish"><i class="ph ph-mailbox"></i><small>Postfach</small></span>
         </div>
-        <p class="pigeon-status" aria-live="polite" data-pigeon-status>Die direkten Links folgen vor der Veröffentlichung.</p>
+        <p class="pigeon-status" aria-live="polite" data-pigeon-status>Kontaktweg wählen. Die Taube übernimmt den Rest.</p>
       </div>
     </div>
   </section>
@@ -58,16 +63,33 @@
 
   const pigeon = document.querySelector<HTMLElement>("[data-pigeon]");
   const pigeonStatus = document.querySelector<HTMLElement>("[data-pigeon-status]");
-  const routeButtons = document.querySelectorAll<HTMLButtonElement>("[data-contact-route]");
+  const pigeonStage = document.querySelector<HTMLElement>("[data-pigeon-stage]");
+  const routeLinks = document.querySelectorAll<HTMLElement>("[data-contact-route]");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  routeButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const route = button.dataset.contactRoute ?? "Kontakt";
-      routeButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
-      pigeon?.classList.remove("is-flying");
-      requestAnimationFrame(() => pigeon?.classList.add("is-flying"));
+  routeLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const route = link.dataset.contactRoute ?? "Kontakt";
+      routeLinks.forEach((item) => item.classList.toggle("is-selected", item === link));
+      pigeonStage?.classList.remove("is-dispatched");
+      requestAnimationFrame(() => pigeonStage?.classList.add("is-dispatched"));
+
+      if (pigeon && pigeonStage && !reduceMotion.matches) {
+        pigeon.getAnimations().forEach((animation) => animation.cancel());
+        const travel = Math.max(110, pigeonStage.clientWidth - 150);
+        pigeon.animate(
+          [
+            { transform: "translate3d(0, 0, 0) rotate(-8deg) scale(0.94)", offset: 0 },
+            { transform: `translate3d(${travel * 0.22}px, -2.5rem, 0) rotate(9deg) scale(1.08)`, offset: 0.24 },
+            { transform: `translate3d(${travel * 0.48}px, 0.7rem, 0) rotate(-7deg) scale(1)`, offset: 0.5 },
+            { transform: `translate3d(${travel * 0.74}px, -2rem, 0) rotate(6deg) scale(1.04)`, offset: 0.76 },
+            { transform: `translate3d(${travel}px, 0, 0) rotate(0deg) scale(0.92)`, offset: 1 },
+          ],
+          { duration: 1450, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
+        );
+      }
       if (pigeonStatus) {
-        pigeonStatus.textContent = `${route} ausgewählt. Der echte Link folgt vor der Veröffentlichung.`;
+        pigeonStatus.textContent = route === "E-Mail" ? "E-Mail-Adresse folgt zur Veröffentlichung." : `${route} ist unterwegs.`;
       }
     });
   });

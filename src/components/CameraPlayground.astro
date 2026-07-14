@@ -2,7 +2,7 @@
 import PhotoPlaceholder from "./PhotoPlaceholder.astro";
 ---
 
-<article class="play-card camera-card" data-reveal="up">
+<article class="play-card camera-card" id="fotografie" data-reveal="up">
   <div class="camera-viewer" data-camera-viewer data-simulation="provia">
     <div class="camera-flash" aria-hidden="true" data-camera-flash></div>
     <div class="camera-screen-top" aria-hidden="true">
@@ -26,6 +26,11 @@ import PhotoPlaceholder from "./PhotoPlaceholder.astro";
         <i class="ph ph-caret-right" aria-hidden="true"></i>
       </button>
     </div>
+
+    <button class="camera-shutter camera-viewer-shutter" type="button" data-camera-shutter>
+      <i class="ph ph-aperture" aria-hidden="true"></i>
+      Auslösen
+    </button>
   </div>
 
   <div class="camera-copy">
@@ -57,10 +62,6 @@ import PhotoPlaceholder from "./PhotoPlaceholder.astro";
     </div>
 
     <div class="camera-actions">
-      <button class="camera-shutter" type="button" data-camera-shutter>
-        <i class="ph ph-aperture" aria-hidden="true"></i>
-        Auslösen
-      </button>
       <a class="fact-source" href="https://www.fujifilm-x.com/global/products/cameras/x-t30-iii/" target="_blank" rel="noreferrer">
         Kamera: Fujifilm <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
       </a>

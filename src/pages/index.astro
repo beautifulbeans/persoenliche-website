@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CameraPlayground from "../components/CameraPlayground.astro";
+import IntroReveal from "../components/IntroReveal.astro";
 import PhotoPlaceholder from "../components/PhotoPlaceholder.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
@@ -10,36 +11,35 @@ import { profile } from "../data/profile";
 ---
 
 <BaseLayout>
+  <IntroReveal />
   <SiteHeader />
 
   <main id="inhalt">
     <section class="hero section-shell" id="oben" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="hero-kicker">{profile.role}</p>
-        <h1 id="hero-title"><span>Fabian</span><span>Deragisch</span></h1>
+        <h1 class="hero-name" id="hero-title" data-hero-name><span data-text="Fabian">Fabian</span><span data-text="Deragisch">Deragisch</span></h1>
         <p class="hero-statement">{profile.statement}</p>
         <div class="hero-actions">
-          <a class="primary-button" href="#laufbahn">Mein Weg <i class="ph ph-arrow-down-right" aria-hidden="true"></i></a>
-          <a class="secondary-button" href="#persoenlich">Mehr Persönlichkeit</a>
+          <a class="primary-button" href="#beruf">Berufserfahrung <i class="ph ph-arrow-down-right" aria-hidden="true"></i></a>
+          <a class="secondary-button" href="#persoenlich">Persönlicher Teil</a>
         </div>
       </div>
 
       <div class="hero-scene" aria-label="Porträt und aktuelle berufliche Rolle">
-        <div class="hero-shape hero-shape-one" aria-hidden="true"></div>
-        <div class="hero-shape hero-shape-two" aria-hidden="true"></div>
-        <PhotoPlaceholder label="Porträt" class="hero-photo" />
-
-        <article class="hero-role-card">
-          <span class="role-card-icon"><i class="ph ph-briefcase" aria-hidden="true"></i></span>
-          <div>
-            <p>Aktuell</p>
-            <strong>Marketing und E-Commerce</strong>
+        <div class="hero-portrait-frame">
+          <span class="hero-portrait-monogram" aria-hidden="true">FD</span>
+          <div class="hero-portrait-art" aria-hidden="true">
+            <span class="portrait-orbit portrait-orbit-one"></span>
+            <span class="portrait-orbit portrait-orbit-two"></span>
+            <span class="portrait-index">01 / PORTRÄT</span>
           </div>
-        </article>
+          <PhotoPlaceholder label="Porträt" note="Eigenes Porträt folgt" class="hero-photo" />
+        </div>
 
-        <span class="hero-float hero-float-camera" aria-hidden="true"><i class="ph ph-camera"></i></span>
-        <span class="hero-float hero-float-music" aria-hidden="true"><i class="ph ph-vinyl-record"></i></span>
-        <span class="hero-float hero-float-leaf" aria-hidden="true"><i class="ph ph-leaf"></i></span>
+        <div class="hero-role-index">
+          <span aria-hidden="true"><i class="ph ph-briefcase"></i></span>
+          <p><small>Aktuell als Mitarbeiter</small><strong>Marketing und E-Commerce</strong></p>
+        </div>
       </div>
     </section>
 
@@ -48,7 +48,8 @@ import { profile } from "../data/profile";
     <section class="thesis-section" id="arbeit" aria-labelledby="thesis-title">
       <div class="section-shell thesis-layout">
         <div class="thesis-copy" data-reveal="left">
-          <h2 id="thesis-title">Wenn KI auf Kunst trifft.</h2>
+          <p class="section-eyebrow">Abschluss im Bachelorstudium</p>
+          <h2 id="thesis-title">Bachelorarbeit: Kreative Synergien.</h2>
           <p>{profile.thesis.summary}</p>
           <div class="thesis-facts" aria-label="Angaben zur Bachelorarbeit">
             <span><i class="ph ph-graduation-cap" aria-hidden="true"></i>B.A. Medien und Kommunikation</span>
@@ -63,7 +64,7 @@ import { profile } from "../data/profile";
             <i class="ph ph-plus"></i>
             <i class="ph ph-paint-brush"></i>
           </div>
-          <p>Bachelorarbeit</p>
+          <p>Medien und Kommunikation</p>
           <h3>{profile.thesis.title}</h3>
           <span>Fabian Deragisch</span>
         </article>
@@ -87,10 +88,31 @@ import { profile } from "../data/profile";
       </div>
     </section>
 
+    <section class="chapter-transition" id="kapitelwechsel" data-chapter-transition aria-labelledby="chapter-transition-title">
+      <div class="chapter-transition-stage">
+        <div class="chapter-transition-panel chapter-transition-professional" aria-hidden="true"></div>
+        <div class="chapter-transition-sheet" aria-hidden="true"></div>
+        <div class="chapter-transition-panel chapter-transition-personal" aria-hidden="true"></div>
+        <div class="chapter-transition-number chapter-transition-number-one" aria-hidden="true">01</div>
+        <div class="chapter-transition-number chapter-transition-number-two" aria-hidden="true">02</div>
+
+        <div class="chapter-transition-center section-shell">
+          <div class="chapter-transition-mark" aria-hidden="true">
+            <span>I</span>
+            <i class="ph ph-arrow-down-right"></i>
+            <span>II</span>
+          </div>
+          <p>Kapitelwechsel</p>
+          <h2 id="chapter-transition-title">Jetzt wird's persönlicher.</h2>
+          <span class="chapter-depth-line" aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+
     <section class="personal-section" id="persoenlich" aria-labelledby="personal-title">
       <div class="section-shell personal-heading" data-reveal="up">
         <h2 id="personal-title">Abseits der Arbeit.</h2>
-        <p>Fünf Interessen, persönliche Empfehlungen und ein paar Dinge zum Ausprobieren.</p>
+        <p>Interessen, Empfehlungen und kleine Dinge zum Ausprobieren.</p>
       </div>
 
       <div class="interest-marquee" aria-label="Persönliche Interessen">
@@ -101,6 +123,11 @@ import { profile } from "../data/profile";
             <span><i class="ph ph-vinyl-record"></i>Vinyl</span>
             <span><i class="ph ph-cards-three"></i>Spielkarten</span>
             <span><i class="ph ph-camera"></i>Fotografie</span>
+            <span><i class="ph ph-leaf"></i>Sencha</span>
+            <span><i class="ph ph-vinyl-record"></i>IGOR</span>
+            <span><i class="ph ph-camera"></i>Fujifilm</span>
+            <span><i class="ph ph-poker-chip"></i>Poker</span>
+            <span><i class="ph ph-cards"></i>Schafkopf</span>
           </div>
           <div class="interest-row" aria-hidden="true">
             <span><i class="ph ph-leaf"></i>Grüner Tee</span>
@@ -108,6 +135,11 @@ import { profile } from "../data/profile";
             <span><i class="ph ph-vinyl-record"></i>Vinyl</span>
             <span><i class="ph ph-cards-three"></i>Spielkarten</span>
             <span><i class="ph ph-camera"></i>Fotografie</span>
+            <span><i class="ph ph-leaf"></i>Sencha</span>
+            <span><i class="ph ph-vinyl-record"></i>IGOR</span>
+            <span><i class="ph ph-camera"></i>Fujifilm</span>
+            <span><i class="ph ph-poker-chip"></i>Poker</span>
+            <span><i class="ph ph-cards"></i>Schafkopf</span>
           </div>
         </div>
       </div>
@@ -115,16 +147,26 @@ import { profile } from "../data/profile";
       <div class="section-shell personal-grid">
         <TeaRitual />
 
-        <article class="play-card training-card" data-reveal="right">
+        <article class="play-card training-card" id="training" data-reveal="right">
           <div class="play-card-heading">
             <span class="play-icon"><i class="ph ph-barbell" aria-hidden="true"></i></span>
             <h3>Training</h3>
           </div>
           <p class="training-personal">Nicht jeder Tag startet motiviert. Regelmäßigkeit heißt für mich oft einfach: hingehen und anfangen.</p>
-          <button class="training-visual" type="button" data-training-move aria-label="Trainingsanimation starten">
-            <i class="ph ph-bone" data-training-icon></i>
-            <span></span><span></span><span></span>
-            <small><i class="ph ph-hand-tap" aria-hidden="true"></i>Antippen</small>
+          <button class="training-set" type="button" data-training-move data-training-stage="0" aria-label="Nächsten Trainingssatz starten">
+            <span class="training-rack" aria-hidden="true">
+              <span class="training-bar"></span>
+              <span class="training-plate training-plate-one"></span>
+              <span class="training-plate training-plate-two"></span>
+              <span class="training-plate training-plate-three"></span>
+              <span class="training-plate training-plate-four"></span>
+            </span>
+            <span class="training-set-meta">
+              <small>Satz für Satz</small>
+              <strong data-training-set-label>Aufwärmen</strong>
+              <span data-training-set-counter>0 von 3</span>
+            </span>
+            <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </button>
           <p class="training-move-status" aria-live="polite" data-training-move-status>Der schwierigste Teil ist oft der Weg bis zur Tür.</p>
           <p class="fact-kicker" data-training-kicker>Knochen</p>
@@ -136,22 +178,16 @@ import { profile } from "../data/profile";
             <button type="button" data-training-fact="neural">Nerven</button>
             <button type="button" data-training-fact="rhythm">Rhythmus</button>
           </div>
-          <a class="fact-source" data-training-source href="https://www.niams.nih.gov/health-topics/exercise-your-bone-health" target="_blank" rel="noreferrer">
-            Quelle: NIH <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
-          </a>
         </article>
 
-        <article class="play-card sound-card" data-reveal="left" data-sound-card data-album-theme="pink-floyd">
+        <article class="play-card sound-card" id="vinyl" data-reveal="left" data-sound-card data-album-theme="pink-floyd">
           <div class="sound-stage">
             <button class="vinyl-button" type="button" aria-pressed="false" data-vinyl-button>
               <i class="ph ph-vinyl-record" aria-hidden="true"></i>
               <span class="sr-only">Plattenspieler starten oder stoppen</span>
             </button>
             <span class="turntable-arm" aria-hidden="true"><span></span></span>
-            <div class="vinyl-market">
-              <strong>3,3×</strong>
-              <span>mehr US-Umsatz als CDs, 2025</span>
-            </div>
+            <p class="turntable-caption">Vier Alben, die ich gern von Anfang bis Ende höre.</p>
           </div>
           <p class="fact-kicker">Vier Platten für den Anfang</p>
           <h3 data-album-title>The Dark Side of the Moon</h3>
@@ -161,21 +197,19 @@ import { profile } from "../data/profile";
             <button class="is-selected" type="button" data-album="pink-floyd">Pink Floyd</button>
             <button type="button" data-album="dire-straits">Dire Straits</button>
             <button type="button" data-album="frank-ocean">Frank Ocean</button>
-            <button type="button" data-album="tyler">Tyler</button>
+            <button type="button" data-album="tyler">Tyler, the Creator</button>
           </div>
-          <a class="fact-source" href="https://www.riaa.com/wp-content/uploads/2026/03/RIAA-Year-End-Revenue-2025.pdf" target="_blank" rel="noreferrer">
-            Vinyl-Zahl: RIAA <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
-          </a>
         </article>
 
-        <article class="play-card cards-card" data-reveal="scale">
+        <article class="play-card cards-card" id="spielkarten" data-reveal="scale">
           <div class="cards-heading">
             <div>
-              <p class="fact-kicker">Am Kartentisch</p>
+              <p class="fact-kicker">Spiele ich gern</p>
               <h3 data-card-game-title>Durak</h3>
             </div>
             <span class="cards-icon"><i class="ph ph-cards-three" aria-hidden="true"></i></span>
           </div>
+          <p class="cards-personal">Kartenspiele gehören für mich zu einem guten Abend mit Freunden.</p>
           <p class="card-game-copy" aria-live="polite" data-card-game-copy>Angreifen, verteidigen, Trumpf im Blick behalten. Verloren hat, wer am Ende noch Karten hält.</p>
           <div class="card-game-switch" role="group" aria-label="Kartenspiel auswählen">
             <button class="is-selected" type="button" data-card-game="durak">Durak</button>
@@ -243,6 +277,60 @@ import { profile } from "../data/profile";
     revealItems.forEach((item) => item.classList.add("is-visible"));
   }
 
+  const portraitFrame = document.querySelector<HTMLElement>(".hero-portrait-frame");
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+  if (portraitFrame && finePointer.matches) {
+    portraitFrame.addEventListener("pointermove", (event) => {
+      const bounds = portraitFrame.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+      const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+      portraitFrame.style.transform = `perspective(900px) rotateX(${y * -4}deg) rotateY(${x * 5}deg) translateY(-0.35rem)`;
+    });
+    portraitFrame.addEventListener("pointerleave", () => {
+      portraitFrame.style.transform = "";
+    });
+  }
+
+  const chapterTransition = document.querySelector<HTMLElement>("[data-chapter-transition]");
+  if (chapterTransition) {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const clamp = (value: number) => Math.min(1, Math.max(0, value));
+    const smoothstep = (value: number) => value * value * (3 - 2 * value);
+    const easeOut = (value: number) => 1 - Math.pow(1 - value, 3);
+    let chapterFrame = 0;
+
+    const updateChapterTransition = () => {
+      chapterFrame = 0;
+      const bounds = chapterTransition.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      const rawProgress = (viewport * 0.78 - bounds.top) / (viewport * 1.18);
+      const progress = reduceMotion.matches ? (rawProgress > 0.5 ? 1 : 0) : clamp(rawProgress);
+      const warmProgress = easeOut(clamp(progress / 0.72));
+      const personalProgress = smoothstep(clamp((progress - 0.17) / 0.83));
+      const centerProgress = smoothstep(progress);
+
+      chapterTransition.style.setProperty("--chapter-warm-y", `${116 - warmProgress * 130}%`);
+      chapterTransition.style.setProperty("--chapter-personal-y", `${120 - personalProgress * 120}%`);
+      chapterTransition.style.setProperty("--chapter-copy-y", `${1.25 - centerProgress * 1.25}rem`);
+      chapterTransition.style.setProperty("--chapter-copy-scale", `${0.97 + centerProgress * 0.03}`);
+      chapterTransition.style.setProperty("--chapter-copy-spacing", `${-0.045 + centerProgress * 0.015}em`);
+      chapterTransition.style.setProperty("--chapter-arrow-rotation", `${-12 + centerProgress * 57}deg`);
+      chapterTransition.style.setProperty("--chapter-line-scale", `${0.7 + centerProgress * 0.85}`);
+      chapterTransition.style.setProperty("--chapter-one-opacity", `${0.7 * (1 - centerProgress)}`);
+      chapterTransition.style.setProperty("--chapter-two-opacity", `${0.72 * personalProgress}`);
+    };
+
+    const requestChapterUpdate = () => {
+      if (chapterFrame) return;
+      chapterFrame = window.requestAnimationFrame(updateChapterTransition);
+    };
+
+    updateChapterTransition();
+    window.addEventListener("scroll", requestChapterUpdate, { passive: true });
+    window.addEventListener("resize", requestChapterUpdate);
+    reduceMotion.addEventListener("change", requestChapterUpdate);
+  }
+
   const storyCards = document.querySelectorAll<HTMLElement>("[data-story-card]");
   const companion = document.querySelector<HTMLElement>("[data-journey-companion]");
   const companionKind = companion?.querySelector<HTMLElement>("[data-companion-kind]");
@@ -261,7 +349,7 @@ import { profile } from "../data/profile";
           if (companionPeriod) companionPeriod.textContent = card.dataset.storyPeriod ?? "";
           if (companionTitle) companionTitle.textContent = card.dataset.storyTitle ?? "";
           if (companionIcon) companionIcon.className = `ph ${card.dataset.storyIcon ?? "ph-briefcase"}`;
-          companion.dataset.mode = card.dataset.storyKind === "Ausbildung" ? "study" : "work";
+          companion.dataset.mode = card.dataset.storyKind === "Studium" ? "study" : "work";
           companion.classList.remove("has-changed");
           requestAnimationFrame(() => companion.classList.add("has-changed"));
         });
@@ -304,29 +392,21 @@ import { profile } from "../data/profile";
       kicker: "Knochen",
       copy: "Krafttraining belastet nicht nur Muskeln. Der gezielte Widerstand setzt auch an den Knochen einen Reiz und kann sie stärken.",
       icon: "ph-bone",
-      label: "Quelle: NIH",
-      href: "https://www.niams.nih.gov/health-topics/exercise-your-bone-health",
     },
     neural: {
       kicker: "Nervensystem",
       copy: "Kraft entsteht nicht nur durch mehr Muskelmasse. Auch neuronale Anpassungen können dazu beitragen, motorische Einheiten besser zu aktivieren.",
       icon: "ph-brain",
-      label: "Quelle: PubMed",
-      href: "https://pubmed.ncbi.nlm.nih.gov/31993949/",
     },
     rhythm: {
       kicker: "Rhythmus",
       copy: "Für zusätzliche gesundheitliche Vorteile empfehlen offizielle Leitlinien muskelstärkende Aktivität an mindestens zwei Tagen pro Woche.",
       icon: "ph-calendar-check",
-      label: "Quelle: NIH",
-      href: "https://www.niams.nih.gov/health-topics/exercise-your-bone-health",
     },
   } as const;
   const trainingButtons = document.querySelectorAll<HTMLButtonElement>("[data-training-fact]");
   const trainingKicker = document.querySelector<HTMLElement>("[data-training-kicker]");
   const trainingCopy = document.querySelector<HTMLElement>("[data-training-copy]");
-  const trainingIcon = document.querySelector<HTMLElement>("[data-training-icon]");
-  const trainingSource = document.querySelector<HTMLAnchorElement>("[data-training-source]");
   trainingButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const key = button.dataset.trainingFact as keyof typeof trainingFacts;
@@ -335,28 +415,29 @@ import { profile } from "../data/profile";
       trainingButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
       if (trainingKicker) trainingKicker.textContent = fact.kicker;
       if (trainingCopy) trainingCopy.textContent = fact.copy;
-      if (trainingIcon) trainingIcon.className = `ph ${fact.icon}`;
-      if (trainingSource) {
-        trainingSource.href = fact.href;
-        trainingSource.innerHTML = `${fact.label} <i class="ph ph-arrow-up-right" aria-hidden="true"></i>`;
-      }
-      trainingIcon?.closest(".training-visual")?.classList.remove("is-changing");
-      requestAnimationFrame(() => trainingIcon?.closest(".training-visual")?.classList.add("is-changing"));
     });
   });
 
   const trainingMove = document.querySelector<HTMLButtonElement>("[data-training-move]");
   const trainingMoveStatus = document.querySelector<HTMLElement>("[data-training-move-status]");
+  const trainingSetLabel = document.querySelector<HTMLElement>("[data-training-set-label]");
+  const trainingSetCounter = document.querySelector<HTMLElement>("[data-training-set-counter]");
   const trainingSteps = [
-    "Tasche gepackt. Der erste Widerstand ist erledigt.",
-    "Angefangen. Ab hier wird es meistens leichter.",
-    "Training läuft. Nicht spektakulär, aber regelmäßig.",
+    { label: "Aufwärmen", counter: "1 von 3", status: "Angefangen. Der erste Widerstand ist erledigt." },
+    { label: "Arbeitssatz", counter: "2 von 3", status: "Der Rhythmus ist da. Jetzt wird konzentriert gearbeitet." },
+    { label: "Letzter Satz", counter: "3 von 3", status: "Nicht spektakulär, aber erledigt. Genau darum geht es mir." },
+    { label: "Neu starten", counter: "0 von 3", status: "Der schwierigste Teil ist oft der Weg bis zur Tür." },
   ];
   let trainingStep = 0;
   trainingMove?.addEventListener("click", () => {
+    const step = trainingSteps[trainingStep % trainingSteps.length];
+    const stage = (trainingStep % trainingSteps.length) + 1;
     trainingMove.classList.remove("is-training");
     requestAnimationFrame(() => trainingMove.classList.add("is-training"));
-    if (trainingMoveStatus) trainingMoveStatus.textContent = trainingSteps[trainingStep % trainingSteps.length];
+    trainingMove.dataset.trainingStage = String(stage === 4 ? 0 : stage);
+    if (trainingSetLabel) trainingSetLabel.textContent = step.label;
+    if (trainingSetCounter) trainingSetCounter.textContent = step.counter;
+    if (trainingMoveStatus) trainingMoveStatus.textContent = step.status;
     trainingStep += 1;
   });
 
@@ -396,7 +477,7 @@ import { profile } from "../data/profile";
     president: ["Präsident", "Karten so schnell wie möglich loswerden. Das Spiel ist auch unter einem deutlich direkteren Namen bekannt."],
     neunern: ["Neunern", "Ein schneller Klassiker für die Runde. Die genaue Variante gehört bei regionalen Kartenspielen meistens schon zur Diskussion dazu."],
     poker: ["Poker", "Wahrscheinlichkeit, Timing und die Frage, was die anderen aus wenigen Informationen machen."],
-    schafkopf: ["Schafkopf", "Ein bayerischer Klassiker, bei dem ich noch dazulerne. Gerade das macht die nächste Runde interessant."],
+    schafkopf: ["Schafkopf", "Ein bayerischer Klassiker mit Partnerspiel, klaren Regeln und viel Taktik am Tisch."],
   } as const;
   const cardGameButtons = document.querySelectorAll<HTMLButtonElement>("[data-card-game]");
   const cardGameTitle = document.querySelector<HTMLElement>("[data-card-game-title]");

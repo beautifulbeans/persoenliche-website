@@ -14,22 +14,25 @@ import { profile } from "../data/profile";
       type="button"
       data-header-note
       data-notes={JSON.stringify(profile.statusNotes)}
-      aria-label="Aktuelle Notiz wechseln"
+      aria-label="Persönliche Statusnotiz wechseln"
+      title="Notiz wechseln"
     >
-      <i class:list={["ph", profile.statusNotes[0].icon]} aria-hidden="true" data-header-note-icon></i>
-      <span aria-live="polite">
+      <span class="header-note-mark" aria-hidden="true">
+        <i class:list={["ph", profile.statusNotes[0].icon]} data-header-note-icon></i>
+      </span>
+      <span class="header-note-copy" aria-live="polite">
         <small data-header-note-label>{profile.statusNotes[0].label}</small>
         <strong data-header-note-text>{profile.statusNotes[0].text}</strong>
       </span>
-      <i class="ph ph-arrows-clockwise note-cycle" aria-hidden="true"></i>
+      <span class="header-note-cycle" aria-hidden="true"><i class="ph ph-arrow-bend-down-right"></i></span>
     </button>
   </div>
 
   <nav aria-label="Hauptnavigation">
-    <a href="#laufbahn"><span class="nav-long">Laufbahn</span><span class="nav-short">Weg</span></a>
-    <a href="#arbeit"><span class="nav-long">Bachelorarbeit</span><span class="nav-short">Arbeit</span></a>
+    <a href="#beruf"><span class="nav-long">Berufserfahrung</span><span class="nav-short">Beruf</span></a>
+    <a href="#ausbildung"><span class="nav-long">Studium + Bachelorarbeit</span><span class="nav-short">Studium</span></a>
     <a href="#persoenlich"><span class="nav-long">Persönlich</span><span class="nav-short">Privat</span></a>
-    <a href="#kontakt"><span class="nav-long">Brieftaube</span><span class="nav-short">Kontakt</span></a>
+    <a href="#kontakt"><span>Kontakt</span></a>
   </nav>
 </header>
 
@@ -37,7 +40,7 @@ import { profile } from "../data/profile";
   document.querySelectorAll<HTMLButtonElement>("[data-header-note]").forEach((button) => {
     const notes = JSON.parse(button.dataset.notes ?? "[]") as Array<{ icon: string; label: string; text: string }>;
     const icon = button.querySelector<HTMLElement>("[data-header-note-icon]");
-    const label = button.querySelector<HTMLElement>("[data-header-note-label]");
+    const labels = button.querySelectorAll<HTMLElement>("[data-header-note-label]");
     const text = button.querySelector<HTMLElement>("[data-header-note-text]");
     let noteIndex = 0;
 
@@ -48,7 +51,7 @@ import { profile } from "../data/profile";
       button.classList.remove("is-changing");
       requestAnimationFrame(() => button.classList.add("is-changing"));
       if (icon) icon.className = `ph ${note.icon}`;
-      if (label) label.textContent = note.label;
+      labels.forEach((label) => (label.textContent = note.label));
       if (text) text.textContent = note.text;
     });
   });

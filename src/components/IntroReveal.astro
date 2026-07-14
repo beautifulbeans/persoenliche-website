@@ -1,0 +1,48 @@
+<div class="intro-reveal" data-intro-reveal aria-hidden="true">
+  <div class="intro-field intro-field-warm"></div>
+  <div class="intro-field intro-field-deep"></div>
+  <div class="intro-type intro-type-first">Fabian</div>
+  <div class="intro-type intro-type-last">Deragisch</div>
+  <div class="intro-aperture">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="intro-mark">
+    <span>FD</span>
+    <p>Portfolio + Persönlichkeit</p>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const intro = document.querySelector("[data-intro-reveal]");
+    if (!(intro instanceof HTMLElement)) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let alreadySeen = false;
+
+    try {
+      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v2") === "true";
+      sessionStorage.setItem("fabian-intro-seen-v2", "true");
+    } catch {
+      alreadySeen = false;
+    }
+
+    if (alreadySeen || reducedMotion) {
+      intro.remove();
+      return;
+    }
+
+    document.body.classList.add("intro-active");
+    requestAnimationFrame(() => intro.classList.add("is-running"));
+
+    window.setTimeout(() => {
+      intro.classList.add("is-leaving");
+      document.body.classList.add("intro-complete");
+      document.body.classList.remove("intro-active");
+    }, 1480);
+
+    window.setTimeout(() => intro.remove(), 2300);
+  })();
+</script>
+
+<noscript><style>.intro-reveal{display:none}</style></noscript>

@@ -4,21 +4,18 @@ import { education, work } from "../data/profile";
 
 <section class="journey section-shell" id="laufbahn" aria-labelledby="journey-title">
   <header class="section-heading" data-reveal="up">
-    <h2 id="journey-title">Mein Weg, klar in zwei Spuren.</h2>
-    <p>
-      Beruf und Ausbildung bleiben getrennt. Beim Scrollen begleitet eine Kapitelkarte die jeweilige Station.
-    </p>
+    <h2 id="journey-title">Beruf und Studium.</h2>
   </header>
 
   <nav class="journey-switcher" aria-label="Bereiche der Laufbahn" data-reveal="up">
     <a href="#beruf">
       <i class="ph ph-briefcase" aria-hidden="true"></i>
-      Beruf
+      Berufserfahrung
       <span>{work.length} Stationen</span>
     </a>
     <a href="#ausbildung">
       <i class="ph ph-graduation-cap" aria-hidden="true"></i>
-      Ausbildung
+      Studium + Bachelorarbeit
       <span>{education.length} Stationen</span>
     </a>
   </nav>
@@ -32,7 +29,6 @@ import { education, work } from "../data/profile";
       <p class="companion-kind" data-companion-kind>Beruf</p>
       <p class="companion-period" data-companion-period>{work[0].period}</p>
       <h3 data-companion-title>{work[0].title}</h3>
-      <p class="companion-hint">Die Karte verändert sich mit der aktiven Station.</p>
     </aside>
 
     <div class="journey-stories">
@@ -49,6 +45,7 @@ import { education, work } from "../data/profile";
           {work.map((entry) => (
             <article
               class:list={["journey-card", entry.current && "is-current", entry.backDetails && "has-flip"]}
+              data-flip-card={entry.backDetails ? "true" : undefined}
               data-story-card
               data-story-kind="Beruf"
               data-story-period={entry.period}
@@ -86,21 +83,21 @@ import { education, work } from "../data/profile";
                   <div class="journey-card-face journey-card-back" data-flip-back aria-hidden="true" inert>
                     <div class="journey-back-top">
                       <span><i class="ph ph-list-magnifying-glass" aria-hidden="true"></i>Ein Blick dahinter</span>
-                      <button type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
-                        <i class="ph ph-x" aria-hidden="true"></i>
-                      </button>
                     </div>
                     <h4>{entry.backTitle}</h4>
                     <p class="journey-back-intro">{entry.backIntro}</p>
                     <div class="journey-back-grid">
-                      {entry.backDetails.map((detail) => (
-                        <article>
+                      {entry.backDetails.map((detail, index) => (
+                        <article style={`--detail-index: ${index}`}>
                           <i class:list={["ph", detail.icon]} aria-hidden="true"></i>
                           <h5>{detail.title}</h5>
                           <p>{detail.text}</p>
                         </article>
                       ))}
                     </div>
+                    <button class="journey-flip-button journey-flip-back-button" type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
+                      Zur Vorderseite <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>
+                    </button>
                   </div>
                 )}
               </div>
@@ -113,8 +110,8 @@ import { education, work } from "../data/profile";
         <header class="journey-group-heading">
           <span class="group-icon"><i class="ph ph-graduation-cap" aria-hidden="true"></i></span>
           <div>
-            <p>Ausbildung</p>
-            <h3 id="education-title">Studium und Schule</h3>
+            <p>Studium</p>
+            <h3 id="education-title">Studium, Schule und Abschlussarbeit</h3>
           </div>
         </header>
 
@@ -122,8 +119,9 @@ import { education, work } from "../data/profile";
           {education.map((entry) => (
             <article
               class:list={["journey-card", "journey-card-education", entry.backDetails && "has-flip"]}
+              data-flip-card={entry.backDetails ? "true" : undefined}
               data-story-card
-              data-story-kind="Ausbildung"
+              data-story-kind="Studium"
               data-story-period={entry.period}
               data-story-title={entry.title}
               data-story-icon={entry.icon}
@@ -152,21 +150,21 @@ import { education, work } from "../data/profile";
                   <div class="journey-card-face journey-card-back" data-flip-back aria-hidden="true" inert>
                     <div class="journey-back-top">
                       <span><i class="ph ph-list-magnifying-glass" aria-hidden="true"></i>Ein Blick dahinter</span>
-                      <button type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
-                        <i class="ph ph-x" aria-hidden="true"></i>
-                      </button>
                     </div>
                     <h4>{entry.backTitle}</h4>
                     <p class="journey-back-intro">{entry.backIntro}</p>
                     <div class="journey-back-grid">
-                      {entry.backDetails.map((detail) => (
-                        <article>
+                      {entry.backDetails.map((detail, index) => (
+                        <article style={`--detail-index: ${index}`}>
                           <i class:list={["ph", detail.icon]} aria-hidden="true"></i>
                           <h5>{detail.title}</h5>
                           <p>{detail.text}</p>
                         </article>
                       ))}
                     </div>
+                    <button class="journey-flip-button journey-flip-back-button" type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
+                      Zur Vorderseite <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>
+                    </button>
                   </div>
                 )}
               </div>
@@ -182,21 +180,69 @@ import { education, work } from "../data/profile";
   document.querySelectorAll<HTMLElement>(".journey-card.has-flip").forEach((card) => {
     const openButton = card.querySelector<HTMLButtonElement>("[data-flip-open]");
     const closeButton = card.querySelector<HTMLButtonElement>("[data-flip-close]");
+    const inner = card.querySelector<HTMLElement>(".journey-card-inner");
     const front = card.querySelector<HTMLElement>("[data-flip-front]");
     const back = card.querySelector<HTMLElement>("[data-flip-back]");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let flipMotion: Animation | undefined;
 
-    const setFlipped = (flipped: boolean) => {
+    const setHeight = (flipped: boolean) => {
+      const face = flipped ? back : front;
+      if (!inner || !face) return;
+      inner.style.height = `${face.scrollHeight}px`;
+    };
+
+    const setFlipped = (flipped: boolean, moveFocus = false) => {
+      setHeight(flipped);
       card.classList.toggle("is-flipped", flipped);
+      card.classList.remove("is-flipping");
+      requestAnimationFrame(() => card.classList.add("is-flipping"));
+
+      if (!reduceMotion) {
+        flipMotion?.cancel();
+        const direction = flipped ? -1 : 1;
+        flipMotion = card.animate(
+          [
+            { transform: "translateY(0) scale(1) rotateZ(0deg)" },
+            { transform: `translateY(${direction * 0.35}rem) scale(1.018) rotateZ(${direction * 0.28}deg)`, offset: 0.46 },
+            { transform: "translateY(0) scale(1) rotateZ(0deg)" },
+          ],
+          {
+            duration: flipped ? 720 : 580,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          },
+        );
+      }
       openButton?.setAttribute("aria-expanded", String(flipped));
       front?.setAttribute("aria-hidden", String(flipped));
       back?.setAttribute("aria-hidden", String(!flipped));
       front?.toggleAttribute("inert", flipped);
       back?.toggleAttribute("inert", !flipped);
-      if (flipped) closeButton?.focus({ preventScroll: true });
-      else openButton?.focus({ preventScroll: true });
+      if (moveFocus) {
+        if (flipped) closeButton?.focus({ preventScroll: true });
+        else openButton?.focus({ preventScroll: true });
+      }
     };
 
-    openButton?.addEventListener("click", () => setFlipped(true));
-    closeButton?.addEventListener("click", () => setFlipped(false));
+    setHeight(false);
+
+    openButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setFlipped(true, true);
+    });
+    closeButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setFlipped(false, true);
+    });
+    card.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest("a, button") || window.getSelection()?.toString()) return;
+      setFlipped(!card.classList.contains("is-flipped"));
+    });
+    card.addEventListener("transitionend", (event) => {
+      if (event.propertyName === "height") card.classList.remove("is-flipping");
+    });
+
+    window.addEventListener("resize", () => setHeight(card.classList.contains("is-flipped")), { passive: true });
   });
 </script>

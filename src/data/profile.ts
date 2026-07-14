@@ -20,7 +20,7 @@ export const profile = {
   name: "Fabian Deragisch",
   role: "Mitarbeiter im Marketing und E-Commerce",
   statement:
-    "Ich arbeite an der Schnittstelle von Marketing, E-Commerce und digitaler Kommunikation.",
+    "Portfolio, Lebenslauf und ein kleiner Einblick in die Person dahinter.",
   focus:
     "Von SEO und Website-Content bis zu E-Mail-Marketing und CMS-Pflege.",
   thesis: {
@@ -30,9 +30,10 @@ export const profile = {
       "Die Bachelorarbeit beschäftigt sich mit der Frage, wie KI und künstlerische Praxis zusammenwirken können und welche Zukunftsbilder daraus für kreative Zusammenarbeit entstehen.",
   },
   statusNotes: [
-    { icon: "ph-vinyl-record", label: "Auf Repeat", text: "IGOR" },
-    { icon: "ph-leaf", label: "In der Kanne", text: "Sencha" },
-    { icon: "ph-camera", label: "In der Tasche", text: "X-T30 III" },
+    { icon: "ph-hammer", label: "Gerade", text: "Website wächst" },
+    { icon: "ph-vinyl-record", label: "Aufgelegt", text: "Blonde" },
+    { icon: "ph-leaf", label: "Heute in der Kanne", text: "Sencha" },
+    { icon: "ph-camera", label: "Fotografiert", text: "Licht in Wien" },
   ],
 };
 
