@@ -1,3 +1,7 @@
+---
+const base = import.meta.env.BASE_URL;
+---
+
 <footer class="site-footer" id="kontakt">
   <section class="pigeon-contact section-shell" aria-labelledby="contact-title" data-reveal="up">
     <div class="contact-copy">
@@ -8,12 +12,12 @@
 
     <div class="contact-panel">
       <div class="contact-routes" aria-label="Kontaktwege">
-        <button type="button" data-contact-route="E-Mail" data-route-kind="mail">
+        <a href="mailto:fabian.deragisch@gmail.com" data-contact-route="E-Mail" data-route-kind="mail">
           <span class="contact-route-number">01</span>
           <i class="ph ph-envelope-simple" aria-hidden="true"></i>
           <span>E-Mail</span>
           <i class="ph ph-arrow-up-right route-arrow" aria-hidden="true"></i>
-        </button>
+        </a>
         <a href="https://at.linkedin.com/in/fabian-deragisch-57769a2a2" target="_blank" rel="noreferrer" data-contact-route="LinkedIn" data-route-kind="linkedin">
           <span class="contact-route-number">02</span>
           <i class="ph ph-linkedin-logo" aria-hidden="true"></i>
@@ -49,10 +53,10 @@
 
   <div class="footer-bottom section-shell">
     <p>Fabian Deragisch <span data-current-year></span></p>
-    <p class="privacy-note">Private Kontaktdaten bleiben bis zur Veröffentlichung geschützt.</p>
+    <p class="privacy-note">Kein Tracking. Keine Werbung. Keine Cookies durch diese Website.</p>
     <nav aria-label="Rechtliche Hinweise">
-      <a href="/impressum/">Impressum</a>
-      <a href="/datenschutz/">Datenschutz</a>
+      <a href={`${base}impressum/`}>Impressum</a>
+      <a href={`${base}datenschutz/`}>Datenschutz</a>
     </nav>
   </div>
 </footer>
@@ -68,9 +72,15 @@
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   routeLinks.forEach((link) => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (event) => {
       const route = link.dataset.contactRoute ?? "Kontakt";
-      routeLinks.forEach((item) => item.classList.toggle("is-selected", item === link));
+      const mailLink = link.dataset.routeKind === "mail" && link instanceof HTMLAnchorElement ? link.href : null;
+      if (mailLink) event.preventDefault();
+      routeLinks.forEach((item) => {
+        const selected = item === link;
+        item.classList.toggle("is-selected", selected);
+        if (item instanceof HTMLButtonElement) item.setAttribute("aria-pressed", String(selected));
+      });
       pigeonStage?.classList.remove("is-dispatched");
       requestAnimationFrame(() => pigeonStage?.classList.add("is-dispatched"));
 
@@ -89,7 +99,13 @@
         );
       }
       if (pigeonStatus) {
-        pigeonStatus.textContent = route === "E-Mail" ? "E-Mail-Adresse folgt zur Veröffentlichung." : `${route} ist unterwegs.`;
+        pigeonStatus.textContent = `${route} ist unterwegs.`;
+      }
+
+      if (mailLink) {
+        window.setTimeout(() => {
+          window.location.href = mailLink;
+        }, reduceMotion.matches ? 0 : 650);
       }
     });
   });

@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { profile } from "../data/profile";
+
+const pdfUrl = `../${profile.thesis.documentUrl.replace(/^\.\//, "")}#toolbar=0&navpanes=0&view=FitH`;
+---
+
+<BaseLayout
+  title="Bachelorarbeit | Fabian Deragisch"
+  description="Leseansicht der Bachelorarbeit Kreative Synergien von Fabian Deragisch."
+>
+  <main class="reader-page" id="inhalt">
+    <header class="reader-header">
+      <a href="../#arbeit"><i class="ph ph-arrow-left" aria-hidden="true"></i>Zurück zur Website</a>
+      <div>
+        <p>Bachelorarbeit · Universität Passau · 2024</p>
+        <h1>Kreative Synergien</h1>
+      </div>
+      <span>Fabian Deragisch</span>
+    </header>
+
+    <div class="reader-document">
+      <object data={pdfUrl} type="application/pdf" aria-label="Bachelorarbeit Kreative Synergien">
+        <div class="reader-fallback">
+          <i class="ph ph-file-pdf" aria-hidden="true"></i>
+          <h2>Die eingebettete Ansicht wird hier nicht unterstützt.</h2>
+          <p>Du kannst die Bachelorarbeit stattdessen direkt im Browser öffnen.</p>
+          <a href={`../${profile.thesis.documentUrl.replace(/^\.\//, "")}`} target="_blank" rel="noreferrer">
+            PDF öffnen <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </object>
+    </div>
+  </main>
+</BaseLayout>

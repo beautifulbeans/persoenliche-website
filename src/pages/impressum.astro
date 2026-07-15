@@ -1,18 +1,47 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title="Impressum | Fabian Deragisch" description="Impressum der persönlichen Website von Fabian Deragisch.">
+<BaseLayout
+  title="Impressum | Fabian Deragisch"
+  description="Impressum und Offenlegung der persönlichen Website von Fabian Deragisch."
+  robots="noindex, follow"
+>
   <main class="legal-page" id="inhalt">
-    <a class="back-link" href="/">← Zurück zur Website</a>
-    <p class="section-index">Rechtlicher Hinweis</p>
+    <a class="back-link" href={base}>← Zurück zur Website</a>
+    <p class="section-index">Impressum und Offenlegung</p>
     <h1>Impressum</h1>
     <div class="legal-notice">
-      <h2>Vor Veröffentlichung ergänzen</h2>
-      <p>
-        Diese Seite befindet sich in privater Entwicklung. Die gesetzlich erforderlichen Angaben werden vor der öffentlichen Veröffentlichung geprüft und vollständig ergänzt.
-      </p>
-      <p>Private Anschrift, Telefonnummer und persönliche Kontaktdaten werden nicht als Platzhalter im Repository gespeichert.</p>
+      <section>
+        <p class="legal-label">Medieninhaber und verantwortlich</p>
+        <h2>Fabian Deragisch</h2>
+        <dl class="legal-details">
+          <div>
+            <dt>Standort</dt>
+            <dd>Wien, Österreich</dd>
+          </div>
+          <div>
+            <dt>Kontakt</dt>
+            <dd><a href="mailto:fabian.deragisch@gmail.com">fabian.deragisch@gmail.com</a></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Zweck der Website</h2>
+        <p>
+          Diese Website ist ein persönliches, nicht-kommerzielles Portfolio. Sie gibt Einblick in meine berufliche Laufbahn, mein Studium, meine Bachelorarbeit und ausgewählte persönliche Interessen. Es werden keine entgeltlichen Leistungen angeboten und keine werblichen Interessen verfolgt.
+        </p>
+      </section>
+
+      <section>
+        <h2>Offenlegung gemäß § 25 MedienG</h2>
+        <p>
+          Medieninhaber: Fabian Deragisch, Wohnort Wien. Inhaltliche Ausrichtung: persönliche Selbstdarstellung und Information über meinen beruflichen und akademischen Werdegang.
+        </p>
+      </section>
     </div>
   </main>
 </BaseLayout>

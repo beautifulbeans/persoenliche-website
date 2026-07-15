@@ -1,12 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title="Seite nicht gefunden | Fabian Deragisch">
+<BaseLayout title="Seite nicht gefunden | Fabian Deragisch" robots="noindex, follow">
   <main class="not-found" id="inhalt">
     <p class="section-index">Fehler 404</p>
     <h1>Hier ist gerade nichts.</h1>
     <p>Vielleicht liegt die gesuchte Seite noch im Skizzenbuch.</p>
-    <a class="primary-link" href="/">Zur Startseite <span aria-hidden="true">→</span></a>
+    <a class="primary-link" href={base}>Zur Startseite <span aria-hidden="true">→</span></a>
   </main>
 </BaseLayout>

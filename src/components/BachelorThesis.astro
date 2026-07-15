@@ -1,0 +1,166 @@
+---
+import { profile } from "../data/profile";
+
+const { thesis } = profile;
+---
+
+<section class="thesis-section" id="arbeit" aria-labelledby="thesis-title">
+  <div class="section-shell thesis-layout">
+    <div class="thesis-copy" data-reveal="left">
+      <p class="section-eyebrow">Abschluss im Bachelorstudium</p>
+      <h2 id="thesis-title">Bachelorarbeit: Kreative Synergien.</h2>
+      <p>{thesis.summary}</p>
+
+      <div class="thesis-facts" aria-label="Angaben zur Bachelorarbeit">
+        <span><i class="ph ph-graduation-cap" aria-hidden="true"></i>B.A. Medien und Kommunikation</span>
+        <span><i class="ph ph-buildings" aria-hidden="true"></i>Universität Passau, 2024</span>
+        <a href={thesis.readerUrl} aria-label="Bachelorarbeit in der Leseansicht öffnen">
+          <i class="ph ph-book-open-text" aria-hidden="true"></i>In der Leseansicht öffnen
+        </a>
+      </div>
+    </div>
+
+    <article class="thesis-card" data-thesis-card data-reveal="scale">
+      <div class="thesis-card-inner" data-thesis-inner>
+        <div class="thesis-card-face thesis-card-front" data-thesis-front>
+          <div class="thesis-cover-top" aria-hidden="true">
+            <span class="thesis-cover-mark"><i class="ph ph-brain"></i></span>
+            <span class="thesis-cover-link"><i class="ph ph-plus"></i></span>
+            <span class="thesis-cover-mark"><i class="ph ph-paint-brush"></i></span>
+          </div>
+
+          <div class="thesis-cover-copy">
+            <p>Medien und Kommunikation</p>
+            <h3>{thesis.title}</h3>
+          </div>
+
+          <div class="thesis-cover-footer">
+            <span>Fabian Deragisch</span>
+            <button type="button" data-thesis-open aria-expanded="false">
+              Key Takeaways <i class="ph ph-arrow-clockwise" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="thesis-card-face thesis-card-back" data-thesis-back aria-hidden="true" inert>
+          <div class="thesis-back-heading">
+            <span><i class="ph ph-note-pencil" aria-hidden="true"></i>Die Arbeit in Kürze</span>
+            <h3>Was aus der Arbeit bleibt.</h3>
+          </div>
+
+          <ol class="thesis-takeaway-list">
+            {thesis.takeaways.map((takeaway, index) => (
+              <li style={`--takeaway-index: ${index}`}>
+                <span aria-hidden="true"><i class:list={["ph", takeaway.icon]}></i></span>
+                <div>
+                  <h4>{takeaway.title}</h4>
+                  <p>{takeaway.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <div class="thesis-back-actions">
+            <a href={thesis.readerUrl}>
+              Arbeit lesen <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+            </a>
+            <button type="button" data-thesis-close>
+              Vorderseite <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<script>
+  const thesisCard = document.querySelector<HTMLElement>("[data-thesis-card]");
+
+  if (thesisCard) {
+    const inner = thesisCard.querySelector<HTMLElement>("[data-thesis-inner]");
+    const front = thesisCard.querySelector<HTMLElement>("[data-thesis-front]");
+    const back = thesisCard.querySelector<HTMLElement>("[data-thesis-back]");
+    const openButton = thesisCard.querySelector<HTMLButtonElement>("[data-thesis-open]");
+    const closeButton = thesisCard.querySelector<HTMLButtonElement>("[data-thesis-close]");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let flipAnimation: Animation | undefined;
+    let flipRun = 0;
+
+    const setHeight = (flipped: boolean) => {
+      const face = flipped ? back : front;
+      if (!inner || !face) return;
+      inner.style.height = `${face.scrollHeight}px`;
+    };
+
+    const setFlipped = (flipped: boolean, moveFocus = false) => {
+      setHeight(flipped);
+      thesisCard.classList.toggle("is-flipped", flipped);
+      thesisCard.classList.add("is-flipping");
+      const currentRun = ++flipRun;
+
+      if (!reduceMotion.matches) {
+        flipAnimation?.cancel();
+        flipAnimation = thesisCard.animate(
+          [
+            { scale: "1" },
+            { scale: "1.012", offset: 0.48 },
+            { scale: "1" },
+          ],
+          {
+            duration: flipped ? 560 : 480,
+            easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+          },
+        );
+        void flipAnimation.finished
+          .catch(() => undefined)
+          .finally(() => {
+            if (currentRun === flipRun) thesisCard.classList.remove("is-flipping");
+          });
+      } else {
+        queueMicrotask(() => thesisCard.classList.remove("is-flipping"));
+      }
+
+      openButton?.setAttribute("aria-expanded", String(flipped));
+      front?.setAttribute("aria-hidden", String(flipped));
+      back?.setAttribute("aria-hidden", String(!flipped));
+      front?.toggleAttribute("inert", flipped);
+      back?.toggleAttribute("inert", !flipped);
+
+      if (moveFocus) {
+        if (flipped) closeButton?.focus({ preventScroll: true });
+        else openButton?.focus({ preventScroll: true });
+      }
+    };
+
+    setHeight(false);
+
+    openButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setFlipped(true, true);
+    });
+
+    closeButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setFlipped(false, true);
+    });
+
+    thesisCard.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const selection = window.getSelection();
+      const selectedInsideCard =
+        selection && !selection.isCollapsed && selection.anchorNode && thesisCard.contains(selection.anchorNode);
+
+      if (target.closest("a, button") || selectedInsideCard) return;
+      setFlipped(!thesisCard.classList.contains("is-flipped"));
+    });
+
+    document.fonts?.ready.then(() => setHeight(thesisCard.classList.contains("is-flipped")));
+
+    const resizeObserver = new ResizeObserver(() => {
+      setHeight(thesisCard.classList.contains("is-flipped"));
+    });
+    if (front) resizeObserver.observe(front);
+    if (back) resizeObserver.observe(back);
+  }
+</script>

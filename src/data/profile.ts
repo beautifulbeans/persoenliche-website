@@ -28,6 +28,31 @@ export const profile = {
       "Kreative Synergien: Die Zukunft der Zusammenarbeit von KI und Künstlern",
     summary:
       "Die Bachelorarbeit beschäftigt sich mit der Frage, wie KI und künstlerische Praxis zusammenwirken können und welche Zukunftsbilder daraus für kreative Zusammenarbeit entstehen.",
+    documentUrl:
+      "./bachelorarbeit-fabian-deragisch/Kreative%20Synergien_Bachelorarbeit_Fabian%20Deragisch.pdf",
+    readerUrl: "./bachelorarbeit/",
+    takeaways: [
+      {
+        icon: "ph-magnifying-glass",
+        title: "Herangehensweise",
+        text: "Literatur zu Kreativität, KI, Urheberrecht und drei konkreten Tools trifft auf fünf leitfadengestützte Experteninterviews und eine qualitative Inhaltsanalyse mit MAXQDA.",
+      },
+      {
+        icon: "ph-intersect-three",
+        title: "Ko-Kreativität statt Ersatz",
+        text: "Das stärkste Zukunftsmodell ist die Zusammenarbeit: KI gibt Impulse und erleichtert Schritte, während Menschen Bedeutung, Auswahl und Richtung bestimmen.",
+      },
+      {
+        icon: "ph-sparkle",
+        title: "Neue kreative Zugänge",
+        text: "Schnelleres Experimentieren, stärker individualisierte Ergebnisse und ein einfacherer Einstieg können neue Formen von Kunst und neues Interesse daran ermöglichen.",
+      },
+      {
+        icon: "ph-scales",
+        title: "Die kritische Seite",
+        text: "Urheberrecht, Kennzeichnung und Trainingsdaten bleiben ebenso offen wie Missbrauch, Leistungsdruck und die Frage, ob Einzigartigkeit und Emotion verloren gehen.",
+      },
+    ],
   },
   statusNotes: [
     { icon: "ph-hammer", label: "Gerade", text: "Website wächst" },

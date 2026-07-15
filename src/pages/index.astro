@@ -1,12 +1,14 @@
 ---
+import { Image } from "astro:assets";
+import BachelorThesis from "../components/BachelorThesis.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CameraPlayground from "../components/CameraPlayground.astro";
 import IntroReveal from "../components/IntroReveal.astro";
-import PhotoPlaceholder from "../components/PhotoPlaceholder.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import TeaRitual from "../components/TeaRitual.astro";
 import Timeline from "../components/Timeline.astro";
+import portrait from "../assets/portrait/fabian-deragisch.jpg";
 import { profile } from "../data/profile";
 ---
 
@@ -27,13 +29,31 @@ import { profile } from "../data/profile";
 
       <div class="hero-scene" aria-label="Porträt und aktuelle berufliche Rolle">
         <div class="hero-portrait-frame">
-          <span class="hero-portrait-monogram" aria-hidden="true">FD</span>
           <div class="hero-portrait-art" aria-hidden="true">
             <span class="portrait-orbit portrait-orbit-one"></span>
             <span class="portrait-orbit portrait-orbit-two"></span>
-            <span class="portrait-index">01 / PORTRÄT</span>
+            <span class="portrait-index">Farbe <i class="ph ph-arrows-left-right"></i> Schwarzweiß</span>
           </div>
-          <PhotoPlaceholder label="Porträt" note="Eigenes Porträt folgt" class="hero-photo" />
+          <figure class="hero-photo">
+            <Image
+              class="hero-portrait-image hero-portrait-image-color"
+              src={portrait}
+              alt="Porträt von Fabian Deragisch"
+              width={1200}
+              quality={84}
+              loading="eager"
+              fetchpriority="high"
+            />
+            <Image
+              class="hero-portrait-image hero-portrait-image-mono"
+              src={portrait}
+              alt=""
+              aria-hidden="true"
+              width={1200}
+              quality={84}
+              loading="eager"
+            />
+          </figure>
         </div>
 
         <div class="hero-role-index">
@@ -45,66 +65,31 @@ import { profile } from "../data/profile";
 
     <Timeline />
 
-    <section class="thesis-section" id="arbeit" aria-labelledby="thesis-title">
-      <div class="section-shell thesis-layout">
-        <div class="thesis-copy" data-reveal="left">
-          <p class="section-eyebrow">Abschluss im Bachelorstudium</p>
-          <h2 id="thesis-title">Bachelorarbeit: Kreative Synergien.</h2>
-          <p>{profile.thesis.summary}</p>
-          <div class="thesis-facts" aria-label="Angaben zur Bachelorarbeit">
-            <span><i class="ph ph-graduation-cap" aria-hidden="true"></i>B.A. Medien und Kommunikation</span>
-            <span><i class="ph ph-buildings" aria-hidden="true"></i>Universität Passau, 2024</span>
-            <span class="thesis-future-link"><i class="ph ph-link-simple" aria-hidden="true"></i>PDF und Leseansicht folgen</span>
-          </div>
-        </div>
-
-        <article class="thesis-cover" data-reveal="scale">
-          <div class="cover-icons" aria-hidden="true">
-            <i class="ph ph-brain"></i>
-            <i class="ph ph-plus"></i>
-            <i class="ph ph-paint-brush"></i>
-          </div>
-          <p>Medien und Kommunikation</p>
-          <h3>{profile.thesis.title}</h3>
-          <span>Fabian Deragisch</span>
-        </article>
-      </div>
-
-      <div class="thesis-takeaways section-shell" data-reveal="up">
-        <div class="takeaway-selector" role="group" aria-label="Gedanken aus der Bachelorarbeit">
-          <button class="is-selected" type="button" data-thesis-note="collaboration">Zusammenarbeit</button>
-          <button type="button" data-thesis-note="critical">Kritischer Blick</button>
-          <button type="button" data-thesis-note="early">Mein Einstieg</button>
-        </div>
-        <div class="takeaway-statement">
-          <span aria-hidden="true"><i class="ph ph-intersect-three"></i></span>
-          <div>
-            <p data-thesis-kicker>Mensch und Maschine</p>
-            <h3 aria-live="polite" data-thesis-copy>
-              Interessant wird KI dort, wo sie künstlerische Entscheidungen erweitert, statt sie einfach zu ersetzen.
-            </h3>
-          </div>
-        </div>
-      </div>
-    </section>
+    <BachelorThesis />
 
     <section class="chapter-transition" id="kapitelwechsel" data-chapter-transition aria-labelledby="chapter-transition-title">
       <div class="chapter-transition-stage">
         <div class="chapter-transition-panel chapter-transition-professional" aria-hidden="true"></div>
-        <div class="chapter-transition-sheet" aria-hidden="true"></div>
         <div class="chapter-transition-panel chapter-transition-personal" aria-hidden="true"></div>
-        <div class="chapter-transition-number chapter-transition-number-one" aria-hidden="true">01</div>
-        <div class="chapter-transition-number chapter-transition-number-two" aria-hidden="true">02</div>
+
+        <div class="chapter-transition-aperture" aria-hidden="true">
+          <span class="chapter-aperture-ring"></span>
+          <span class="chapter-aperture-blade" data-aperture-angle="0"></span>
+          <span class="chapter-aperture-blade" data-aperture-angle="60"></span>
+          <span class="chapter-aperture-blade" data-aperture-angle="120"></span>
+          <span class="chapter-aperture-blade" data-aperture-angle="180"></span>
+          <span class="chapter-aperture-blade" data-aperture-angle="240"></span>
+          <span class="chapter-aperture-blade" data-aperture-angle="300"></span>
+          <span class="chapter-aperture-core"></span>
+        </div>
 
         <div class="chapter-transition-center section-shell">
-          <div class="chapter-transition-mark" aria-hidden="true">
-            <span>I</span>
-            <i class="ph ph-arrow-down-right"></i>
-            <span>II</span>
+          <h2 id="chapter-transition-title"><span>Jetzt wird's</span><span>persönlicher.</span></h2>
+          <div class="chapter-transition-cue" aria-hidden="true">
+            <span>Beruf &amp; Studium</span>
+            <i class="ph ph-arrow-right"></i>
+            <span>Persönlich</span>
           </div>
-          <p>Kapitelwechsel</p>
-          <h2 id="chapter-transition-title">Jetzt wird's persönlicher.</h2>
-          <span class="chapter-depth-line" aria-hidden="true"></span>
         </div>
       </div>
     </section>
@@ -174,9 +159,9 @@ import { profile } from "../data/profile";
             Krafttraining belastet nicht nur Muskeln. Der gezielte Widerstand setzt auch an den Knochen einen Reiz und kann sie stärken.
           </p>
           <div class="fact-switch" role="group" aria-label="Trainingsfakt auswählen">
-            <button class="is-selected" type="button" data-training-fact="bone">Knochen</button>
-            <button type="button" data-training-fact="neural">Nerven</button>
-            <button type="button" data-training-fact="rhythm">Rhythmus</button>
+            <button class="is-selected" type="button" data-training-fact="bone" aria-pressed="true">Knochen</button>
+            <button type="button" data-training-fact="neural" aria-pressed="false">Nerven</button>
+            <button type="button" data-training-fact="rhythm" aria-pressed="false">Rhythmus</button>
           </div>
         </article>
 
@@ -194,10 +179,10 @@ import { profile } from "../data/profile";
           <p class="album-artist" data-album-artist>Pink Floyd, 1973</p>
           <p class="album-note" aria-live="polite" data-album-note>Ein durchgehendes Konzept über Zeit, Druck, Geld und Vergänglichkeit. Übergänge und Sounddesign machen es für mich zu einem Album am Stück.</p>
           <div class="album-switch" role="group" aria-label="Album auswählen">
-            <button class="is-selected" type="button" data-album="pink-floyd">Pink Floyd</button>
-            <button type="button" data-album="dire-straits">Dire Straits</button>
-            <button type="button" data-album="frank-ocean">Frank Ocean</button>
-            <button type="button" data-album="tyler">Tyler, the Creator</button>
+            <button class="is-selected" type="button" data-album="pink-floyd" aria-pressed="true">Pink Floyd</button>
+            <button type="button" data-album="dire-straits" aria-pressed="false">Dire Straits</button>
+            <button type="button" data-album="frank-ocean" aria-pressed="false">Frank Ocean</button>
+            <button type="button" data-album="tyler" aria-pressed="false">Tyler, the Creator</button>
           </div>
         </article>
 
@@ -212,11 +197,11 @@ import { profile } from "../data/profile";
           <p class="cards-personal">Kartenspiele gehören für mich zu einem guten Abend mit Freunden.</p>
           <p class="card-game-copy" aria-live="polite" data-card-game-copy>Angreifen, verteidigen, Trumpf im Blick behalten. Verloren hat, wer am Ende noch Karten hält.</p>
           <div class="card-game-switch" role="group" aria-label="Kartenspiel auswählen">
-            <button class="is-selected" type="button" data-card-game="durak">Durak</button>
-            <button type="button" data-card-game="president">Präsident</button>
-            <button type="button" data-card-game="neunern">Neunern</button>
-            <button type="button" data-card-game="poker">Poker</button>
-            <button type="button" data-card-game="schafkopf">Schafkopf</button>
+            <button class="is-selected" type="button" data-card-game="durak" aria-pressed="true">Durak</button>
+            <button type="button" data-card-game="president" aria-pressed="false">Präsident</button>
+            <button type="button" data-card-game="neunern" aria-pressed="false">Neunern</button>
+            <button type="button" data-card-game="poker" aria-pressed="false">Poker</button>
+            <button type="button" data-card-game="schafkopf" aria-pressed="false">Schafkopf</button>
           </div>
           <div class="card-deck" aria-hidden="true">
             <span class="playing-card card-back"></span>
@@ -259,65 +244,175 @@ import { profile } from "../data/profile";
 </BaseLayout>
 
 <script>
-  const revealItems = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  import { animateContentSwap, prefersReducedMotion, setPressedState } from "../scripts/motion";
 
-  if ("IntersectionObserver" in window) {
-    const revealObserver = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -8%" },
-    );
-    revealItems.forEach((item) => revealObserver.observe(item));
+  const revealItems = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  const revealMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  if ("IntersectionObserver" in window && !revealMotion.matches) {
+    try {
+      const revealObserver = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -8%" },
+      );
+      document.documentElement.classList.add("motion-ready");
+      revealItems.forEach((item) => revealObserver.observe(item));
+    } catch {
+      document.documentElement.classList.remove("motion-ready");
+      revealItems.forEach((item) => item.classList.add("is-visible"));
+    }
   } else {
     revealItems.forEach((item) => item.classList.add("is-visible"));
   }
 
   const portraitFrame = document.querySelector<HTMLElement>(".hero-portrait-frame");
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-  if (portraitFrame && finePointer.matches) {
+  if (portraitFrame && finePointer.matches && !prefersReducedMotion()) {
+    let portraitBounds: DOMRect | null = null;
+    let targetTiltX = 0;
+    let targetTiltY = 0;
+    let currentTiltX = 0;
+    let currentTiltY = 0;
+    let velocityX = 0;
+    let velocityY = 0;
+    let portraitFrameRequest = 0;
+    let pointerInside = false;
+
+    const renderPortraitTilt = () => {
+      const spring = 0.12;
+      const damping = 0.76;
+      velocityX = (velocityX + (targetTiltX - currentTiltX) * spring) * damping;
+      velocityY = (velocityY + (targetTiltY - currentTiltY) * spring) * damping;
+      currentTiltX += velocityX;
+      currentTiltY += velocityY;
+      portraitFrame.style.transform = `perspective(900px) rotateX(${currentTiltY * -4}deg) rotateY(${currentTiltX * 5}deg) translate3d(0, -0.35rem, 0)`;
+
+      const settled =
+        Math.abs(targetTiltX - currentTiltX) < 0.002 &&
+        Math.abs(targetTiltY - currentTiltY) < 0.002 &&
+        Math.abs(velocityX) < 0.002 &&
+        Math.abs(velocityY) < 0.002;
+
+      if (!settled) {
+        portraitFrameRequest = window.requestAnimationFrame(renderPortraitTilt);
+      } else {
+        portraitFrameRequest = 0;
+        if (!pointerInside) {
+          portraitFrame.style.transform = "";
+          portraitFrame.classList.remove("is-tracking");
+        }
+      }
+    };
+
+    const requestPortraitTilt = () => {
+      if (!portraitFrameRequest) portraitFrameRequest = window.requestAnimationFrame(renderPortraitTilt);
+    };
+
+    portraitFrame.addEventListener("pointerenter", () => {
+      pointerInside = true;
+      portraitBounds = portraitFrame.getBoundingClientRect();
+      portraitFrame.classList.add("is-tracking");
+    });
     portraitFrame.addEventListener("pointermove", (event) => {
-      const bounds = portraitFrame.getBoundingClientRect();
-      const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-      const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-      portraitFrame.style.transform = `perspective(900px) rotateX(${y * -4}deg) rotateY(${x * 5}deg) translateY(-0.35rem)`;
+      portraitBounds ??= portraitFrame.getBoundingClientRect();
+      targetTiltX = (event.clientX - portraitBounds.left) / portraitBounds.width - 0.5;
+      targetTiltY = (event.clientY - portraitBounds.top) / portraitBounds.height - 0.5;
+      portraitFrame.style.setProperty("--portrait-x", `${(targetTiltX + 0.5) * 100}%`);
+      portraitFrame.style.setProperty("--portrait-y", `${(targetTiltY + 0.5) * 100}%`);
+      requestPortraitTilt();
     });
     portraitFrame.addEventListener("pointerleave", () => {
-      portraitFrame.style.transform = "";
+      pointerInside = false;
+      targetTiltX = 0;
+      targetTiltY = 0;
+      requestPortraitTilt();
     });
+    window.addEventListener("resize", () => (portraitBounds = null), { passive: true });
   }
 
   const chapterTransition = document.querySelector<HTMLElement>("[data-chapter-transition]");
   if (chapterTransition) {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const chapterStage = chapterTransition.querySelector<HTMLElement>(".chapter-transition-stage");
+    const personalPanel = chapterTransition.querySelector<HTMLElement>(".chapter-transition-personal");
+    const aperture = chapterTransition.querySelector<HTMLElement>(".chapter-transition-aperture");
+    const apertureRing = chapterTransition.querySelector<HTMLElement>(".chapter-aperture-ring");
+    const apertureCore = chapterTransition.querySelector<HTMLElement>(".chapter-aperture-core");
+    const apertureBlades = Array.from(chapterTransition.querySelectorAll<HTMLElement>("[data-aperture-angle]"));
+    const chapterCenter = chapterTransition.querySelector<HTMLElement>(".chapter-transition-center");
+    const chapterTitleLines = Array.from(chapterTransition.querySelectorAll<HTMLElement>(".chapter-transition-center h2 span"));
+    const chapterCue = chapterTransition.querySelector<HTMLElement>(".chapter-transition-cue");
+    const transitionHeader = document.querySelector<HTMLElement>("[data-site-header]");
     const clamp = (value: number) => Math.min(1, Math.max(0, value));
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
-    const easeOut = (value: number) => 1 - Math.pow(1 - value, 3);
     let chapterFrame = 0;
+    let chapterIsNear = true;
+
+    const setChapterState = (progress: number) => {
+      const apertureProgress = smoothstep(clamp((progress - 0.02) / 0.62));
+      const personalProgress = smoothstep(clamp((progress - 0.12) / 0.76));
+      const copyProgress = smoothstep(clamp((progress - 0.05) / 0.36));
+      const exitProgress = smoothstep(clamp((progress - 0.76) / 0.22));
+      const apertureFade = 1 - smoothstep(clamp((personalProgress - 0.72) / 0.28));
+
+      if (personalPanel) {
+        personalPanel.style.clipPath = `circle(${personalProgress * 154}% at 50% 50%)`;
+        personalPanel.style.opacity = String(clamp(personalProgress * 1.5));
+      }
+      if (aperture) {
+        aperture.style.opacity = String(apertureFade);
+        aperture.style.transform = `translate3d(0, ${(1 - copyProgress) * 0.8}rem, 0) rotate(${-10 + apertureProgress * 36}deg) scale(${0.76 + apertureProgress * 0.34})`;
+      }
+      if (apertureRing) {
+        apertureRing.style.opacity = String(0.76 * apertureFade);
+        apertureRing.style.transform = `scale(${0.9 + apertureProgress * 0.22}) rotate(${-apertureProgress * 54}deg)`;
+      }
+      if (apertureCore) {
+        apertureCore.style.transform = `translate(-50%, -50%) scale(${0.72 + apertureProgress * 2.6})`;
+        apertureCore.style.opacity = String(apertureFade);
+      }
+      apertureBlades.forEach((blade) => {
+        const angle = Number(blade.dataset.apertureAngle ?? 0);
+        blade.style.opacity = String(apertureFade);
+        blade.style.transform = `rotate(${angle + apertureProgress * 34}deg) translate3d(0, ${apertureProgress * -118}%, 0) scale(${1 - apertureProgress * 0.08})`;
+      });
+      if (chapterCenter) {
+        chapterCenter.style.opacity = String(copyProgress * (1 - exitProgress));
+        chapterCenter.style.transform = `translate3d(0, ${(1 - copyProgress) * 1.1 - exitProgress * 0.7}rem, 0) scale(${0.96 + copyProgress * 0.04})`;
+      }
+      chapterTitleLines.forEach((line, index) => {
+        const direction = index === 0 ? -1 : 1;
+        line.style.transform = `translate3d(${direction * (1 - copyProgress) * 0.9}rem, 0, 0)`;
+      });
+      if (chapterCue) chapterCue.style.opacity = String(copyProgress * (1 - exitProgress));
+      transitionHeader?.setAttribute("data-section-mode", personalProgress > 0.52 ? "personal" : "professional");
+    };
 
     const updateChapterTransition = () => {
       chapterFrame = 0;
       const bounds = chapterTransition.getBoundingClientRect();
       const viewport = window.innerHeight;
-      const rawProgress = (viewport * 0.78 - bounds.top) / (viewport * 1.18);
-      const progress = reduceMotion.matches ? (rawProgress > 0.5 ? 1 : 0) : clamp(rawProgress);
-      const warmProgress = easeOut(clamp(progress / 0.72));
-      const personalProgress = smoothstep(clamp((progress - 0.17) / 0.83));
-      const centerProgress = smoothstep(progress);
 
-      chapterTransition.style.setProperty("--chapter-warm-y", `${116 - warmProgress * 130}%`);
-      chapterTransition.style.setProperty("--chapter-personal-y", `${120 - personalProgress * 120}%`);
-      chapterTransition.style.setProperty("--chapter-copy-y", `${1.25 - centerProgress * 1.25}rem`);
-      chapterTransition.style.setProperty("--chapter-copy-scale", `${0.97 + centerProgress * 0.03}`);
-      chapterTransition.style.setProperty("--chapter-copy-spacing", `${-0.045 + centerProgress * 0.015}em`);
-      chapterTransition.style.setProperty("--chapter-arrow-rotation", `${-12 + centerProgress * 57}deg`);
-      chapterTransition.style.setProperty("--chapter-line-scale", `${0.7 + centerProgress * 0.85}`);
-      chapterTransition.style.setProperty("--chapter-one-opacity", `${0.7 * (1 - centerProgress)}`);
-      chapterTransition.style.setProperty("--chapter-two-opacity", `${0.72 * personalProgress}`);
+      if (reduceMotion.matches) {
+        setChapterState(bounds.top <= viewport * 0.5 ? 1 : 0);
+        if (chapterCenter) {
+          chapterCenter.style.opacity = "1";
+          chapterCenter.style.transform = "none";
+        }
+        chapterTitleLines.forEach((line) => (line.style.transform = "none"));
+        if (chapterCue) chapterCue.style.opacity = "1";
+        chapterStage?.classList.remove("is-motion-active");
+        return;
+      }
+      if (!chapterIsNear) return;
+      const scrollDistance = Math.max(1, bounds.height - viewport);
+      setChapterState(clamp(-bounds.top / scrollDistance));
     };
 
     const requestChapterUpdate = () => {
@@ -325,10 +420,25 @@ import { profile } from "../data/profile";
       chapterFrame = window.requestAnimationFrame(updateChapterTransition);
     };
 
+    if ("IntersectionObserver" in window) {
+      const chapterObserver = new IntersectionObserver(
+        ([entry]) => {
+          chapterIsNear = entry?.isIntersecting ?? false;
+          chapterStage?.classList.toggle("is-motion-active", chapterIsNear && !reduceMotion.matches);
+          if (chapterIsNear) requestChapterUpdate();
+        },
+        { rootMargin: "75% 0px" },
+      );
+      chapterObserver.observe(chapterTransition);
+    }
+
     updateChapterTransition();
     window.addEventListener("scroll", requestChapterUpdate, { passive: true });
-    window.addEventListener("resize", requestChapterUpdate);
-    reduceMotion.addEventListener("change", requestChapterUpdate);
+    window.addEventListener("resize", requestChapterUpdate, { passive: true });
+    reduceMotion.addEventListener("change", () => {
+      chapterStage?.classList.toggle("is-motion-active", chapterIsNear && !reduceMotion.matches);
+      requestChapterUpdate();
+    });
   }
 
   const storyCards = document.querySelectorAll<HTMLElement>("[data-story-card]");
@@ -345,47 +455,23 @@ import { profile } from "../data/profile";
           if (!entry.isIntersecting) return;
           storyCards.forEach((card) => card.classList.toggle("is-active", card === entry.target));
           const card = entry.target as HTMLElement;
-          if (companionKind) companionKind.textContent = card.dataset.storyKind ?? "Laufbahn";
-          if (companionPeriod) companionPeriod.textContent = card.dataset.storyPeriod ?? "";
-          if (companionTitle) companionTitle.textContent = card.dataset.storyTitle ?? "";
-          if (companionIcon) companionIcon.className = `ph ${card.dataset.storyIcon ?? "ph-briefcase"}`;
-          companion.dataset.mode = card.dataset.storyKind === "Studium" ? "study" : "work";
-          companion.classList.remove("has-changed");
-          requestAnimationFrame(() => companion.classList.add("has-changed"));
+          animateContentSwap(
+            [companionKind, companionPeriod, companionTitle, companionIcon],
+            () => {
+              if (companionKind) companionKind.textContent = card.dataset.storyKind ?? "Laufbahn";
+              if (companionPeriod) companionPeriod.textContent = card.dataset.storyPeriod ?? "";
+              if (companionTitle) companionTitle.textContent = card.dataset.storyTitle ?? "";
+              if (companionIcon) companionIcon.className = `ph ${card.dataset.storyIcon ?? "ph-briefcase"}`;
+              companion.dataset.mode = card.dataset.storyKind === "Studium" ? "study" : "work";
+            },
+            { duration: 180, offset: 3, stagger: 0 },
+          );
         });
       },
       { rootMargin: "-28% 0px -52%", threshold: 0 },
     );
     storyCards.forEach((card) => storyObserver.observe(card));
   }
-
-  const thesisNotes = {
-    collaboration: {
-      kicker: "Mensch und Maschine",
-      copy: "Interessant wird KI dort, wo sie künstlerische Entscheidungen erweitert, statt sie einfach zu ersetzen.",
-    },
-    critical: {
-      kicker: "Nicht nur Potenzial",
-      copy: "Zur Zusammenarbeit gehören auch Fragen nach Urheberschaft, Kontrolle und dem Wert kreativer Arbeit.",
-    },
-    early: {
-      kicker: "Mein Einstieg in das Thema",
-      copy: "Mit der Arbeit habe ich mich 2024 systematisch mit Funktionsweise, Möglichkeiten und Grenzen generativer KI beschäftigt.",
-    },
-  } as const;
-  const thesisButtons = document.querySelectorAll<HTMLButtonElement>("[data-thesis-note]");
-  const thesisKicker = document.querySelector<HTMLElement>("[data-thesis-kicker]");
-  const thesisCopy = document.querySelector<HTMLElement>("[data-thesis-copy]");
-  thesisButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const key = button.dataset.thesisNote as keyof typeof thesisNotes;
-      const note = thesisNotes[key];
-      if (!note) return;
-      thesisButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
-      if (thesisKicker) thesisKicker.textContent = note.kicker;
-      if (thesisCopy) thesisCopy.textContent = note.copy;
-    });
-  });
 
   const trainingFacts = {
     bone: {
@@ -412,9 +498,11 @@ import { profile } from "../data/profile";
       const key = button.dataset.trainingFact as keyof typeof trainingFacts;
       const fact = trainingFacts[key];
       if (!fact) return;
-      trainingButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
-      if (trainingKicker) trainingKicker.textContent = fact.kicker;
-      if (trainingCopy) trainingCopy.textContent = fact.copy;
+      setPressedState(trainingButtons, button);
+      animateContentSwap([trainingKicker, trainingCopy], () => {
+        if (trainingKicker) trainingKicker.textContent = fact.kicker;
+        if (trainingCopy) trainingCopy.textContent = fact.copy;
+      });
     });
   });
 
@@ -432,12 +520,23 @@ import { profile } from "../data/profile";
   trainingMove?.addEventListener("click", () => {
     const step = trainingSteps[trainingStep % trainingSteps.length];
     const stage = (trainingStep % trainingSteps.length) + 1;
-    trainingMove.classList.remove("is-training");
-    requestAnimationFrame(() => trainingMove.classList.add("is-training"));
+    if (!prefersReducedMotion()) {
+      trainingMove.getAnimations().forEach((animation) => animation.cancel());
+      trainingMove.animate(
+        [{ scale: "1" }, { scale: "0.992", offset: 0.28 }, { scale: "1.012", offset: 0.68 }, { scale: "1" }],
+        { duration: 420, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+      );
+    }
     trainingMove.dataset.trainingStage = String(stage === 4 ? 0 : stage);
-    if (trainingSetLabel) trainingSetLabel.textContent = step.label;
-    if (trainingSetCounter) trainingSetCounter.textContent = step.counter;
-    if (trainingMoveStatus) trainingMoveStatus.textContent = step.status;
+    animateContentSwap(
+      [trainingSetLabel, trainingSetCounter, trainingMoveStatus],
+      () => {
+        if (trainingSetLabel) trainingSetLabel.textContent = step.label;
+        if (trainingSetCounter) trainingSetCounter.textContent = step.counter;
+        if (trainingMoveStatus) trainingMoveStatus.textContent = step.status;
+      },
+      { duration: 190, offset: 4, stagger: 12 },
+    );
     trainingStep += 1;
   });
 
@@ -463,11 +562,13 @@ import { profile } from "../data/profile";
       const key = button.dataset.album as keyof typeof albums;
       const album = albums[key];
       if (!album) return;
-      albumButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
-      if (albumTitle) albumTitle.textContent = album[0];
-      if (albumArtist) albumArtist.textContent = album[1];
-      if (albumNote) albumNote.textContent = album[2];
-      if (soundCard) soundCard.dataset.albumTheme = key;
+      setPressedState(albumButtons, button);
+      animateContentSwap([albumTitle, albumArtist, albumNote], () => {
+        if (albumTitle) albumTitle.textContent = album[0];
+        if (albumArtist) albumArtist.textContent = album[1];
+        if (albumNote) albumNote.textContent = album[2];
+        if (soundCard) soundCard.dataset.albumTheme = key;
+      });
       vinylButton?.setAttribute("aria-pressed", "true");
     });
   });
@@ -487,9 +588,11 @@ import { profile } from "../data/profile";
       const key = button.dataset.cardGame as keyof typeof cardGames;
       const game = cardGames[key];
       if (!game) return;
-      cardGameButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
-      if (cardGameTitle) cardGameTitle.textContent = game[0];
-      if (cardGameCopy) cardGameCopy.textContent = game[1];
+      setPressedState(cardGameButtons, button);
+      animateContentSwap([cardGameTitle, cardGameCopy], () => {
+        if (cardGameTitle) cardGameTitle.textContent = game[0];
+        if (cardGameCopy) cardGameCopy.textContent = game[1];
+      });
     });
   });
 
@@ -508,9 +611,20 @@ import { profile } from "../data/profile";
     cardIndex += 1;
     handCards.forEach((card, index) => {
       card.innerHTML = `${hand[index][0]}<span>${hand[index][1]}</span>`;
-      card.classList.remove("is-drawn");
-      requestAnimationFrame(() => card.classList.add("is-drawn"));
+      if (!prefersReducedMotion()) {
+        card.getAnimations().forEach((animation) => animation.cancel());
+        card.animate(
+          [
+            { translate: "0 0.9rem", scale: "0.98", opacity: 0.5 },
+            { translate: "0 -0.35rem", scale: "1.015", opacity: 1, offset: 0.62 },
+            { translate: "0 0", scale: "1", opacity: 1 },
+          ],
+          { duration: 360, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        );
+      }
     });
-    if (cardStatus) cardStatus.textContent = hand[2];
+    animateContentSwap([cardStatus], () => {
+      if (cardStatus) cardStatus.textContent = hand[2];
+    });
   });
 </script>

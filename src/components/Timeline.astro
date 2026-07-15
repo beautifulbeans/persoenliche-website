@@ -21,7 +21,7 @@ import { education, work } from "../data/profile";
   </nav>
 
   <div class="journey-layout">
-    <aside class="journey-companion" aria-live="polite" data-journey-companion data-mode="work">
+    <aside class="journey-companion" data-journey-companion data-mode="work">
       <i class="ph ph-arrow-up-right companion-watermark" aria-hidden="true"></i>
       <div class="companion-icon" aria-hidden="true">
         <i class="ph ph-briefcase" data-companion-icon></i>
@@ -183,8 +183,9 @@ import { education, work } from "../data/profile";
     const inner = card.querySelector<HTMLElement>(".journey-card-inner");
     const front = card.querySelector<HTMLElement>("[data-flip-front]");
     const back = card.querySelector<HTMLElement>("[data-flip-back]");
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let flipMotion: Animation | undefined;
+    let flipRun = 0;
 
     const setHeight = (flipped: boolean) => {
       const face = flipped ? back : front;
@@ -195,23 +196,29 @@ import { education, work } from "../data/profile";
     const setFlipped = (flipped: boolean, moveFocus = false) => {
       setHeight(flipped);
       card.classList.toggle("is-flipped", flipped);
-      card.classList.remove("is-flipping");
-      requestAnimationFrame(() => card.classList.add("is-flipping"));
+      card.classList.add("is-flipping");
+      const currentRun = ++flipRun;
 
-      if (!reduceMotion) {
+      if (!reduceMotion.matches) {
         flipMotion?.cancel();
-        const direction = flipped ? -1 : 1;
         flipMotion = card.animate(
           [
-            { transform: "translateY(0) scale(1) rotateZ(0deg)" },
-            { transform: `translateY(${direction * 0.35}rem) scale(1.018) rotateZ(${direction * 0.28}deg)`, offset: 0.46 },
-            { transform: "translateY(0) scale(1) rotateZ(0deg)" },
+            { scale: "1" },
+            { scale: "1.014", offset: 0.48 },
+            { scale: "1" },
           ],
           {
-            duration: flipped ? 720 : 580,
-            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            duration: flipped ? 500 : 440,
+            easing: "cubic-bezier(0.23, 1, 0.32, 1)",
           },
         );
+        void flipMotion.finished
+          .catch(() => undefined)
+          .finally(() => {
+            if (currentRun === flipRun) card.classList.remove("is-flipping");
+          });
+      } else {
+        queueMicrotask(() => card.classList.remove("is-flipping"));
       }
       openButton?.setAttribute("aria-expanded", String(flipped));
       front?.setAttribute("aria-hidden", String(flipped));
@@ -236,13 +243,19 @@ import { education, work } from "../data/profile";
     });
     card.addEventListener("click", (event) => {
       const target = event.target as HTMLElement;
-      if (target.closest("a, button") || window.getSelection()?.toString()) return;
+      const selection = window.getSelection();
+      const selectedInsideCard =
+        selection && !selection.isCollapsed && selection.anchorNode && card.contains(selection.anchorNode);
+      if (target.closest("a, button") || selectedInsideCard) return;
       setFlipped(!card.classList.contains("is-flipped"));
     });
-    card.addEventListener("transitionend", (event) => {
-      if (event.propertyName === "height") card.classList.remove("is-flipping");
-    });
 
-    window.addEventListener("resize", () => setHeight(card.classList.contains("is-flipped")), { passive: true });
+    document.fonts?.ready.then(() => setHeight(card.classList.contains("is-flipped")));
+
+    const cardResizeObserver = new ResizeObserver(() => {
+      setHeight(card.classList.contains("is-flipped"));
+    });
+    if (front) cardResizeObserver.observe(front);
+    if (back) cardResizeObserver.observe(back);
   });
 </script>

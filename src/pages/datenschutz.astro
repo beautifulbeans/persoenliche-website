@@ -1,20 +1,62 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title="Datenschutz | Fabian Deragisch" description="Datenschutzhinweise der persönlichen Website von Fabian Deragisch.">
+<BaseLayout
+  title="Datenschutz | Fabian Deragisch"
+  description="Datenschutzhinweise der persönlichen Website von Fabian Deragisch."
+  robots="noindex, follow"
+>
   <main class="legal-page" id="inhalt">
-    <a class="back-link" href="/">← Zurück zur Website</a>
-    <p class="section-index">Rechtlicher Hinweis</p>
+    <a class="back-link" href={base}>← Zurück zur Website</a>
+    <p class="section-index">Stand: Juli 2026</p>
     <h1>Datenschutz</h1>
     <div class="legal-notice">
-      <h2>Aktueller Entwicklungsstand</h2>
-      <p>
-        Die Website verwendet derzeit keine Analysewerkzeuge, Werbe-Tracker, externen Schriften oder eingebetteten Inhalte von Drittanbietern.
-      </p>
-      <p>
-        Vor der Veröffentlichung werden Hosting, Kontaktmöglichkeiten und alle tatsächlich eingesetzten Dienste geprüft. Auf dieser Grundlage entsteht die vollständige Datenschutzerklärung.
-      </p>
+      <section>
+        <h2>Verantwortlich</h2>
+        <p>Fabian Deragisch, Wien, Österreich</p>
+        <p><a href="mailto:fabian.deragisch@gmail.com">fabian.deragisch@gmail.com</a></p>
+      </section>
+
+      <section>
+        <h2>Was diese Website nicht macht</h2>
+        <p>
+          Diese Website verfolgt keine kommerziellen oder werblichen Interessen. Sie setzt selbst keine Cookies und verwendet keine Analysewerkzeuge, Werbe-Tracker, Kontaktformulare, Benutzerkonten oder eingebetteten Social-Media-Inhalte. Schriften und Symbole werden lokal ausgeliefert.
+        </p>
+      </section>
+
+      <section>
+        <h2>Hosting über GitHub Pages</h2>
+        <p>
+          Die Website wird über GitHub Pages bereitgestellt, einen Dienst von GitHub, Inc. Beim Aufruf einer GitHub-Pages-Seite wird die IP-Adresse der besuchenden Person laut GitHub zu Sicherheitszwecken protokolliert und gespeichert. Weitere technische Verbindungsdaten können im Rahmen der Bereitstellung verarbeitet werden.
+        </p>
+        <p>
+          Die Bereitstellung der Website und ihre Absicherung beruhen, soweit mir diese Verarbeitung zuzurechnen ist, auf meinem berechtigten Interesse gemäß Art. 6 Abs. 1 lit. f DSGVO. Weitere Informationen enthält die <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noreferrer">Datenschutzerklärung von GitHub</a>.
+        </p>
+      </section>
+
+      <section>
+        <h2>Kontakt per E-Mail</h2>
+        <p>
+          Wenn du mir eine E-Mail sendest, verarbeite ich die von dir freiwillig übermittelten Angaben, um deine Nachricht zu beantworten. Rechtsgrundlage ist je nach Inhalt Art. 6 Abs. 1 lit. b oder lit. f DSGVO. Die Daten werden gelöscht, sobald sie für die Kommunikation nicht mehr benötigt werden und keine gesetzlichen Aufbewahrungspflichten bestehen.
+        </p>
+      </section>
+
+      <section>
+        <h2>Externe Links</h2>
+        <p>
+          Die Website verlinkt auf LinkedIn und Instagram, bindet von diesen Plattformen aber keine Inhalte ein. Erst wenn du einen solchen Link aufrufst, gelten die Datenschutzbestimmungen des jeweiligen Anbieters.
+        </p>
+      </section>
+
+      <section>
+        <h2>Deine Rechte</h2>
+        <p>
+          Du kannst im Rahmen der gesetzlichen Voraussetzungen Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung sowie Widerspruch verlangen. Außerdem besteht ein Beschwerderecht bei der <a href="https://www.dsb.gv.at/" target="_blank" rel="noreferrer">Österreichischen Datenschutzbehörde</a>.
+        </p>
+      </section>
     </div>
   </main>
 </BaseLayout>

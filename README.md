@@ -13,4 +13,6 @@ npm run dev
 
 Dieses Repository enthält ausschließlich Inhalte, die für eine öffentliche Website freigegeben werden können. Vollständige Adresse, Geburtsdatum, Familienstand, private Telefonnummer und unbearbeitete Lebenslaufdateien werden nicht im Projekt gespeichert.
 
-Die Website bleibt bis zur abschließenden Inhalts- und Rechtsprüfung auf `noindex` und wird nicht automatisch veröffentlicht.
+Vor einem Push entfernt `npm run sanitize:images` EXIF-, XMP- und IPTC-Metadaten aus den JPG-Quelldateien, ohne die komprimierten Bilddaten neu zu berechnen.
+
+Pushes auf `main` werden über GitHub Actions automatisch als GitHub Pages veröffentlicht.

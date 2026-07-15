@@ -1,0 +1,1809 @@
+/*
+ * Verbindliche visuelle Ebene
+ * Professionell: matte Olive-Kameratasche. Persönlich: helles Mineralglas.
+ * Die Komponenten dürfen eigene Töne tragen, die Bedienlogik bleibt identisch.
+ */
+
+:root {
+  --brand: #65704f;
+  --brand-strong: #49543a;
+  --brand-soft: #dce2d2;
+  --on-brand: #fbfcf7;
+  --on-brand-muted: #edf1e8;
+
+  --professional-page: #f2f3ed;
+  --professional-surface: #fbfbf7;
+  --professional-surface-2: #e5e8de;
+  --professional-surface-3: #d3d8ca;
+  --professional-ink: #22271f;
+  --professional-muted: #596153;
+  --professional-line: #c5cbbb;
+  --professional-line-strong: #858f78;
+
+  --study-canvas: #ebe7de;
+  --study: #88724f;
+  --study-strong: #625238;
+  --study-soft: #e8e0d2;
+  --chapter-bridge: #d3dac6;
+
+  --personal-page: #e7edef;
+  --personal-surface: #f8faf9;
+  --personal-surface-2: #dce6e8;
+  --personal-surface-3: #c8d5d8;
+  --personal-ink: #263236;
+  --personal-muted: #53666c;
+  --personal-line: #bdcbce;
+  --personal-line-strong: #7f969d;
+  --personal-accent: #55747d;
+  --personal-accent-strong: #3a5962;
+  --personal-accent-soft: #d2e0e3;
+  --personal-on-accent: #f8fbfa;
+
+  --tone-tea: #65704f;
+  --tone-tea-strong: #49543a;
+  --tone-tea-soft: #dce4d2;
+  --tone-training: #58736f;
+  --tone-training-strong: #3e5956;
+  --tone-training-soft: #dbe7e4;
+  --tone-vinyl: #896638;
+  --tone-vinyl-strong: #664823;
+  --tone-vinyl-soft: #eee2ce;
+  --tone-cards: #74677f;
+  --tone-cards-strong: #51465d;
+  --tone-cards-soft: #e5e0e9;
+  --tone-camera: #55747e;
+  --tone-camera-strong: #395861;
+  --tone-camera-soft: #d9e6e8;
+
+  --page: var(--professional-page);
+  --surface: var(--professional-surface);
+  --surface-2: var(--professional-surface-2);
+  --surface-3: var(--professional-surface-3);
+  --ink: var(--professional-ink);
+  --muted: var(--professional-muted);
+  --line: var(--professional-line);
+  --line-strong: var(--professional-line-strong);
+  --accent: var(--brand);
+  --accent-strong: var(--brand-strong);
+  --accent-soft: var(--brand-soft);
+  --on-accent: var(--on-brand);
+  --warm: var(--tone-vinyl);
+  --warm-strong: var(--tone-vinyl-strong);
+  --warm-soft: var(--tone-vinyl-soft);
+  --transition-warm: var(--chapter-bridge);
+
+  --radius-card: 1rem;
+  --shadow: 0 6px 0 rgb(73 84 58 / 0.12);
+  --shadow-small: 0 3px 0 rgb(73 84 58 / 0.09);
+  --motion-press: 140ms;
+  --motion-ui: 210ms;
+  --motion-panel: 480ms;
+}
+
+body {
+  background: var(--professional-page);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.035em;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+button,
+a,
+summary {
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline-width: 2px;
+  outline-offset: 3px;
+}
+
+.site-header {
+  border-color: color-mix(in srgb, var(--line-strong) 52%, transparent);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  box-shadow: 0 4px 0 rgb(73 84 58 / 0.08);
+  transition:
+    background-color var(--motion-ui) ease,
+    border-color var(--motion-ui) ease,
+    color var(--motion-ui) ease;
+}
+
+.site-header nav a {
+  min-height: 2.75rem;
+  align-content: center;
+}
+
+.site-header nav a:hover {
+  background: transparent;
+}
+
+.site-header nav a[aria-current="location"] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.wordmark > span:first-child,
+.header-note-mark,
+.header-note-cycle {
+  transition:
+    background-color var(--motion-ui) ease,
+    border-color var(--motion-ui) ease,
+    color var(--motion-ui) ease,
+    transform var(--motion-ui) var(--ease-out);
+}
+
+.site-header[data-section-mode="personal"] {
+  --surface: var(--personal-surface);
+  --surface-2: var(--personal-surface-2);
+  --ink: var(--personal-ink);
+  --muted: var(--personal-muted);
+  --line: var(--personal-line);
+  --line-strong: var(--personal-line-strong);
+  --accent: var(--personal-accent);
+  --accent-strong: var(--personal-accent-strong);
+  --on-accent: var(--personal-on-accent);
+}
+
+.header-note {
+  cursor: pointer;
+  transition: transform var(--motion-press) var(--ease-out);
+}
+
+.header-note:hover .header-note-mark,
+.header-note:hover .header-note-cycle i {
+  transform: none;
+}
+
+.hero h1 {
+  max-width: 9ch;
+  letter-spacing: -0.035em;
+}
+
+.hero-portrait-frame {
+  box-shadow: 0 6px 0 rgb(73 84 58 / 0.1);
+}
+
+.hero-portrait-frame.is-tracking {
+  transition:
+    border-radius var(--motion-panel) var(--ease-out),
+    background-color 280ms ease;
+  will-change: transform;
+}
+
+.hero-role-index {
+  border-color: var(--line-strong);
+  background: var(--surface);
+  box-shadow: 0 4px 0 rgb(73 84 58 / 0.1);
+}
+
+.primary-button,
+.secondary-button,
+.primary-link,
+.thesis-facts a,
+.journey-switcher a,
+.journey-flip-button,
+.takeaway-selector button,
+.tea-fact-switch button,
+.fact-switch button,
+.album-switch button,
+.card-game-switch button,
+.camera-fact-switch button,
+.simulation-controls button,
+.training-set,
+.play-card-action,
+.camera-shutter,
+.camera-screen-bottom button,
+.contact-routes a,
+.contact-routes button {
+  transition:
+    transform var(--motion-press) var(--ease-out),
+    background-color var(--motion-ui) ease,
+    border-color var(--motion-ui) ease,
+    color var(--motion-ui) ease,
+    box-shadow var(--motion-ui) ease;
+}
+
+.takeaway-selector button,
+.tea-fact-switch button,
+.fact-switch button,
+.album-switch button,
+.card-game-switch button,
+.camera-fact-switch button,
+.simulation-controls button,
+.journey-flip-button,
+.camera-screen-bottom button {
+  min-height: 2.75rem;
+}
+
+.primary-button:active,
+.secondary-button:active,
+.primary-link:active,
+.thesis-facts a:active,
+.journey-switcher a:active,
+.journey-flip-button:active,
+.takeaway-selector button:active,
+.tea-fact-switch button:active,
+.fact-switch button:active,
+.album-switch button:active,
+.card-game-switch button:active,
+.camera-fact-switch button:active,
+.simulation-controls button:active,
+.training-set:active,
+.play-card-action:active,
+.camera-shutter:active,
+.camera-screen-bottom button:active,
+.contact-routes a:active,
+.contact-routes button:active,
+.header-note:active,
+.teapot:active {
+  transform: scale(0.98);
+}
+
+/* Laufbahn: klare Flächen, eine gemeinsame Bewegungslogik */
+.journey-card-inner,
+.journey-card-education .journey-card-inner {
+  transition:
+    height var(--motion-panel) var(--ease-out),
+    transform 520ms var(--ease-in-out);
+}
+
+.journey-card-face {
+  border-radius: var(--radius-card);
+  box-shadow: none;
+  transition:
+    border-color var(--motion-ui) ease,
+    box-shadow var(--motion-ui) ease,
+    filter var(--motion-ui) ease;
+}
+
+.journey-card.is-active .journey-card-face {
+  box-shadow: var(--shadow);
+}
+
+.journey-card.is-flipping .journey-card-face {
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--accent) 18%, transparent);
+  filter: none;
+}
+
+.journey-card.has-flip::after {
+  display: none;
+}
+
+.journey-flip-button {
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+  box-shadow: none;
+}
+
+.journey-back-grid article {
+  opacity: 0;
+  transform: translateY(0.55rem);
+}
+
+.journey-card.is-flipped .journey-back-grid article {
+  animation-duration: 260ms;
+  animation-delay: calc(150ms + (var(--detail-index) * 36ms));
+}
+
+.journey-card-education .journey-card-face {
+  background: color-mix(in srgb, var(--study-soft) 68%, var(--surface));
+}
+
+/* Studium wird wärmer, ohne eine zweite Markenwelt zu eröffnen. */
+.thesis-section {
+  background: var(--study-canvas);
+}
+
+.thesis-cover {
+  border-radius: var(--radius-card);
+  box-shadow: 0.6rem 0.6rem 0 var(--surface-3);
+}
+
+.takeaway-selector button[aria-pressed="true"] {
+  border-bottom-color: var(--study);
+  color: var(--study-strong);
+}
+
+/* Kapitelwechsel: eine helle Iris öffnet die persönliche Welt. */
+.chapter-transition {
+  min-height: 175svh;
+  background: var(--personal-page);
+}
+
+.chapter-transition-stage {
+  height: 100svh;
+  background: var(--study-canvas);
+}
+
+.chapter-transition-professional {
+  background: var(--study-canvas);
+}
+
+.chapter-transition-panel,
+.chapter-transition-aperture,
+.chapter-aperture-ring,
+.chapter-aperture-blade,
+.chapter-aperture-core,
+.chapter-transition-center,
+.chapter-transition-center h2 span,
+.chapter-transition-cue {
+  will-change: auto;
+}
+
+.chapter-transition-stage.is-motion-active .chapter-transition-personal,
+.chapter-transition-stage.is-motion-active .chapter-transition-aperture,
+.chapter-transition-stage.is-motion-active .chapter-aperture-ring,
+.chapter-transition-stage.is-motion-active .chapter-aperture-blade,
+.chapter-transition-stage.is-motion-active .chapter-aperture-core,
+.chapter-transition-stage.is-motion-active .chapter-transition-center,
+.chapter-transition-stage.is-motion-active .chapter-transition-center h2 span,
+.chapter-transition-stage.is-motion-active .chapter-transition-cue {
+  will-change: transform, opacity, clip-path;
+}
+
+.chapter-transition-personal {
+  inset: 0;
+  background: var(--personal-page);
+  clip-path: circle(0% at 50% 50%);
+  opacity: 0;
+  transform: none;
+}
+
+.chapter-transition-aperture {
+  position: absolute;
+  z-index: 3;
+  width: clamp(16rem, 36vw, 28rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate3d(0, 0.8rem, 0) rotate(-10deg) scale(0.76);
+  transform-origin: center;
+}
+
+.chapter-aperture-ring {
+  position: absolute;
+  inset: -8%;
+  border: 1px solid color-mix(in srgb, var(--brand-strong) 52%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 0.55rem color-mix(in srgb, var(--study-canvas) 54%, transparent),
+    inset 0 0 0 calc(0.55rem + 1px) color-mix(in srgb, var(--brand) 30%, transparent);
+  transform: scale(0.9);
+}
+
+.chapter-aperture-ring::before,
+.chapter-aperture-ring::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.75rem;
+  height: 1px;
+  background: var(--brand-strong);
+  content: "";
+}
+
+.chapter-aperture-ring::before {
+  left: -1rem;
+}
+
+.chapter-aperture-ring::after {
+  right: -1rem;
+  left: auto;
+}
+
+.chapter-aperture-blade {
+  position: absolute;
+  top: -5%;
+  left: 29%;
+  width: 42%;
+  height: 55%;
+  background: color-mix(in srgb, var(--brand) 88%, var(--study-canvas));
+  clip-path: polygon(48% 0, 100% 16%, 76% 100%, 0 72%);
+  opacity: 0.94;
+  transform-origin: 50% 100%;
+}
+
+.chapter-aperture-blade[data-aperture-angle="60"] { transform: rotate(60deg); }
+.chapter-aperture-blade[data-aperture-angle="120"] { transform: rotate(120deg); }
+.chapter-aperture-blade[data-aperture-angle="180"] { transform: rotate(180deg); }
+.chapter-aperture-blade[data-aperture-angle="240"] { transform: rotate(240deg); }
+.chapter-aperture-blade[data-aperture-angle="300"] { transform: rotate(300deg); }
+
+.chapter-aperture-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12%;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--personal-accent-strong) 64%, transparent);
+  border-radius: 50%;
+  background: var(--personal-page);
+  transform: translate(-50%, -50%) scale(0.72);
+}
+
+.chapter-transition-center {
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, 1.1rem, 0) scale(0.96);
+}
+
+.chapter-transition-center h2 {
+  max-width: 12ch;
+  margin: 0 auto;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.chapter-transition-center h2 span {
+  display: block;
+}
+
+.chapter-transition-cue {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.5rem auto 0;
+  padding-block: 0.55rem;
+  border-block: 1px solid color-mix(in srgb, currentColor 38%, transparent);
+  color: color-mix(in srgb, currentColor 76%, transparent);
+  font: 560 0.62rem var(--font-mono);
+}
+
+.chapter-transition-cue i {
+  font-size: 0.85rem;
+}
+
+/* Persönliches Kapitel: hell, mineralisch und dennoch mit einzelnen Charaktertönen. */
+.personal-section,
+.site-footer {
+  --page: var(--personal-page);
+  --surface: var(--personal-surface);
+  --surface-2: var(--personal-surface-2);
+  --surface-3: var(--personal-surface-3);
+  --ink: var(--personal-ink);
+  --muted: var(--personal-muted);
+  --line: var(--personal-line);
+  --line-strong: var(--personal-line-strong);
+  --accent: var(--personal-accent);
+  --accent-strong: var(--personal-accent-strong);
+  --accent-soft: var(--personal-accent-soft);
+  --on-accent: var(--personal-on-accent);
+  --study: var(--tone-cards);
+  --study-strong: var(--tone-cards-strong);
+  --study-soft: var(--tone-cards-soft);
+  --warm: var(--tone-vinyl);
+  --warm-strong: var(--tone-vinyl-strong);
+  --warm-soft: var(--tone-vinyl-soft);
+  background: var(--personal-page);
+  color: var(--personal-ink);
+}
+
+.personal-section .interest-marquee {
+  background: color-mix(in srgb, var(--personal-surface) 86%, var(--personal-accent-soft));
+}
+
+.tea-ritual,
+.play-card,
+.genealogy-teaser {
+  border-radius: var(--radius-card);
+  box-shadow: none;
+}
+
+.tea-ritual {
+  --accent: var(--tone-tea);
+  --accent-strong: var(--tone-tea-strong);
+  --accent-soft: var(--tone-tea-soft);
+  background: var(--tone-tea);
+  border-color: color-mix(in srgb, var(--tone-tea-strong) 70%, transparent);
+  color: var(--on-brand);
+  box-shadow: 0 5px 0 rgb(73 84 58 / 0.13);
+}
+
+.tea-copy > p:not(.tea-label),
+.tea-profile-heading .tea-fact-value,
+.tea-copy > .tea-taste {
+  color: var(--on-brand-muted);
+  opacity: 1;
+}
+
+.tea-profile-heading span,
+.tea-label,
+.tea-source,
+.tea-visual > p {
+  color: var(--on-brand-muted);
+  opacity: 1;
+}
+
+.tea-fact-switch button {
+  min-height: 2.75rem;
+  border-color: color-mix(in srgb, var(--on-brand) 38%, transparent);
+  color: var(--on-brand);
+}
+
+.tea-fact-switch button[aria-pressed="true"] {
+  background: var(--on-brand);
+  color: var(--tone-tea-strong);
+}
+
+.training-card {
+  --accent: var(--tone-training);
+  --accent-strong: var(--tone-training-strong);
+  --accent-soft: var(--tone-training-soft);
+  background: var(--personal-surface);
+}
+
+.training-set {
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--tone-training-soft) 72%, var(--surface));
+}
+
+.fact-switch button[aria-pressed="true"] {
+  border-color: var(--tone-training);
+  background: var(--tone-training);
+  color: var(--personal-on-accent);
+}
+
+.sound-card {
+  --warm: var(--tone-vinyl);
+  --warm-strong: var(--tone-vinyl-strong);
+  --warm-soft: var(--tone-vinyl-soft);
+  background: color-mix(in srgb, var(--tone-vinyl-soft) 82%, var(--personal-surface));
+}
+
+.album-switch button[aria-pressed="true"] {
+  border-color: var(--tone-vinyl);
+  background: var(--tone-vinyl);
+  color: var(--personal-on-accent);
+}
+
+.cards-card {
+  --study: var(--tone-cards);
+  --study-strong: var(--tone-cards-strong);
+  --study-soft: var(--tone-cards-soft);
+  background: color-mix(in srgb, var(--tone-cards-soft) 86%, var(--personal-surface));
+}
+
+.card-game-switch button[aria-pressed="true"] {
+  border-color: var(--tone-cards);
+  background: var(--tone-cards);
+  color: var(--personal-on-accent);
+}
+
+.playing-card {
+  border-color: color-mix(in srgb, var(--tone-cards-strong) 46%, var(--personal-line));
+  box-shadow: 0 4px 0 rgb(81 70 93 / 0.13);
+}
+
+.card-back {
+  display: grid;
+  place-items: center;
+  background: var(--tone-cards);
+  color: var(--personal-on-accent);
+}
+
+.card-back::after {
+  content: "FD";
+  font: 620 1rem var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.camera-card {
+  --accent: var(--tone-camera);
+  --accent-strong: var(--tone-camera-strong);
+  --accent-soft: var(--tone-camera-soft);
+  min-height: 0;
+  grid-template-columns: minmax(0, 1.28fr) minmax(20rem, 0.72fr);
+  background: var(--personal-surface);
+}
+
+.camera-viewer {
+  min-height: 0;
+  gap: 1rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: color-mix(in srgb, var(--tone-camera-soft) 82%, var(--personal-line-strong));
+}
+
+.camera-display {
+  position: relative;
+  width: 100%;
+  padding: 0.65rem;
+  border-radius: 0.75rem;
+  background: #1d272a;
+  box-shadow: 0 5px 0 rgb(25 39 43 / 0.18);
+  color: #edf4f3;
+}
+
+.camera-frames {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: #101719;
+  contain: layout paint;
+  touch-action: pan-y;
+}
+
+.camera-screen-top {
+  top: 0.65rem;
+  right: 0.75rem;
+  left: 0.75rem;
+  z-index: 8;
+  color: #edf4f3;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.62);
+}
+
+.camera-shot {
+  position: absolute;
+  inset: 0;
+  display: block;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.camera-shot.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  animation: none;
+}
+
+.camera-photo img,
+.camera-shot .photo-placeholder-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  object-fit: cover;
+}
+
+.camera-shot figcaption {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.65rem;
+  left: 0.65rem;
+  z-index: 4;
+  display: flex;
+  min-width: 0;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.55rem;
+  background: rgb(16 23 25 / 0.72);
+  color: #edf4f3;
+  font-family: var(--font-mono);
+}
+
+.camera-shot figcaption small {
+  min-width: 0;
+  overflow: hidden;
+  color: #cedbd8;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.camera-viewer[data-simulation="classic"] .camera-photo img {
+  filter: sepia(0.38) saturate(0.72) contrast(1.08);
+}
+
+.camera-viewer[data-simulation="acros"] .camera-photo img {
+  filter: grayscale(1) contrast(1.14);
+}
+
+.camera-flash,
+.camera-curtain,
+.camera-sensor-scan,
+.camera-capture-readout {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.camera-flash {
+  inset: 0;
+  background: #f8fbfa;
+  opacity: 0;
+}
+
+.camera-curtain {
+  right: 0;
+  left: 0;
+  height: 50.5%;
+  background: #0c1113;
+}
+
+.camera-curtain-top {
+  top: 0;
+  transform: translate3d(0, -102%, 0);
+}
+
+.camera-curtain-bottom {
+  bottom: 0;
+  transform: translate3d(0, 102%, 0);
+}
+
+.camera-sensor-scan {
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: #d9e7df;
+  box-shadow: 0 0 8px rgb(217 231 223 / 0.72);
+  opacity: 0;
+  transform: translate3d(0, -120%, 0);
+}
+
+.camera-capture-readout {
+  right: 0.8rem;
+  top: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  background: #d9e7df;
+  color: #172124;
+  font: 620 0.56rem var(--font-mono);
+  opacity: 0;
+}
+
+.camera-fact-switch button[aria-pressed="true"],
+.simulation-controls button[aria-pressed="true"] {
+  border-color: var(--tone-camera);
+  background: var(--tone-camera);
+  color: var(--personal-on-accent);
+}
+
+.camera-screen-bottom {
+  display: grid;
+  min-height: 3.5rem;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 0.65rem;
+  padding: 0.45rem 0.15rem 0;
+  color: #edf4f3;
+}
+
+.camera-playback-mode,
+.camera-file-name {
+  overflow: hidden;
+  font: 500 0.54rem var(--font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.camera-file-name {
+  justify-self: end;
+  color: #bccbc8;
+}
+
+.camera-gallery-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.camera-screen-bottom .camera-gallery-nav button {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
+  border-color: rgb(237 244 243 / 0.36);
+  color: #edf4f3;
+}
+
+.camera-screen-bottom .camera-gallery-nav > span {
+  min-width: 3.4rem;
+  font: 540 0.58rem var(--font-mono);
+  text-align: center;
+}
+
+.camera-hardware {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.camera-hardware > p {
+  max-width: 15rem;
+  color: var(--personal-muted);
+  font: 500 0.58rem / 1.5 var(--font-mono);
+  text-align: right;
+}
+
+.camera-viewer-shutter {
+  position: static;
+  min-height: 3.5rem;
+  gap: 0.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--personal-ink);
+  text-align: left;
+}
+
+.camera-shutter-disc {
+  display: grid;
+  width: 3.5rem;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--personal-ink) 42%, transparent);
+  border-radius: 50%;
+  background: var(--personal-ink);
+  box-shadow: inset 0 0 0 0.35rem var(--tone-camera-soft);
+  color: var(--personal-on-accent);
+  font-size: 1.2rem;
+}
+
+.camera-shutter-copy small,
+.camera-shutter-copy strong {
+  display: block;
+}
+
+.camera-shutter-copy small {
+  color: var(--personal-muted);
+  font: 500 0.5rem var(--font-mono);
+}
+
+.camera-shutter-copy strong {
+  margin-top: 0.22rem;
+  font-size: 0.72rem;
+  font-weight: 680;
+}
+
+.genealogy-teaser {
+  background: color-mix(in srgb, var(--personal-surface) 78%, var(--tone-cards-soft));
+}
+
+.tea-fact-switch,
+.fact-switch,
+.album-switch,
+.card-game-switch,
+.camera-fact-switch,
+.simulation-controls > div {
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tea-fact-switch button,
+.fact-switch button,
+.album-switch button,
+.card-game-switch button,
+.camera-fact-switch button,
+.simulation-controls button {
+  scroll-snap-align: start;
+}
+
+/* Kontakt bleibt freundlich und nutzt semantische Tokens ohne deren Bedeutung umzudrehen. */
+.site-footer {
+  background: var(--personal-page);
+}
+
+.pigeon-contact {
+  --page: var(--personal-page);
+  --surface: var(--personal-surface);
+  --ink: var(--personal-ink);
+  --muted: var(--personal-muted);
+  --line: var(--personal-line);
+  --accent: var(--personal-accent);
+  --accent-strong: var(--personal-accent-strong);
+  --on-accent: var(--personal-on-accent);
+  background: var(--personal-surface);
+  color: var(--personal-ink);
+}
+
+.pigeon-contact .contact-eyebrow {
+  color: var(--personal-muted);
+}
+
+.pigeon-contact .contact-copy > p:not(.contact-eyebrow) {
+  color: var(--personal-muted);
+}
+
+.contact-panel .contact-routes :is(a, button) {
+  display: grid;
+  width: 100%;
+  min-height: 3.75rem;
+  grid-template-columns: 2rem 1.5rem minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.7rem 0.2rem;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--personal-ink) 22%, transparent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--personal-ink);
+  text-align: left;
+  text-decoration: none;
+}
+
+.contact-panel .contact-routes :is(a, button):last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--personal-ink) 22%, transparent);
+}
+
+.contact-panel .contact-routes :is(a, button):hover,
+.contact-panel .contact-routes :is(a, button).is-selected {
+  background: transparent;
+  color: var(--personal-ink);
+  transform: none;
+}
+
+.contact-route-number,
+.contact-panel .route-start small,
+.contact-panel .route-finish small,
+.contact-panel .pigeon-status {
+  color: var(--personal-muted);
+}
+
+.contact-panel .pigeon-stage {
+  border-color: color-mix(in srgb, var(--personal-ink) 18%, transparent);
+}
+
+.contact-panel .route-start,
+.contact-panel .route-finish {
+  border-color: color-mix(in srgb, var(--personal-ink) 30%, transparent);
+  background: color-mix(in srgb, var(--personal-accent-soft) 62%, var(--personal-surface));
+  color: var(--personal-ink);
+}
+
+.contact-panel .route-line {
+  border-top-color: color-mix(in srgb, var(--personal-accent) 55%, transparent);
+}
+
+.contact-panel .pigeon {
+  color: var(--personal-accent-strong);
+}
+
+.contact-panel .pigeon-letter {
+  border-color: var(--personal-accent-strong);
+  background: var(--personal-accent);
+  color: var(--personal-on-accent);
+}
+
+.route-cloud,
+.route-feather {
+  color: color-mix(in srgb, var(--personal-accent) 34%, transparent);
+}
+
+/* Reveals sind eine Verbesserung, kein Sichtbarkeits-Gate. */
+[data-reveal] {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.motion-ready [data-reveal] {
+  opacity: 0;
+  transition:
+    opacity 520ms var(--ease-out),
+    transform 520ms var(--ease-out);
+}
+
+.motion-ready [data-reveal="up"] {
+  transform: translate3d(0, 1.35rem, 0);
+}
+
+.motion-ready [data-reveal="left"] {
+  transform: translate3d(-1.35rem, 0, 0);
+}
+
+.motion-ready [data-reveal="right"] {
+  transform: translate3d(1.35rem, 0, 0);
+}
+
+.motion-ready [data-reveal="scale"] {
+  transform: scale(0.97);
+}
+
+.motion-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Die seltene Startsequenz darf auffallen, bleibt aber kurz. */
+.intro-reveal {
+  transition-duration: 620ms;
+}
+
+.intro-field-deep {
+  transition: transform 680ms 90ms var(--ease-in-out);
+}
+
+.intro-type {
+  font-size: clamp(3.5rem, 10vw, 6rem);
+}
+
+.intro-reveal.is-running .intro-type-first {
+  animation-duration: 660ms;
+  animation-delay: 60ms;
+}
+
+.intro-reveal.is-running .intro-type-last {
+  animation-duration: 660ms;
+  animation-delay: 170ms;
+}
+
+.intro-reveal.is-running .intro-aperture {
+  animation-duration: 760ms;
+  animation-delay: 120ms;
+}
+
+.intro-reveal.is-running .intro-mark {
+  animation-duration: 360ms;
+  animation-delay: 360ms;
+}
+
+body.intro-complete .hero-name span:first-child,
+body.intro-complete .hero-name span:last-child {
+  animation-duration: 620ms;
+}
+
+body.intro-complete .hero-statement,
+body.intro-complete .hero-actions {
+  animation-duration: 420ms;
+}
+
+body.intro-complete .hero-scene {
+  animation-duration: 700ms;
+}
+
+@keyframes fact-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) rotate(-2deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Das echte Porträt bleibt fotografisch und bekommt erst durch Interaktion eine zweite Ebene. */
+.hero-portrait-frame {
+  --portrait-x: 50%;
+  --portrait-y: 42%;
+  background: #202722;
+}
+
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  margin: 0;
+  pointer-events: none;
+}
+
+.hero-portrait-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 38%;
+  transform: scale(1.01);
+  transition:
+    clip-path 620ms var(--ease-out),
+    filter 420ms ease,
+    transform 820ms var(--ease-out);
+}
+
+.hero-portrait-image-color {
+  filter: saturate(0.9) contrast(1.035);
+}
+
+.hero-portrait-image-mono {
+  z-index: 2;
+  clip-path: circle(0 at var(--portrait-x) var(--portrait-y));
+  filter: grayscale(1) contrast(1.08) brightness(1.04);
+}
+
+.hero-portrait-art {
+  z-index: 4;
+}
+
+.portrait-index {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 999px;
+  background: rgb(23 30 26 / 0.68);
+  color: #f5f7f2;
+  backdrop-filter: blur(7px);
+}
+
+.portrait-index i {
+  font-size: 0.72rem;
+}
+
+.portrait-orbit {
+  border-color: rgb(247 249 244 / 0.56);
+}
+
+/* Bachelorarbeit: Cover und Erkenntnisse sind ein einziges, aufklappbares Objekt. */
+.thesis-layout {
+  grid-template-columns: minmax(0, 0.92fr) minmax(23rem, 0.72fr);
+  gap: clamp(2.5rem, 7vw, 6.5rem);
+  align-items: center;
+}
+
+.thesis-copy {
+  align-self: center;
+}
+
+.thesis-card {
+  min-width: 0;
+  cursor: pointer;
+  perspective: 1400px;
+}
+
+.thesis-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 32rem;
+  transform-style: preserve-3d;
+  transition:
+    height 540ms var(--ease-out),
+    transform 680ms cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.thesis-card.is-flipped .thesis-card-inner {
+  transform: rotateY(180deg);
+}
+
+.thesis-card-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  min-height: 32rem;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border-radius: var(--radius-card);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  flex-direction: column;
+}
+
+.thesis-card-front {
+  border: 1px solid color-mix(in srgb, var(--study-strong) 78%, transparent);
+  background: var(--study);
+  box-shadow: 0.65rem 0.65rem 0 color-mix(in srgb, var(--surface-3) 88%, var(--study-soft));
+  color: var(--on-accent);
+}
+
+.thesis-card-back {
+  border: 1px solid color-mix(in srgb, var(--study) 56%, var(--line));
+  background: color-mix(in srgb, var(--study-soft) 52%, var(--surface));
+  color: var(--ink);
+  transform: rotateY(180deg);
+}
+
+.thesis-cover-top {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.thesis-cover-mark {
+  display: grid;
+  width: 3.4rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--on-accent) 44%, transparent);
+  border-radius: 50%;
+  font-size: 1.35rem;
+}
+
+.thesis-cover-link {
+  color: color-mix(in srgb, var(--on-accent) 68%, transparent);
+  font-size: 0.95rem;
+}
+
+.thesis-cover-copy {
+  margin-block: auto 2.8rem;
+}
+
+.thesis-cover-copy > p {
+  color: color-mix(in srgb, var(--on-accent) 76%, transparent);
+  font: 500 0.62rem var(--font-mono);
+  text-transform: uppercase;
+}
+
+.thesis-cover-copy h3 {
+  max-width: 15ch;
+  margin-top: 0.8rem;
+  font-size: clamp(1.8rem, 3.3vw, 2.8rem);
+  line-height: 1.04;
+}
+
+.thesis-cover-footer,
+.thesis-back-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.thesis-cover-footer > span {
+  color: color-mix(in srgb, var(--on-accent) 72%, transparent);
+  font: 500 0.62rem var(--font-mono);
+}
+
+.thesis-cover-footer button,
+.thesis-back-actions :is(a, button) {
+  display: inline-flex;
+  min-height: 2.8rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding-inline: 0.95rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    transform var(--motion-press) var(--ease-out),
+    background-color var(--motion-ui) ease,
+    border-color var(--motion-ui) ease;
+}
+
+.thesis-cover-footer button {
+  border: 1px solid color-mix(in srgb, var(--on-accent) 46%, transparent);
+  background: var(--on-accent);
+  color: var(--study-strong);
+}
+
+.thesis-back-heading > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--study-strong);
+  font: 580 0.61rem var(--font-mono);
+  text-transform: uppercase;
+}
+
+.thesis-back-heading h3 {
+  max-width: 14ch;
+  margin-top: 0.65rem;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.thesis-takeaway-list {
+  display: grid;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.thesis-takeaway-list li {
+  display: grid;
+  padding-block: 0.85rem;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.8rem;
+  border-top: 1px solid color-mix(in srgb, var(--study) 30%, var(--line));
+}
+
+.thesis-takeaway-list li > span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--study);
+  color: var(--on-accent);
+  font-size: 0.88rem;
+}
+
+.thesis-takeaway-list h4 {
+  font-size: 0.83rem;
+  letter-spacing: -0.015em;
+}
+
+.thesis-takeaway-list p {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.48;
+}
+
+.thesis-back-actions {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.thesis-back-actions a {
+  border: 1px solid var(--study-strong);
+  background: var(--study-strong);
+  color: var(--on-accent);
+}
+
+.thesis-back-actions button {
+  border: 1px solid color-mix(in srgb, var(--study) 50%, var(--line));
+  background: transparent;
+  color: var(--study-strong);
+}
+
+.thesis-card.is-flipped .thesis-takeaway-list li {
+  animation: thesis-detail-in 320ms var(--ease-out) both;
+  animation-delay: calc(190ms + (var(--takeaway-index) * 45ms));
+}
+
+@keyframes thesis-detail-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ruhige Lesefläche für die eingebettete PDF. */
+.reader-page {
+  min-height: 100dvh;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  background: var(--study-canvas);
+}
+
+.reader-header {
+  display: grid;
+  max-width: 92rem;
+  margin: 0 auto 1rem;
+  grid-template-columns: minmax(10rem, 1fr) minmax(0, 2fr) minmax(10rem, 1fr);
+  gap: 1.25rem;
+  align-items: end;
+}
+
+.reader-header > a {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 2.8rem;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.74rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.reader-header > div {
+  text-align: center;
+}
+
+.reader-header p,
+.reader-header > span {
+  color: var(--study-strong);
+  font: 500 0.6rem var(--font-mono);
+}
+
+.reader-header h1 {
+  margin-top: 0.25rem;
+  font-size: clamp(1.55rem, 3.5vw, 2.75rem);
+}
+
+.reader-header > span {
+  justify-self: end;
+}
+
+.reader-document {
+  max-width: 92rem;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  background: #4a4a46;
+}
+
+.reader-document object {
+  display: block;
+  width: 100%;
+  height: calc(100dvh - 7.5rem);
+  min-height: 38rem;
+}
+
+.reader-fallback {
+  display: grid;
+  min-height: 38rem;
+  padding: 2rem;
+  place-items: center;
+  align-content: center;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: center;
+}
+
+.reader-fallback > i {
+  color: var(--study);
+  font-size: 2.4rem;
+}
+
+.reader-fallback h2 {
+  max-width: 20ch;
+  margin-top: 1rem;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.reader-fallback p {
+  margin-top: 0.8rem;
+  color: var(--muted);
+}
+
+.reader-fallback a {
+  display: inline-flex;
+  min-height: 2.8rem;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.4rem;
+  padding-inline: 1rem;
+  border-radius: 999px;
+  background: var(--study-strong);
+  color: var(--on-accent);
+  font-size: 0.75rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-portrait-frame:hover .hero-portrait-image-mono {
+    clip-path: circle(37% at var(--portrait-x) var(--portrait-y));
+    transform: scale(1.035);
+  }
+
+  .hero-portrait-frame:hover .hero-portrait-image-color {
+    transform: scale(1.025);
+  }
+
+  .thesis-card:hover:not(.is-flipped) .thesis-card-front {
+    border-color: var(--study-strong);
+  }
+
+  .thesis-cover-footer button:hover,
+  .thesis-back-actions :is(a, button):hover {
+    transform: translateY(-0.12rem);
+  }
+
+  .thesis-facts a:hover {
+    border-color: var(--study);
+    transform: translateY(-0.12rem);
+  }
+
+  .site-header nav a:hover {
+    background: var(--surface-2);
+  }
+
+  .site-header nav a[aria-current="location"]:hover {
+    background: var(--accent);
+  }
+
+  .header-note:hover .header-note-mark {
+    transform: rotate(7deg) translateY(-0.08rem);
+  }
+
+  .header-note:hover .header-note-cycle i {
+    transform: translate(0.1rem, 0.1rem);
+  }
+
+  .contact-panel .contact-routes :is(a, button):hover {
+    color: var(--personal-accent-strong);
+    transform: translateX(0.25rem);
+  }
+
+  .contact-routes :is(a, button):hover .route-arrow {
+    transform: translate(0.15rem, -0.15rem);
+  }
+}
+
+@media (max-width: 60rem) and (min-width: 48.01rem) {
+  .tea-ritual,
+  .training-card,
+  .sound-card,
+  .cards-card {
+    grid-column: 1 / -1;
+  }
+
+  .training-set {
+    grid-template-columns: minmax(9rem, 1fr) auto auto;
+  }
+}
+
+@media (max-width: 48rem) {
+  .hero-portrait-image {
+    object-position: 50% 36%;
+  }
+
+  .portrait-index {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .thesis-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .thesis-card {
+    margin-top: 0.5rem;
+  }
+
+  .thesis-card-inner,
+  .thesis-card-face {
+    min-height: 31rem;
+  }
+
+  .thesis-card-inner {
+    transition-duration: 460ms, 580ms;
+  }
+
+  .reader-page {
+    padding: 0.8rem;
+  }
+
+  .reader-header {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  .reader-header > div {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    text-align: left;
+  }
+
+  .reader-header > span {
+    font-size: 0.54rem;
+  }
+
+  .reader-document object {
+    height: calc(100dvh - 9rem);
+    min-height: 34rem;
+  }
+
+  .hero h1 {
+    max-width: 100%;
+    font-size: clamp(3.5rem, 17.5vw, 5.4rem);
+  }
+
+  .site-header nav a {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding-inline: 0.48rem;
+    text-align: center;
+  }
+
+  .journey-card.is-active {
+    transform: none;
+  }
+
+  .journey-card h4 {
+    font-size: clamp(1.65rem, 8vw, 2.35rem);
+  }
+
+  .journey-card-inner,
+  .journey-card-education .journey-card-inner {
+    transition-duration: 420ms, 480ms;
+  }
+
+  .chapter-transition {
+    min-height: 165svh;
+  }
+
+  .chapter-transition-stage {
+    height: 100svh;
+  }
+
+  .chapter-transition-aperture {
+    width: min(76vw, 20rem);
+  }
+
+  .chapter-transition-center h2 {
+    font-size: clamp(2.65rem, 13vw, 4.25rem);
+  }
+
+  .motion-ready [data-reveal="left"],
+  .motion-ready [data-reveal="right"] {
+    transform: translate3d(0, 1.1rem, 0);
+  }
+
+  .tea-ritual,
+  .training-card,
+  .sound-card,
+  .cards-card,
+  .camera-card {
+    min-height: 0;
+  }
+
+  .training-set {
+    min-height: 9rem;
+  }
+
+  .training-card > .training-fact {
+    min-height: 6.2rem;
+  }
+
+  .sound-card > .album-note {
+    min-height: 6.4rem;
+  }
+
+  .cards-card > .card-game-copy {
+    min-height: 5rem;
+  }
+
+  .camera-fact-panel {
+    min-height: 13rem;
+  }
+
+  .camera-viewer {
+    min-height: 0;
+    padding: 0.85rem;
+  }
+
+  .camera-screen-bottom {
+    min-height: 3.5rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .camera-file-name {
+    display: none;
+  }
+
+  .camera-hardware {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .camera-hardware > p {
+    max-width: 24rem;
+    text-align: left;
+  }
+
+  .camera-shot figcaption {
+    right: 0.45rem;
+    bottom: 0.45rem;
+    left: 0.45rem;
+    padding: 0.4rem 0.45rem;
+    font-size: 0.52rem;
+  }
+
+  .contact-panel .contact-routes :is(a, button) {
+    min-height: 3.5rem;
+  }
+}
+
+@media (max-width: 24rem) {
+  .thesis-card-face {
+    padding: 1.2rem;
+  }
+
+  .thesis-cover-footer,
+  .thesis-back-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .thesis-cover-footer > span {
+    order: 2;
+  }
+
+  .thesis-back-actions :is(a, button) {
+    width: 100%;
+  }
+
+  .header-note {
+    min-width: 2.75rem;
+    max-width: 2.75rem;
+    padding-inline: 0;
+  }
+
+  .header-note-copy {
+    display: none;
+  }
+
+  .header-note .header-note-mark {
+    display: grid;
+    margin: 0;
+  }
+
+  .header-note-cycle {
+    display: none;
+  }
+
+  .site-header nav a {
+    min-width: 2.75rem;
+    padding-inline: 0.3rem;
+    font-size: 0.61rem;
+  }
+
+  .camera-screen-top {
+    justify-content: flex-end;
+  }
+
+  .camera-screen-top span:first-child,
+  .camera-shot figcaption small {
+    display: none;
+  }
+
+  .camera-playback-mode {
+    font-size: 0;
+  }
+
+  .camera-playback-mode i {
+    font-size: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter-transition {
+    min-height: 100svh;
+  }
+
+  .intro-reveal {
+    display: none;
+  }
+
+  .motion-ready [data-reveal],
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: opacity 140ms ease;
+  }
+
+  .interest-track,
+  .vinyl-button[aria-pressed="true"] i,
+  .journey-card.is-flipped .journey-back-grid article,
+  .training-set.is-training *,
+  .playing-card.is-drawn,
+  .camera-shot.is-active,
+  .camera-flash.is-flashing,
+  .pigeon-stage.is-dispatched *,
+  .teapot.is-brewing,
+  .teapot.is-brewing *,
+  .thesis-card.is-flipped .thesis-takeaway-list li {
+    animation: none !important;
+  }
+
+  .journey-card-inner,
+  .journey-card-education .journey-card-inner,
+  .thesis-card-inner {
+    transition-duration: 0ms !important;
+  }
+
+  .chapter-transition-personal,
+  .chapter-transition-aperture,
+  .chapter-aperture-ring,
+  .chapter-aperture-blade,
+  .chapter-aperture-core,
+  .chapter-transition-center,
+  .chapter-transition-center h2 span,
+  .chapter-transition-cue {
+    transition: none !important;
+  }
+
+  .chapter-transition-aperture {
+    display: none;
+  }
+
+  .hero-portrait-frame {
+    transform: none !important;
+  }
+
+  .hero-portrait-image {
+    transition: none !important;
+  }
+
+  .hero-portrait-image-mono {
+    display: none;
+  }
+}

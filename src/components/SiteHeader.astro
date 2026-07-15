@@ -37,6 +37,8 @@ import { profile } from "../data/profile";
 </header>
 
 <script>
+  import { animateContentSwap } from "../scripts/motion";
+
   document.querySelectorAll<HTMLButtonElement>("[data-header-note]").forEach((button) => {
     const notes = JSON.parse(button.dataset.notes ?? "[]") as Array<{ icon: string; label: string; text: string }>;
     const icon = button.querySelector<HTMLElement>("[data-header-note-icon]");
@@ -48,11 +50,50 @@ import { profile } from "../data/profile";
       if (!notes.length) return;
       noteIndex = (noteIndex + 1) % notes.length;
       const note = notes[noteIndex];
-      button.classList.remove("is-changing");
-      requestAnimationFrame(() => button.classList.add("is-changing"));
-      if (icon) icon.className = `ph ${note.icon}`;
-      labels.forEach((label) => (label.textContent = note.label));
-      if (text) text.textContent = note.text;
+      animateContentSwap(
+        [button.querySelector<HTMLElement>(".header-note-mark"), button.querySelector<HTMLElement>(".header-note-copy")],
+        () => {
+          if (icon) icon.className = `ph ${note.icon}`;
+          labels.forEach((label) => (label.textContent = note.label));
+          if (text) text.textContent = note.text;
+        },
+        { duration: 190, offset: 3, stagger: 0 },
+      );
     });
   });
+
+  const siteHeader = document.querySelector<HTMLElement>("[data-site-header]");
+  const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-site-header] nav a[href^='#']"));
+  const observedSections = sectionLinks
+    .map((link) => {
+      const id = link.hash.slice(1);
+      const section = document.getElementById(id);
+      return section ? { link, section } : null;
+    })
+    .filter((entry): entry is { link: HTMLAnchorElement; section: HTMLElement } => Boolean(entry));
+
+  const setCurrentSection = (activeLink: HTMLAnchorElement) => {
+    sectionLinks.forEach((link) => {
+      if (link === activeLink) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+    siteHeader?.setAttribute("data-section-mode", activeLink.hash === "#persoenlich" || activeLink.hash === "#kontakt" ? "personal" : "professional");
+  };
+
+  if ("IntersectionObserver" in window) {
+    const navigationObserver = new IntersectionObserver(
+      (entries) => {
+        const active = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!active) return;
+        const match = observedSections.find(({ section }) => section === active.target);
+        if (match) setCurrentSection(match.link);
+      },
+      { rootMargin: "-18% 0px -62%", threshold: [0, 0.12, 0.4] },
+    );
+    observedSections.forEach(({ section }) => navigationObserver.observe(section));
+  }
+
+  sectionLinks.forEach((link) => link.addEventListener("click", () => setCurrentSection(link)));
 </script>

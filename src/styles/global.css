@@ -73,7 +73,7 @@ h3,
 h4 {
   font-weight: 590;
   line-height: 1.03;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
@@ -251,7 +251,7 @@ button:active,
   max-width: 8ch;
   font-size: clamp(4.6rem, 9.5vw, 8.3rem);
   line-height: 0.81;
-  letter-spacing: -0.075em;
+  letter-spacing: -0.04em;
 }
 
 .hero h1 span {
@@ -868,7 +868,7 @@ button:active,
   margin-top: 2.2rem;
 }
 
-.thesis-facts span {
+.thesis-facts :is(span, a) {
   display: inline-flex;
   min-height: 2.7rem;
   align-items: center;
@@ -877,7 +877,9 @@ button:active,
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-control);
   background: var(--surface);
+  color: var(--ink);
   font-size: 0.75rem;
+  text-decoration: none;
 }
 
 .thesis-facts i {
@@ -1658,7 +1660,7 @@ button:active,
 .vinyl-market strong {
   font-size: clamp(2.4rem, 5vw, 4.2rem);
   line-height: 1;
-  letter-spacing: -0.07em;
+  letter-spacing: -0.035em;
 }
 
 .vinyl-market span {
@@ -1792,9 +1794,7 @@ button:active,
 }
 
 .card-back {
-  background:
-    repeating-linear-gradient(45deg, transparent 0 7px, color-mix(in srgb, var(--study) 20%, transparent) 7px 8px),
-    var(--surface);
+  background: var(--study);
   transform: translateX(-72%) rotate(-12deg);
 }
 
@@ -3145,6 +3145,44 @@ button:active,
   font-size: 2rem;
 }
 
+.legal-notice section + section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.legal-label {
+  color: var(--accent-strong) !important;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.legal-details {
+  display: grid;
+  margin: 1.6rem 0 0;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1rem 2rem;
+}
+
+.legal-details div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.legal-details dt {
+  color: var(--muted);
+  font: 500 0.65rem var(--font-mono);
+}
+
+.legal-details dd {
+  margin: 0;
+}
+
+.legal-notice a {
+  color: var(--accent-strong);
+  text-underline-offset: 0.18em;
+}
+
 .legal-notice p,
 .not-found > p:not(.section-index) {
   margin-top: 1.3rem;
@@ -3874,15 +3912,6 @@ button:active,
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
   }
 
   [data-reveal] {
@@ -5785,7 +5814,7 @@ body.intro-complete .hero-scene {
 }
 
 .pigeon-stage.is-dispatched .pigeon > .ph-bird {
-  animation: pigeon-wingbeat 240ms ease-in-out 6 alternate;
+  animation: pigeon-wingbeat 240ms var(--ease-in-out) 6 alternate;
 }
 
 .pigeon-stage.is-dispatched .route-feather-one {

@@ -14,11 +14,11 @@
     </p>
 
     <div class="tea-fact-switch" role="group" aria-label="Grüntee-Sorte auswählen">
-      <button class="is-selected" type="button" data-tea-kind="sencha">Sencha</button>
-      <button type="button" data-tea-kind="jasmine">Jasmin</button>
-      <button type="button" data-tea-kind="matcha">Matcha</button>
-      <button type="button" data-tea-kind="genmaicha">Genmaicha</button>
-      <button type="button" data-tea-kind="gyokuro">Gyokuro</button>
+      <button class="is-selected" type="button" data-tea-kind="sencha" aria-pressed="true">Sencha</button>
+      <button type="button" data-tea-kind="jasmine" aria-pressed="false">Jasmin</button>
+      <button type="button" data-tea-kind="matcha" aria-pressed="false">Matcha</button>
+      <button type="button" data-tea-kind="genmaicha" aria-pressed="false">Genmaicha</button>
+      <button type="button" data-tea-kind="gyokuro" aria-pressed="false">Gyokuro</button>
     </div>
     <p class="tea-source">Zubereitung: für viele Grüntees rund 80 °C</p>
   </div>
@@ -45,6 +45,8 @@
 </article>
 
 <script>
+  import { animateContentSwap, setPressedState } from "../scripts/motion";
+
   const teaProfiles = {
     sencha: {
       value: "Sencha",
@@ -80,6 +82,7 @@
 
   document.querySelectorAll<HTMLElement>(".tea-ritual").forEach((ritual) => {
     const pot = ritual.querySelector<HTMLButtonElement>("[data-teapot]");
+    const heading = ritual.querySelector<HTMLElement>(".tea-profile-heading");
     const value = ritual.querySelector<HTMLElement>("[data-tea-value]");
     const badge = ritual.querySelector<HTMLElement>("[data-tea-badge]");
     const taste = ritual.querySelector<HTMLElement>("[data-tea-taste]");
@@ -87,18 +90,28 @@
     const buttons = Array.from(ritual.querySelectorAll<HTMLButtonElement>("[data-tea-kind]"));
     const keys = Object.keys(teaProfiles) as Array<keyof typeof teaProfiles>;
     let activeIndex = 0;
+    let brewingRun = 0;
 
     const showTea = (key: keyof typeof teaProfiles) => {
       const profile = teaProfiles[key];
       activeIndex = keys.indexOf(key);
       ritual.dataset.teaProfile = key;
-      buttons.forEach((item) => item.classList.toggle("is-selected", item.dataset.teaKind === key));
-      if (value) value.textContent = profile.value;
-      if (badge) badge.textContent = profile.badge;
-      if (taste) taste.textContent = profile.taste;
-      if (copy) copy.textContent = profile.copy;
+      const selectedButton = buttons.find((item) => item.dataset.teaKind === key);
+      if (selectedButton) setPressedState(buttons, selectedButton);
+      animateContentSwap([heading, taste, copy], () => {
+        if (value) value.textContent = profile.value;
+        if (badge) badge.textContent = profile.badge;
+        if (taste) taste.textContent = profile.taste;
+        if (copy) copy.textContent = profile.copy;
+      });
       pot?.classList.remove("is-brewing");
-      requestAnimationFrame(() => pot?.classList.add("is-brewing"));
+      const currentRun = ++brewingRun;
+      requestAnimationFrame(() => {
+        pot?.classList.add("is-brewing");
+        window.setTimeout(() => {
+          if (currentRun === brewingRun) pot?.classList.remove("is-brewing");
+        }, 1400);
+      });
     };
 
     buttons.forEach((button) => {

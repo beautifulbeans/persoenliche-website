@@ -1,36 +1,119 @@
 ---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
 import PhotoPlaceholder from "./PhotoPlaceholder.astro";
+import { photographyCopy, photographyPlaceholders } from "../data/photography";
+
+const photoModules = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/fotografie/*.{jpg,jpeg,png,webp,avif}",
+  { eager: true },
+);
+
+const humanizeFileName = (fileName: string) =>
+  fileName
+    .replace(/\.[^.]+$/, "")
+    .replace(/^\d+[\s_-]*/, "")
+    .replace(/[\s_-]+/g, " ")
+    .replace(/^./, (character) => character.toUpperCase());
+
+const importedPhotos = Object.entries(photoModules)
+  .sort(([left], [right]) => left.localeCompare(right, "de", { numeric: true }))
+  .map(([path, module]) => {
+    const fileName = path.split("/").pop() ?? "Foto";
+    const copy = photographyCopy[fileName];
+    const title = copy?.title ?? humanizeFileName(fileName);
+
+    return {
+      src: module.default,
+      alt: copy?.alt ?? `${title} – Fotografie von Fabian Deragisch`,
+      title,
+      note: copy?.note ?? "Fotografie von Fabian Deragisch",
+      fileName,
+    };
+  });
+
+const shots = importedPhotos.length
+  ? importedPhotos
+  : photographyPlaceholders.map((placeholder, index) => ({
+      src: null,
+      alt: "",
+      title: placeholder.title,
+      note: placeholder.note,
+      fileName: `DSCF${String(index + 1).padStart(4, "0")}.JPG`,
+    }));
 ---
 
 <article class="play-card camera-card" id="fotografie" data-reveal="up">
-  <div class="camera-viewer" data-camera-viewer data-simulation="provia">
-    <div class="camera-flash" aria-hidden="true" data-camera-flash></div>
-    <div class="camera-screen-top" aria-hidden="true">
-      <span>FUJIFILM X-T30 III</span>
-      <span>ISO 400&nbsp;&nbsp;F2.8&nbsp;&nbsp;1/250</span>
+  <div
+    class="camera-viewer"
+    data-camera-viewer
+    data-simulation="provia"
+    data-frame-names={JSON.stringify(shots.map((shot) => shot.fileName))}
+  >
+    <div class="camera-display">
+      <div class="camera-frames">
+        <div class="camera-screen-top" aria-hidden="true">
+          <span>FUJIFILM X-T30 III</span>
+          <span>ISO 400&nbsp;&nbsp;F2.8&nbsp;&nbsp;1/250</span>
+        </div>
+
+        {shots.map((shot, index) =>
+          shot.src ? (
+            <figure class:list={["camera-shot", "camera-photo", index === 0 && "is-active"]}>
+              <Image
+                src={shot.src}
+                alt={shot.alt}
+                widths={[640, 960, 1440]}
+                sizes="(max-width: 48rem) calc(100vw - 3rem), 58vw"
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+              <figcaption>
+                <span>{shot.title}</span>
+                <small>{shot.note}</small>
+              </figcaption>
+            </figure>
+          ) : (
+            <PhotoPlaceholder
+              label={shot.title}
+              note={shot.note}
+              class={`camera-shot${index === 0 ? " is-active" : ""}`}
+            />
+          ),
+        )}
+
+        <span class="focus-frame" aria-hidden="true"></span>
+        <span class="camera-flash" aria-hidden="true" data-camera-flash></span>
+        <span class="camera-curtain camera-curtain-top" aria-hidden="true" data-camera-curtain-top></span>
+        <span class="camera-curtain camera-curtain-bottom" aria-hidden="true" data-camera-curtain-bottom></span>
+        <span class="camera-sensor-scan" aria-hidden="true" data-camera-scan></span>
+        <span class="camera-capture-readout" aria-hidden="true" data-camera-readout>
+          <i class="ph ph-check"></i> Gespeichert
+        </span>
+      </div>
+
+      <div class="camera-screen-bottom">
+        <span class="camera-playback-mode"><i class="ph ph-images" aria-hidden="true"></i> Wiedergabe</span>
+        <div class="camera-gallery-nav" aria-label="Fotogalerie steuern">
+          <button type="button" data-camera-previous aria-label="Vorheriges Foto">
+            <i class="ph ph-caret-left" aria-hidden="true"></i>
+          </button>
+          <span aria-live="polite" data-camera-counter>1 / {shots.length}</span>
+          <button type="button" data-camera-next aria-label="Nächstes Foto">
+            <i class="ph ph-caret-right" aria-hidden="true"></i>
+          </button>
+        </div>
+        <span class="camera-file-name" data-camera-file-name>{shots[0]?.fileName}</span>
+      </div>
     </div>
 
-    <div class="camera-frames">
-      <PhotoPlaceholder label="Favorite Shot 01" note="Eigenes Foto folgt" class="camera-shot is-active" />
-      <PhotoPlaceholder label="Favorite Shot 02" note="Eigenes Foto folgt" class="camera-shot" />
-      <PhotoPlaceholder label="Favorite Shot 03" note="Eigenes Foto folgt" class="camera-shot" />
-      <span class="focus-frame" aria-hidden="true"></span>
-    </div>
-
-    <div class="camera-screen-bottom">
-      <button type="button" data-camera-previous aria-label="Vorheriges Foto">
-        <i class="ph ph-caret-left" aria-hidden="true"></i>
+    <div class="camera-hardware">
+      <button class="camera-shutter camera-viewer-shutter" type="button" data-camera-shutter>
+        <span class="camera-shutter-disc" aria-hidden="true"><i class="ph ph-aperture"></i></span>
+        <span class="camera-shutter-copy"><small>Virtueller Auslöser</small><strong>Foto aufnehmen</strong></span>
       </button>
-      <span data-camera-counter>1 / 3</span>
-      <button type="button" data-camera-next aria-label="Nächstes Foto">
-        <i class="ph ph-caret-right" aria-hidden="true"></i>
-      </button>
+      <p><i class="ph ph-hand-swipe-left" aria-hidden="true"></i>Fotos im Display wischen oder mit den Pfeilen wechseln</p>
     </div>
-
-    <button class="camera-shutter camera-viewer-shutter" type="button" data-camera-shutter>
-      <i class="ph ph-aperture" aria-hidden="true"></i>
-      Auslösen
-    </button>
+    <p class="sr-only" aria-live="polite" data-camera-capture-status></p>
   </div>
 
   <div class="camera-copy">
@@ -47,17 +130,17 @@ import PhotoPlaceholder from "./PhotoPlaceholder.astro";
     </div>
 
     <div class="camera-fact-switch" role="group" aria-label="Kamerafakt auswählen">
-      <button class="is-selected" type="button" data-camera-fact="model">X-T30 III</button>
-      <button type="button" data-camera-fact="mirrorless">Spiegellos</button>
-      <button type="button" data-camera-fact="simulation">Filmsimulation</button>
+      <button class="is-selected" type="button" data-camera-fact="model" aria-pressed="true">X-T30 III</button>
+      <button type="button" data-camera-fact="mirrorless" aria-pressed="false">Spiegellos</button>
+      <button type="button" data-camera-fact="simulation" aria-pressed="false">Filmsimulation</button>
     </div>
 
     <div class="simulation-controls">
       <span>Look testen</span>
       <div role="group" aria-label="Filmsimulation auswählen">
-        <button class="is-selected" type="button" data-film-simulation="provia">Provia</button>
-        <button type="button" data-film-simulation="classic">Classic Chrome</button>
-        <button type="button" data-film-simulation="acros">Acros</button>
+        <button class="is-selected" type="button" data-film-simulation="provia" aria-pressed="true">Provia</button>
+        <button type="button" data-film-simulation="classic" aria-pressed="false">Classic Chrome</button>
+        <button type="button" data-film-simulation="acros" aria-pressed="false">Acros</button>
       </div>
     </div>
 
@@ -70,6 +153,8 @@ import PhotoPlaceholder from "./PhotoPlaceholder.astro";
 </article>
 
 <script>
+  import { animateContentSwap, prefersReducedMotion, setPressedState } from "../scripts/motion";
+
   const cameraFacts = {
     model: {
       kicker: "Meine Kamera",
@@ -90,9 +175,17 @@ import PhotoPlaceholder from "./PhotoPlaceholder.astro";
 
   document.querySelectorAll<HTMLElement>(".camera-card").forEach((card) => {
     const viewer = card.querySelector<HTMLElement>("[data-camera-viewer]");
-    const flash = card.querySelector<HTMLElement>("[data-camera-flash]");
+    const frameArea = card.querySelector<HTMLElement>(".camera-frames");
     const frames = Array.from(card.querySelectorAll<HTMLElement>(".camera-shot"));
+    const flash = card.querySelector<HTMLElement>("[data-camera-flash]");
+    const curtainTop = card.querySelector<HTMLElement>("[data-camera-curtain-top]");
+    const curtainBottom = card.querySelector<HTMLElement>("[data-camera-curtain-bottom]");
+    const sensorScan = card.querySelector<HTMLElement>("[data-camera-scan]");
+    const captureReadout = card.querySelector<HTMLElement>("[data-camera-readout]");
+    const captureStatus = card.querySelector<HTMLElement>("[data-camera-capture-status]");
+    const focusFrame = card.querySelector<HTMLElement>(".focus-frame");
     const counter = card.querySelector<HTMLElement>("[data-camera-counter]");
+    const fileName = card.querySelector<HTMLElement>("[data-camera-file-name]");
     const previous = card.querySelector<HTMLButtonElement>("[data-camera-previous]");
     const next = card.querySelector<HTMLButtonElement>("[data-camera-next]");
     const shutter = card.querySelector<HTMLButtonElement>("[data-camera-shutter]");
@@ -101,41 +194,182 @@ import PhotoPlaceholder from "./PhotoPlaceholder.astro";
     const title = card.querySelector<HTMLElement>("[data-camera-fact-title]");
     const copy = card.querySelector<HTMLElement>("[data-camera-fact-copy]");
     const simulationButtons = card.querySelectorAll<HTMLButtonElement>("[data-film-simulation]");
+    const frameNames = JSON.parse(viewer?.dataset.frameNames ?? "[]") as string[];
     let frameIndex = 0;
+    let captureRun = 0;
 
-    const showFrame = (index: number) => {
+    const showFrame = (index: number, direction: 1 | -1 = 1) => {
       if (!frames.length) return;
-      frameIndex = (index + frames.length) % frames.length;
-      frames.forEach((frame, itemIndex) => frame.classList.toggle("is-active", itemIndex === frameIndex));
+      const previousFrame = frames[frameIndex];
+      const nextIndex = (index + frames.length) % frames.length;
+      const nextFrame = frames[nextIndex];
+      if (previousFrame === nextFrame) return;
+
+      frames.forEach((frame) => {
+        frame.getAnimations().forEach((animation) => animation.cancel());
+        frame.classList.toggle("is-active", frame === previousFrame || frame === nextFrame);
+      });
+      frameIndex = nextIndex;
+
+      if (prefersReducedMotion()) {
+        previousFrame?.classList.remove("is-active");
+      } else {
+        const outgoing = previousFrame?.animate(
+          [
+            { opacity: 1, transform: "translate3d(0, 0, 0)" },
+            { opacity: 0, transform: `translate3d(${direction * -7}%, 0, 0)` },
+          ],
+          { duration: 190, easing: "cubic-bezier(0.23, 1, 0.32, 1)", fill: "forwards" },
+        );
+        nextFrame?.animate(
+          [
+            { opacity: 0, transform: `translate3d(${direction * 9}%, 0, 0)` },
+            { opacity: 1, transform: "translate3d(0, 0, 0)" },
+          ],
+          { duration: 230, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        );
+        void outgoing?.finished
+          .catch(() => undefined)
+          .then(() => {
+            if (frames[frameIndex] !== previousFrame) previousFrame?.classList.remove("is-active");
+          });
+      }
       if (counter) counter.textContent = `${frameIndex + 1} / ${frames.length}`;
+      if (fileName) fileName.textContent = frameNames[frameIndex] ?? `DSCF${String(frameIndex + 1).padStart(4, "0")}.JPG`;
     };
 
-    previous?.addEventListener("click", () => showFrame(frameIndex - 1));
-    next?.addEventListener("click", () => showFrame(frameIndex + 1));
-    shutter?.addEventListener("click", () => {
-      flash?.classList.remove("is-flashing");
-      requestAnimationFrame(() => flash?.classList.add("is-flashing"));
-      showFrame(frameIndex + 1);
+    previous?.addEventListener("click", () => showFrame(frameIndex - 1, -1));
+    next?.addEventListener("click", () => showFrame(frameIndex + 1, 1));
+
+    let dragPointer: number | null = null;
+    let dragStartX = 0;
+    let dragStartedAt = 0;
+    frameArea?.addEventListener("pointerdown", (event) => {
+      if (dragPointer !== null) return;
+      dragPointer = event.pointerId;
+      dragStartX = event.clientX;
+      dragStartedAt = performance.now();
+      frameArea.setPointerCapture(event.pointerId);
     });
+    frameArea?.addEventListener("pointerup", (event) => {
+      if (event.pointerId !== dragPointer) return;
+      const distance = event.clientX - dragStartX;
+      const elapsed = Math.max(1, performance.now() - dragStartedAt);
+      const velocity = Math.abs(distance) / elapsed;
+      if (Math.abs(distance) > 44 || (Math.abs(distance) > 18 && velocity > 0.35)) {
+        showFrame(frameIndex + (distance < 0 ? 1 : -1), distance < 0 ? 1 : -1);
+      }
+      dragPointer = null;
+    });
+    frameArea?.addEventListener("pointercancel", () => (dragPointer = null));
+
+    const runCapture = () => {
+      const currentRun = ++captureRun;
+      const captureElements = [frameArea, flash, curtainTop, curtainBottom, sensorScan, captureReadout, focusFrame];
+      captureElements.forEach((element) => element?.getAnimations().forEach((animation) => animation.cancel()));
+      if (captureStatus) captureStatus.textContent = "Foto aufgenommen. Das angezeigte Galeriebild bleibt unverändert.";
+
+      if (prefersReducedMotion()) {
+        if (captureReadout) captureReadout.style.opacity = "1";
+        window.setTimeout(() => {
+          if (currentRun === captureRun && captureReadout) captureReadout.style.opacity = "";
+        }, 650);
+        return;
+      }
+
+      frameArea?.animate(
+        [
+          { transform: "scale(1)" },
+          { transform: "scale(1.008)", offset: 0.18 },
+          { transform: "scale(1)" },
+        ],
+        { duration: 620, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+      );
+      focusFrame?.animate(
+        [
+          { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
+          { transform: "translate(-50%, -50%) scale(0.72)", opacity: 1, offset: 0.22 },
+          { transform: "translate(-50%, -50%) scale(0.72)", opacity: 0, offset: 0.42 },
+          { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
+        ],
+        { duration: 620, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+      );
+      flash?.animate(
+        [
+          { opacity: 0 },
+          { opacity: 0.84, offset: 0.08 },
+          { opacity: 0, offset: 0.24 },
+          { opacity: 0 },
+        ],
+        { duration: 560, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+      );
+      curtainTop?.animate(
+        [
+          { transform: "translate3d(0, -102%, 0)" },
+          { transform: "translate3d(0, 0, 0)", offset: 0.31 },
+          { transform: "translate3d(0, 0, 0)", offset: 0.44 },
+          { transform: "translate3d(0, -102%, 0)" },
+        ],
+        { duration: 560, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
+      );
+      curtainBottom?.animate(
+        [
+          { transform: "translate3d(0, 102%, 0)" },
+          { transform: "translate3d(0, 0, 0)", offset: 0.31 },
+          { transform: "translate3d(0, 0, 0)", offset: 0.44 },
+          { transform: "translate3d(0, 102%, 0)" },
+        ],
+        { duration: 560, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
+      );
+      sensorScan?.animate(
+        [
+          { opacity: 0, transform: "translate3d(0, -120%, 0)" },
+          { opacity: 0.86, offset: 0.16 },
+          { opacity: 0, transform: "translate3d(0, 120%, 0)" },
+        ],
+        { duration: 380, delay: 240, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+      );
+      captureReadout?.animate(
+        [
+          { opacity: 0, transform: "translate3d(0, 0.35rem, 0)" },
+          { opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.2 },
+          { opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.72 },
+          { opacity: 0, transform: "translate3d(0, -0.25rem, 0)" },
+        ],
+        { duration: 760, delay: 250, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+      );
+    };
+
+    shutter?.addEventListener("click", runCapture);
 
     factButtons.forEach((button) => {
       button.addEventListener("click", () => {
         const key = button.dataset.cameraFact as keyof typeof cameraFacts;
         const fact = cameraFacts[key];
         if (!fact) return;
-        factButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
-        if (kicker) kicker.textContent = fact.kicker;
-        if (title) title.textContent = fact.title;
-        if (copy) copy.textContent = fact.copy;
+        setPressedState(factButtons, button);
+        animateContentSwap([kicker, title, copy], () => {
+          if (kicker) kicker.textContent = fact.kicker;
+          if (title) title.textContent = fact.title;
+          if (copy) copy.textContent = fact.copy;
+        });
       });
     });
 
     simulationButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        simulationButtons.forEach((item) => item.classList.toggle("is-selected", item === button));
+        setPressedState(simulationButtons, button);
         if (viewer) viewer.dataset.simulation = button.dataset.filmSimulation ?? "provia";
-        flash?.classList.remove("is-flashing");
-        requestAnimationFrame(() => flash?.classList.add("is-flashing"));
+        if (frameArea && !prefersReducedMotion()) {
+          frameArea.getAnimations().forEach((animation) => animation.cancel());
+          frameArea.animate(
+            [
+              { opacity: 0.58, filter: "blur(2px)" },
+              { opacity: 1, filter: "blur(0)" },
+            ],
+            { duration: 220, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+          );
+        }
       });
     });
   });

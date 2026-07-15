@@ -21,8 +21,8 @@
     let alreadySeen = false;
 
     try {
-      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v2") === "true";
-      sessionStorage.setItem("fabian-intro-seen-v2", "true");
+      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v3") === "true";
+      sessionStorage.setItem("fabian-intro-seen-v3", "true");
     } catch {
       alreadySeen = false;
     }
@@ -39,9 +39,9 @@
       intro.classList.add("is-leaving");
       document.body.classList.add("intro-complete");
       document.body.classList.remove("intro-active");
-    }, 1480);
+    }, 1050);
 
-    window.setTimeout(() => intro.remove(), 2300);
+    window.setTimeout(() => intro.remove(), 1720);
   })();
 </script>
 
