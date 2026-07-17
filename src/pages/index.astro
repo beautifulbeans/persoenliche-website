@@ -18,6 +18,10 @@ const portraitPixels = Array.from({ length: 80 }, (_, index) => ({
   index,
   order: (index * 29) % 80,
 }));
+const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
+  index,
+  order: (index * 11) % 24,
+}));
 ---
 
 <BaseLayout>
@@ -97,34 +101,26 @@ const portraitPixels = Array.from({ length: 80 }, (_, index) => ({
         <div class="chapter-transition-panel chapter-transition-professional" aria-hidden="true"></div>
         <div class="chapter-transition-panel chapter-transition-personal" aria-hidden="true"></div>
 
-        <div class="chapter-transition-aperture" aria-hidden="true">
-          <span class="chapter-aperture-ring"></span>
-          <span class="chapter-aperture-blade" data-aperture-angle="0"></span>
-          <span class="chapter-aperture-blade" data-aperture-angle="60"></span>
-          <span class="chapter-aperture-blade" data-aperture-angle="120"></span>
-          <span class="chapter-aperture-blade" data-aperture-angle="180"></span>
-          <span class="chapter-aperture-blade" data-aperture-angle="240"></span>
-          <span class="chapter-aperture-blade" data-aperture-angle="300"></span>
-          <span class="chapter-aperture-core"></span>
+        <div class="chapter-pixel-field" aria-hidden="true">
+          {chapterPixels.map((pixel) => (
+            <i style={`--chapter-index: ${pixel.index}; --chapter-order: ${pixel.order}`}></i>
+          ))}
+        </div>
+
+        <div class="chapter-orbits" aria-hidden="true">
+          <span><i class="ph ph-leaf"></i></span>
+          <span><i class="ph ph-vinyl-record"></i></span>
+          <span><i class="ph ph-camera"></i></span>
         </div>
 
         <div class="chapter-transition-center section-shell">
-          <h2 id="chapter-transition-title"><span>Jetzt wird's</span><span>persönlicher.</span></h2>
-          <div class="chapter-transition-cue" aria-hidden="true">
-            <span>Beruf &amp; Studium</span>
-            <i class="ph ph-arrow-right"></i>
-            <span>Persönlich</span>
-          </div>
+          <h2 id="chapter-transition-title"><span>Abseits der</span><span>Arbeit.</span></h2>
+          <p class="chapter-transition-copy">Interessen, Empfehlungen und kleine Dinge zum Ausprobieren.</p>
         </div>
       </div>
     </section>
 
-    <section class="personal-section" id="persoenlich" aria-labelledby="personal-title">
-      <div class="section-shell personal-heading" data-reveal="up">
-        <h2 id="personal-title">Abseits der Arbeit.</h2>
-        <p>Interessen, Empfehlungen und kleine Dinge zum Ausprobieren.</p>
-      </div>
-
+    <section class="personal-section" id="persoenlich" aria-label="Abseits der Arbeit">
       <div class="interest-marquee" aria-label="Persönliche Interessen">
         <div class="interest-track">
           <div class="interest-row">
@@ -398,26 +394,24 @@ const portraitPixels = Array.from({ length: 80 }, (_, index) => ({
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const chapterStage = chapterTransition.querySelector<HTMLElement>(".chapter-transition-stage");
     const transitionHeader = document.querySelector<HTMLElement>("[data-site-header]");
-    let chapterFrame = 0;
 
-    const updateChapterTransition = () => {
-      chapterFrame = 0;
-      const bounds = chapterTransition.getBoundingClientRect();
-      const opened = bounds.top <= window.innerHeight * 0.48;
+    const setChapterState = (opened: boolean) => {
       chapterStage?.classList.toggle("is-personal-open", opened);
-      chapterStage?.classList.toggle("is-motion-active", !reduceMotion.matches);
       transitionHeader?.setAttribute("data-section-mode", opened ? "personal" : "professional");
     };
 
-    const requestChapterUpdate = () => {
-      if (chapterFrame) return;
-      chapterFrame = window.requestAnimationFrame(updateChapterTransition);
-    };
-
-    updateChapterTransition();
-    window.addEventListener("scroll", requestChapterUpdate, { passive: true });
-    window.addEventListener("resize", requestChapterUpdate, { passive: true });
-    reduceMotion.addEventListener("change", requestChapterUpdate);
+    if (reduceMotion.matches || !("IntersectionObserver" in window)) {
+      setChapterState(true);
+    } else {
+      const chapterObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setChapterState(true);
+          else if (entry.boundingClientRect.top > 0) setChapterState(false);
+        },
+        { rootMargin: "-18% 0px -22%", threshold: 0.18 },
+      );
+      chapterObserver.observe(chapterTransition);
+    }
   }
 
   const storyCards = document.querySelectorAll<HTMLElement>("[data-story-card]");

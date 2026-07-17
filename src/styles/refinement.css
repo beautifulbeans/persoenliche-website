@@ -4546,6 +4546,494 @@ body.intro-complete .hero-name .hero-name-line:last-child {
   overflow: hidden;
 }
 
+/*
+ * Feinschliff 2026-07-17
+ * Normale Typografie, lokale Anchor-Rückmeldung und ein eigenständiger,
+ * nicht scroll-gescrubbter Kapitelwechsel für den persönlichen Bereich.
+ */
+body {
+  background:
+    radial-gradient(circle at 9% 9%, rgb(101 112 79 / 0.09), transparent 24rem),
+    radial-gradient(circle at 88% 34%, rgb(136 114 79 / 0.07), transparent 27rem),
+    var(--professional-page);
+  font-style: normal;
+  font-synthesis: none;
+}
+
+button,
+input,
+textarea,
+select,
+p,
+li,
+a,
+span,
+small,
+strong {
+  font-style: normal;
+}
+
+.hero,
+.journey,
+.thesis-section {
+  background-repeat: no-repeat;
+}
+
+.hero {
+  background-image: radial-gradient(ellipse at 84% 20%, rgb(101 112 79 / 0.08), transparent 42%);
+}
+
+.journey {
+  background-image:
+    radial-gradient(ellipse at 4% 30%, rgb(101 112 79 / 0.06), transparent 30%),
+    radial-gradient(ellipse at 92% 74%, rgb(136 114 79 / 0.055), transparent 27%);
+}
+
+.thesis-section {
+  background-image: radial-gradient(ellipse at 74% 24%, rgb(136 114 79 / 0.075), transparent 34%);
+}
+
+/* Die Rückmeldung bleibt am angeklickten Element und überlagert nie den Inhalt. */
+.anchor-flight {
+  display: none !important;
+}
+
+a[data-anchor-travelling="true"] {
+  border-color: color-mix(in srgb, var(--accent) 72%, var(--line));
+}
+
+/* Eigene Phosphor-Pfeile statt eines plattformabhängigen Emoji-Glyphen. */
+.journey-switcher a {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.journey-switcher a::after {
+  display: none;
+  content: none;
+}
+
+.journey-switcher > a > i:first-child {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.journey-switcher .journey-switcher-arrow {
+  display: grid;
+  grid-column: 3;
+  grid-row: 1 / 3;
+  align-self: center;
+  place-items: center;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+/* Ein heller Pixelvorhang verbindet Studium und Privates, ohne am Scrollrad zu hängen. */
+.chapter-transition {
+  position: relative;
+  min-height: 100svh;
+  overflow: clip;
+  background: var(--study-canvas);
+  isolation: isolate;
+}
+
+.chapter-transition-stage {
+  position: relative;
+  top: auto;
+  display: grid;
+  width: 100%;
+  height: 100svh;
+  min-height: 42rem;
+  overflow: clip;
+  place-items: center;
+  background: var(--study-canvas);
+  color: var(--personal-ink);
+  isolation: isolate;
+}
+
+.chapter-transition-professional,
+.chapter-transition-personal {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  clip-path: none;
+  transform: none;
+}
+
+.chapter-transition-professional {
+  background:
+    radial-gradient(circle at 18% 22%, rgb(101 112 79 / 0.09), transparent 25rem),
+    var(--study-canvas);
+}
+
+.chapter-transition-personal {
+  background:
+    radial-gradient(circle at 80% 18%, rgb(85 116 125 / 0.12), transparent 23rem),
+    radial-gradient(circle at 14% 82%, rgb(101 112 79 / 0.09), transparent 25rem),
+    var(--personal-page);
+  opacity: 0;
+  transition: opacity 480ms 380ms ease;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-transition-personal {
+  clip-path: none;
+  opacity: 1;
+}
+
+.chapter-pixel-field {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  pointer-events: none;
+}
+
+.chapter-pixel-field i {
+  background: color-mix(in srgb, var(--personal-accent-soft) 78%, var(--study-canvas));
+  opacity: 0;
+  transform: scaleY(0.04);
+  transform-origin: center bottom;
+}
+
+.chapter-pixel-field i:nth-child(3n) {
+  background: color-mix(in srgb, var(--chapter-bridge) 72%, var(--personal-page));
+  transform-origin: center top;
+}
+
+.chapter-pixel-field i:nth-child(4n) {
+  background: color-mix(in srgb, var(--brand-soft) 58%, var(--personal-page));
+}
+
+.chapter-transition-stage.is-personal-open .chapter-pixel-field i {
+  animation: chapter-pixel-sweep 920ms calc(var(--chapter-order) * 18ms) var(--ease-cut) both;
+}
+
+.chapter-orbits {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 420ms 720ms ease;
+}
+
+.chapter-orbits span {
+  position: absolute;
+  display: grid;
+  width: clamp(3.2rem, 7vw, 5.2rem);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--personal-accent) 42%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--personal-surface) 62%, transparent);
+  color: var(--personal-accent-strong);
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  opacity: 0;
+}
+
+.chapter-orbits span:nth-child(1) {
+  top: 18%;
+  left: 10%;
+  transform: translate3d(-1rem, 1rem, 0) rotate(-14deg);
+}
+
+.chapter-orbits span:nth-child(2) {
+  top: 22%;
+  right: 9%;
+  transform: translate3d(1rem, -1rem, 0) rotate(12deg);
+}
+
+.chapter-orbits span:nth-child(3) {
+  right: 17%;
+  bottom: 14%;
+  transform: translate3d(0.5rem, 1rem, 0) rotate(8deg);
+}
+
+.chapter-transition-stage.is-personal-open .chapter-orbits {
+  opacity: 1;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-orbits span {
+  opacity: 0.62;
+  transform: translate3d(0, 0, 0) rotate(0deg);
+  transition:
+    opacity 420ms calc(690ms + var(--chapter-icon-delay, 0ms)) ease,
+    transform 760ms calc(620ms + var(--chapter-icon-delay, 0ms)) var(--ease-spring-soft);
+}
+
+.chapter-orbits span:nth-child(2) { --chapter-icon-delay: 70ms; }
+.chapter-orbits span:nth-child(3) { --chapter-icon-delay: 130ms; }
+
+.chapter-transition-center {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  width: min(calc(100% - 2rem), 62rem);
+  justify-items: center;
+  color: var(--personal-ink);
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  transform: translate3d(0, 2rem, 0) scale(0.965);
+  transition:
+    opacity 480ms 500ms ease,
+    transform 880ms 420ms var(--ease-spring-soft);
+}
+
+.chapter-transition-center h2 {
+  max-width: 10ch;
+  margin: 0.4rem auto 0;
+  font-size: clamp(3.25rem, 8vw, 7rem);
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+}
+
+.chapter-transition-center h2 span {
+  display: block;
+  transform: none;
+  transition: none;
+}
+
+.chapter-transition-center > .chapter-transition-copy {
+  max-width: 34rem;
+  margin-top: 1.4rem;
+  color: var(--personal-muted);
+  font: 500 var(--type-lead) / 1.45 var(--font-sans);
+  letter-spacing: 0;
+  opacity: 1;
+  text-transform: none;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-transition-center {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.chapter-transition-aperture,
+.chapter-transition-cue {
+  display: none;
+}
+
+@keyframes chapter-pixel-sweep {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.04);
+  }
+  22% {
+    opacity: 0.92;
+  }
+  62% {
+    opacity: 0.92;
+    transform: scaleY(1.03);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(1);
+  }
+}
+
+/* Zwei identische Reihen bilden wieder eine lückenlose, mobile-sichere Schleife. */
+.personal-section {
+  padding-top: clamp(2rem, 5vw, 4rem);
+  background:
+    radial-gradient(circle at 82% 8%, rgb(85 116 125 / 0.09), transparent 25rem),
+    radial-gradient(circle at 8% 52%, rgb(101 112 79 / 0.065), transparent 30rem),
+    var(--personal-page);
+}
+
+.interest-marquee {
+  width: 100%;
+  max-width: none;
+  margin-top: 0;
+  overflow: hidden;
+  contain: layout paint;
+}
+
+.interest-track {
+  display: flex;
+  width: max-content;
+  max-width: none;
+  overflow: visible;
+  animation: personal-interest-marquee 30s linear infinite;
+  will-change: transform;
+}
+
+.interest-row {
+  display: flex;
+  width: max-content;
+  flex: 0 0 auto;
+  padding-right: 1.5rem;
+  align-items: center;
+}
+
+@keyframes personal-interest-marquee {
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Die Tülle zeigt nach rechts, daher kippt die Kanne beim Gießen im Uhrzeigersinn. */
+.teapot-vessel {
+  transform-origin: 65% 67%;
+}
+
+.teapot.is-brewing .teapot-vessel {
+  animation-name: tea-vessel-pour-corrected;
+}
+
+@keyframes tea-vessel-pour-corrected {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  18% { transform: translate3d(0.12rem, -0.2rem, 0) rotate(2deg); }
+  38%, 66% { transform: translate3d(0.62rem, -0.52rem, 0) rotate(12deg); }
+  82% { transform: translate3d(0.1rem, 0.06rem, 0) rotate(-1deg); }
+}
+
+/* Vinyl beginnt mit dem Warum und bleibt danach als kompaktes interaktives Objekt lesbar. */
+.vinyl-intro {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+  padding-bottom: 1.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--warm) 30%, var(--line));
+}
+
+.vinyl-intro-icon {
+  display: grid;
+  width: 2.8rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--warm-strong);
+  color: var(--personal-on-accent);
+  font-size: 1.25rem;
+}
+
+.vinyl-intro h3 {
+  max-width: none;
+  margin: 0;
+  font-size: clamp(1.65rem, 3.2vw, 2.35rem);
+}
+
+.vinyl-intro p {
+  max-width: 45rem;
+  margin-top: 0.65rem;
+  color: color-mix(in srgb, var(--warm-strong) 72%, var(--muted));
+  font-size: var(--type-small);
+  line-height: 1.5;
+}
+
+.vinyl-intro p + p {
+  margin-top: 0.2rem;
+}
+
+.vinyl-console {
+  margin-top: 1.5rem;
+}
+
+/* Die Pfote kommt aus dem rechten Rand und erreicht den dort sitzenden Tonarm. */
+.vinyl-cat-paw {
+  right: -0.65rem;
+  bottom: 0.1rem;
+  transform: translate3d(118%, 0.35rem, 0) rotate(8deg);
+}
+
+.turntable.is-rescuing .vinyl-cat-paw {
+  animation: vinyl-cat-reach-corrected 2.05s cubic-bezier(0.77, 0, 0.175, 1) both;
+}
+
+@keyframes vinyl-cat-reach-corrected {
+  0% { opacity: 0; transform: translate3d(118%, 0.35rem, 0) rotate(8deg); }
+  14% { opacity: 1; }
+  40% { opacity: 1; transform: translate3d(56%, -300%, 0) rotate(-10deg); }
+  52% { opacity: 1; transform: translate3d(53%, -310%, 0) rotate(-15deg) scale(0.98); }
+  66% { opacity: 1; transform: translate3d(56%, -300%, 0) rotate(-10deg); }
+  100% { opacity: 0; transform: translate3d(122%, 0.25rem, 0) rotate(5deg); }
+}
+
+@media (max-width: 48rem) {
+  .journey-switcher .journey-switcher-arrow {
+    font-size: 0.95rem;
+  }
+
+  .chapter-transition-stage {
+    min-height: 38rem;
+  }
+
+  .chapter-pixel-field {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+  }
+
+  .chapter-orbits span:nth-child(1) {
+    top: 16%;
+    left: 6%;
+  }
+
+  .chapter-orbits span:nth-child(2) {
+    top: 19%;
+    right: 5%;
+  }
+
+  .chapter-orbits span:nth-child(3) {
+    right: 8%;
+    bottom: 12%;
+  }
+
+  .chapter-transition-center h2 {
+    font-size: clamp(3.4rem, 17vw, 5.4rem);
+  }
+
+  .chapter-transition-copy {
+    max-width: 25rem;
+    padding-inline: 0.5rem;
+  }
+
+  .interest-track {
+    animation-duration: 24s;
+  }
+
+  .vinyl-intro {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  .vinyl-intro-icon {
+    width: 2.45rem;
+  }
+
+  .vinyl-cat-paw {
+    right: -0.5rem;
+    width: 6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter-transition-personal,
+  .chapter-transition-center,
+  .chapter-orbits,
+  .chapter-orbits span {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .chapter-pixel-field {
+    display: none;
+  }
+
+  .interest-marquee {
+    overflow-x: auto;
+  }
+
+  .interest-track {
+    animation: none;
+  }
+
+  .interest-row:nth-child(2) {
+    display: none;
+  }
+}
+
 @media (max-width: 72rem) {
   .wordmark-name {
     display: none;

@@ -1,28 +1,37 @@
-<div class="anchor-flight" data-anchor-flight aria-hidden="true">
-  <span class="anchor-flight-track"></span>
-  <span class="anchor-flight-marker"><i class="ph ph-arrow-down"></i></span>
-</div>
-
 <script>
   import { prefersReducedMotion } from "../scripts/motion";
 
-  const flight = document.querySelector<HTMLElement>("[data-anchor-flight]");
-  const marker = flight?.querySelector<HTMLElement>(".anchor-flight-marker");
   let scrollFrame = 0;
-  let markerAnimation: Animation | undefined;
+  let activeLink: HTMLAnchorElement | undefined;
 
-  const easeOutQuint = (value: number) => 1 - Math.pow(1 - value, 5);
+  const easeInOutCubic = (value: number) =>
+    value < 0.5 ? 4 * value * value * value : 1 - Math.pow(-2 * value + 2, 3) / 2;
 
   const stopJourney = () => {
     if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
     scrollFrame = 0;
-    markerAnimation?.cancel();
-    markerAnimation = undefined;
-    flight?.classList.remove("is-active");
-    document.body.classList.remove("is-anchor-travelling");
+    activeLink?.removeAttribute("data-anchor-travelling");
+    activeLink = undefined;
   };
 
-  const travelTo = (link: HTMLAnchorElement, target: HTMLElement) => {
+  const finishJourney = (
+    link: HTMLAnchorElement,
+    target: HTMLElement,
+    keyboardActivation: boolean,
+  ) => {
+    history.pushState(null, "", link.hash);
+    if (keyboardActivation) {
+      target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: true });
+    }
+    stopJourney();
+  };
+
+  const travelTo = (
+    link: HTMLAnchorElement,
+    target: HTMLElement,
+    keyboardActivation: boolean,
+  ) => {
     const header = document.querySelector<HTMLElement>("[data-site-header]");
     const headerOffset = (header?.offsetHeight ?? 64) + 24;
     const startY = window.scrollY;
@@ -31,54 +40,50 @@
       target.getBoundingClientRect().top + window.scrollY - headerOffset,
     );
     const distance = destinationY - startY;
-    const direction = distance >= 0 ? "down" : "up";
 
     if (prefersReducedMotion() || Math.abs(distance) < 8) {
       window.scrollTo({ top: destinationY });
-      history.pushState(null, "", link.hash);
-      target.focus?.({ preventScroll: true });
+      finishJourney(link, target, keyboardActivation);
       return;
     }
 
     stopJourney();
-    document.body.classList.add("is-anchor-travelling");
-    flight?.classList.add("is-active");
-    flight?.setAttribute("data-direction", direction);
+    activeLink = link;
+    link.setAttribute("data-anchor-travelling", "true");
 
-    const duration = Math.min(1150, Math.max(680, 600 + Math.abs(distance) * 0.12));
-    markerAnimation = marker?.animate(
-      direction === "down"
-        ? [{ transform: "translateY(0)" }, { transform: "translateY(var(--anchor-track))" }]
-        : [{ transform: "translateY(var(--anchor-track))" }, { transform: "translateY(0)" }],
+    const icon = link.querySelector<HTMLElement>(
+      ".journey-switcher-arrow, .ph-arrow-down-right, .ph-arrow-down",
+    );
+    icon?.animate(
+      distance >= 0
+        ? [
+            { transform: "translate3d(0, 0, 0)" },
+            { transform: "translate3d(0.22rem, 0.3rem, 0)", offset: 0.48 },
+            { transform: "translate3d(0, 0, 0)" },
+          ]
+        : [
+            { transform: "translate3d(0, 0, 0)" },
+            { transform: "translate3d(-0.18rem, -0.28rem, 0)", offset: 0.48 },
+            { transform: "translate3d(0, 0, 0)" },
+          ],
       {
-        duration,
-        easing: "cubic-bezier(0.16, 1, 0.3, 1)",
-        fill: "both",
+        duration: 420,
+        easing: "cubic-bezier(0.23, 1, 0.32, 1)",
       },
     );
 
+    const duration = Math.min(900, Math.max(500, 420 + Math.abs(distance) * 0.09));
     const startedAt = performance.now();
     const step = (time: number) => {
       const progress = Math.min(1, (time - startedAt) / duration);
-      window.scrollTo({ top: startY + distance * easeOutQuint(progress) });
+      window.scrollTo({ top: startY + distance * easeInOutCubic(progress) });
 
       if (progress < 1) {
         scrollFrame = window.requestAnimationFrame(step);
         return;
       }
 
-      history.pushState(null, "", link.hash);
-      target.setAttribute("tabindex", "-1");
-      target.focus({ preventScroll: true });
-      target.animate(
-        [
-          { filter: "brightness(1)" },
-          { filter: "brightness(1.035)", offset: 0.35 },
-          { filter: "brightness(1)" },
-        ],
-        { duration: 520, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
-      );
-      window.setTimeout(stopJourney, 180);
+      finishJourney(link, target, keyboardActivation);
     };
 
     scrollFrame = window.requestAnimationFrame(step);
@@ -90,7 +95,7 @@
       const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
       if (!target) return;
       event.preventDefault();
-      travelTo(link, target);
+      travelTo(link, target, event.detail === 0);
     });
   });
 

@@ -15,7 +15,7 @@ const albums = [
     artist: "Pink Floyd",
     year: "1973",
     monogram: "DS",
-    tracks: ["Time", "The Great Gig in the Sky", "Us and Them"],
+    tracks: ["Time", "The Great Gig in the Sky", "Any Colour You Like"],
   },
   {
     key: "dire-straits",
@@ -24,7 +24,7 @@ const albums = [
     artist: "Dire Straits",
     year: "1978",
     monogram: "DR",
-    tracks: ["Down to the Waterline", "Sultans of Swing", "Wild West End"],
+    tracks: ["Sultans of Swing", "Six Blade Knife", "Down to the Waterline"],
   },
   {
     key: "frank-ocean",
@@ -33,7 +33,7 @@ const albums = [
     artist: "Frank Ocean",
     year: "2016",
     monogram: "BL",
-    tracks: ["Ivy", "Self Control", "Nights"],
+    tracks: ["Nights", "White Ferrari", "Seigfried"],
   },
   {
     key: "tyler",
@@ -42,7 +42,7 @@ const albums = [
     artist: "Tyler, the Creator",
     year: "2019",
     monogram: "IG",
-    tracks: ["EARFQUAKE", "I THINK", "GONE, GONE / THANK YOU"],
+    tracks: ["IGOR'S THEME", "PUPPET", "ARE WE STILL FRIENDS?"],
   },
   {
     key: "mac-miller",
@@ -51,7 +51,7 @@ const albums = [
     artist: "Mac Miller",
     year: "2018",
     monogram: "SW",
-    tracks: ["Come Back to Earth", "Self Care", "2009"],
+    tracks: ["What's the Use?", "Wings", "Dunno"],
   },
 ].map((album) => ({
   ...album,
@@ -60,6 +60,15 @@ const albums = [
 ---
 
 <article class="play-card sound-card" id="vinyl" data-reveal="left" data-sound-card data-album-theme={albums[0].key}>
+  <header class="vinyl-intro">
+    <span class="vinyl-intro-icon" aria-hidden="true"><i class="ph ph-vinyl-record"></i></span>
+    <div>
+      <h3>Musik bewusst hören.</h3>
+      <p>Schallplatten bremsen das Hören angenehm aus. Durch das Seitenwechseln höre ich Alben bewusster und stärker als Ganzes.</p>
+      <p>Gerade bei Konzeptalben und sorgfältig aufgebauten Platten passt das für mich. Spotify schätze ich trotzdem.</p>
+    </div>
+  </header>
+
   <div class="vinyl-console">
     <div class="turntable" data-turntable>
       <button class="vinyl-button" type="button" aria-pressed="true" data-vinyl-button>
