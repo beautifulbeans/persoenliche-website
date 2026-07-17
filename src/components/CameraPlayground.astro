@@ -25,7 +25,7 @@ const importedPhotos = Object.entries(photoModules)
 
     return {
       src: module.default,
-      alt: copy?.alt ?? `${title} – Fotografie von Fabian Deragisch`,
+      alt: copy?.alt ?? `${title}: Fotografie von Fabian Deragisch`,
       title,
       note: copy?.note ?? "Fotografie von Fabian Deragisch",
       fileName,
@@ -106,6 +106,15 @@ const shots = importedPhotos.length
       </div>
     </div>
 
+    <div class="simulation-controls camera-simulation-dock">
+      <span>Look</span>
+      <div role="group" aria-label="Filmsimulation auswählen">
+        <button class="is-selected" type="button" data-film-simulation="provia" aria-pressed="true">Provia</button>
+        <button type="button" data-film-simulation="classic" aria-pressed="false">Classic Chrome</button>
+        <button type="button" data-film-simulation="acros" aria-pressed="false">Acros</button>
+      </div>
+    </div>
+
     <div class="camera-hardware">
       <button class="camera-shutter camera-viewer-shutter" type="button" data-camera-shutter aria-label="Foto auslösen">
         <span class="camera-shutter-disc" aria-hidden="true"><i class="ph ph-camera"></i></span>
@@ -131,15 +140,6 @@ const shots = importedPhotos.length
       <button class="is-selected" type="button" data-camera-fact="model" aria-pressed="true">X-T30 III</button>
       <button type="button" data-camera-fact="mirrorless" aria-pressed="false">Spiegellos</button>
       <button type="button" data-camera-fact="simulation" aria-pressed="false">Filmsimulation</button>
-    </div>
-
-    <div class="simulation-controls">
-      <span>Look testen</span>
-      <div role="group" aria-label="Filmsimulation auswählen">
-        <button class="is-selected" type="button" data-film-simulation="provia" aria-pressed="true">Provia</button>
-        <button type="button" data-film-simulation="classic" aria-pressed="false">Classic Chrome</button>
-        <button type="button" data-film-simulation="acros" aria-pressed="false">Acros</button>
-      </div>
     </div>
 
     <div class="camera-actions">

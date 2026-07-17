@@ -60,54 +60,65 @@ const albums = [
 ---
 
 <article class="play-card sound-card" id="vinyl" data-reveal="left" data-sound-card data-album-theme={albums[0].key}>
-  <div class="sound-stage">
-    <div class="album-sleeves" aria-live="polite">
-      {albums.map((album, index) => (
-        <figure class:list={["album-sleeve", index === 0 && "is-active"]} data-album-panel={album.key}>
-          {album.cover ? (
-            <Image src={album.cover} alt={`Cover von ${album.title} von ${album.artist}`} widths={[320, 480]} sizes="12rem" loading="lazy" />
-          ) : (
-            <span class="album-sleeve-fallback" aria-label={`${album.title} – Cover kann lokal ergänzt werden`}>
-              <strong>{album.monogram}</strong>
-              <small>{album.title}</small>
-            </span>
-          )}
-        </figure>
-      ))}
-    </div>
-
+  <div class="vinyl-console">
     <div class="turntable" data-turntable>
       <button class="vinyl-button" type="button" aria-pressed="true" data-vinyl-button>
-        <span class="vinyl-disc" aria-hidden="true"><span></span></span>
+        <span class="vinyl-disc" aria-hidden="true">
+          <span class="vinyl-disc-label">
+            <strong data-vinyl-monogram>{albums[0].monogram}</strong>
+            <i></i>
+          </span>
+        </span>
         <span class="sr-only">Plattenspieler starten oder stoppen</span>
       </button>
       <span class="turntable-arm" aria-hidden="true"><span></span></span>
-      <span class="vinyl-cat-paw" aria-hidden="true"><span></span></span>
+      <svg class="vinyl-cat-paw" viewBox="0 0 180 72" aria-hidden="true">
+        <path
+          class="vinyl-cat-silhouette"
+          d="M181 16C151 13 120 15 91 20C84 10 73 5 61 5C49 5 41 10 37 19C27 17 19 21 16 30C13 39 18 49 28 54C34 65 47 70 61 67C75 64 84 57 88 48C117 52 150 56 181 54Z"
+        />
+        <ellipse class="vinyl-cat-pad" cx="52" cy="49" rx="15" ry="11" />
+        <circle class="vinyl-cat-toe" cx="29" cy="34" r="5" />
+        <circle class="vinyl-cat-toe" cx="41" cy="24" r="5.5" />
+        <circle class="vinyl-cat-toe" cx="56" cy="21" r="5.5" />
+        <circle class="vinyl-cat-toe" cx="70" cy="27" r="5" />
+      </svg>
+    </div>
+
+    <div class="album-copy-stack" aria-live="polite">
+      {albums.map((album, index) => (
+        <section class:list={["album-copy-panel", index === 0 && "is-active"]} data-album-detail={album.key} hidden={index !== 0}>
+          <p class="album-artist">{album.artist}, {album.year}</p>
+          <h3>{album.title}</h3>
+          <div class="favorite-tracks">
+            <span>Meine Favoriten</span>
+            <ol>
+              {album.tracks.map((track, trackIndex) => (
+                <li><span>{String(trackIndex + 1).padStart(2, "0")}</span><strong>{track}</strong></li>
+              ))}
+            </ol>
+          </div>
+        </section>
+      ))}
     </div>
   </div>
 
-  <div class="album-copy-stack">
+  <div class="album-library" role="group" aria-label="Album auswählen">
     {albums.map((album, index) => (
-      <section class:list={["album-copy-panel", index === 0 && "is-active"]} data-album-panel={album.key} hidden={index !== 0}>
-        <h3>{album.title}</h3>
-        <p class="album-artist">{album.artist}, {album.year}</p>
-        <div class="favorite-tracks">
-          <span>{album.tracks.length} Favoriten</span>
-          <ol>
-            {album.tracks.map((track, trackIndex) => (
-              <li><span>{String(trackIndex + 1).padStart(2, "0")}</span><strong>{track}</strong></li>
-            ))}
-          </ol>
-        </div>
-      </section>
-    ))}
-  </div>
-
-  <div class="album-switch" role="group" aria-label="Album auswählen">
-    {albums.map((album, index) => (
-      <button class:list={[index === 0 && "is-selected"]} type="button" data-album={album.key} aria-pressed={index === 0}>
-        <span>{album.title}</span>
-        <small>{album.artist}</small>
+      <button class:list={["album-choice", index === 0 && "is-selected"]} type="button" data-album={album.key} data-album-monogram={album.monogram} aria-pressed={index === 0}>
+        <span class="album-choice-cover">
+          {album.cover ? (
+            <Image src={album.cover} alt={`Cover von ${album.title} von ${album.artist}`} widths={[180, 320]} sizes="(max-width: 40rem) 7.5rem, 8.5rem" loading="lazy" />
+          ) : (
+            <span class="album-choice-fallback" aria-label={`${album.title} - Cover kann lokal ergänzt werden`}>
+              <strong>{album.monogram}</strong>
+            </span>
+          )}
+        </span>
+        <span class="album-choice-copy">
+          <strong>{album.title}</strong>
+          <small>{album.artist}</small>
+        </span>
       </button>
     ))}
   </div>
@@ -119,11 +130,13 @@ const albums = [
   document.querySelectorAll<HTMLElement>("[data-sound-card]").forEach((soundCard) => {
     const vinylButton = soundCard.querySelector<HTMLButtonElement>("[data-vinyl-button]");
     const turntable = soundCard.querySelector<HTMLElement>("[data-turntable]");
-    const albumButtons = soundCard.querySelectorAll<HTMLButtonElement>("[data-album]");
-    const panels = soundCard.querySelectorAll<HTMLElement>("[data-album-panel]");
+    const vinylMonogram = soundCard.querySelector<HTMLElement>("[data-vinyl-monogram]");
+    const albumButtons = Array.from(soundCard.querySelectorAll<HTMLButtonElement>("[data-album]"));
+    const panels = Array.from(soundCard.querySelectorAll<HTMLElement>("[data-album-detail]"));
     let rescueTimer = 0;
     let rescueRestartTimer = 0;
     let rescueFinishTimer = 0;
+    let albumRun = 0;
 
     const setPlaying = (playing: boolean) => {
       vinylButton?.setAttribute("aria-pressed", String(playing));
@@ -141,11 +154,11 @@ const albums = [
       rescueTimer = window.setTimeout(() => {
         if (vinylButton?.getAttribute("aria-pressed") === "true") return;
         turntable?.classList.add("is-rescuing");
-        rescueRestartTimer = window.setTimeout(() => setPlaying(true), prefersReducedMotion() ? 0 : 1280);
+        rescueRestartTimer = window.setTimeout(() => setPlaying(true), prefersReducedMotion() ? 0 : 980);
         rescueFinishTimer = window.setTimeout(() => {
           turntable?.classList.remove("is-rescuing");
-        }, prefersReducedMotion() ? 100 : 2700);
-      }, 10000);
+        }, prefersReducedMotion() ? 100 : 2050);
+      }, 5000);
     };
 
     vinylButton?.addEventListener("click", () => {
@@ -159,23 +172,26 @@ const albums = [
       button.addEventListener("click", () => {
         const key = button.dataset.album;
         if (!key) return;
+        const currentRun = ++albumRun;
         setPressedState(albumButtons, button);
         soundCard.dataset.albumTheme = key;
+        if (vinylMonogram) vinylMonogram.textContent = button.dataset.albumMonogram ?? "FD";
 
         panels.forEach((panel) => {
-          const active = panel.dataset.albumPanel === key;
+          const active = panel.dataset.albumDetail === key;
           panel.classList.toggle("is-active", active);
           panel.toggleAttribute("hidden", !active);
           if (active && !prefersReducedMotion()) {
             panel.animate(
               [
-                { opacity: 0, transform: "translate3d(0, 0.35rem, 0)", filter: "blur(2px)" },
-                { opacity: 1, transform: "translate3d(0, 0, 0)", filter: "blur(0)" },
+                { opacity: 0, transform: "translate3d(0, 1.25rem, 0) scale(0.985)", clipPath: "inset(100% 0 0 0)" },
+                { opacity: 1, transform: "translate3d(0, 0, 0) scale(1)", clipPath: "inset(0 0 0 0)" },
               ],
-              { duration: 260, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+              { duration: 440, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
             );
           }
         });
+        if (currentRun !== albumRun) return;
         clearRescue();
         setPlaying(true);
       });

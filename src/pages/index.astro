@@ -141,12 +141,18 @@ import { profile } from "../data/profile";
           </div>
           <p class="training-personal">Nicht jeder Tag startet motiviert. Regelmäßigkeit heißt für mich oft einfach: hingehen und anfangen.</p>
           <button class="training-set" type="button" data-training-move data-training-stage="0" aria-label="Nächsten Trainingssatz starten">
-            <span class="training-rack" aria-hidden="true">
-              <span class="training-bar"></span>
-              <span class="training-plate training-plate-one"></span>
-              <span class="training-plate training-plate-two"></span>
-              <span class="training-plate training-plate-three"></span>
-              <span class="training-plate training-plate-four"></span>
+            <span class="training-lift-zone" aria-hidden="true">
+              <span class="training-rack">
+                <span class="training-bar"></span>
+                <span class="training-plate training-plate-one"></span>
+                <span class="training-plate training-plate-two"></span>
+                <span class="training-plate training-plate-three"></span>
+                <span class="training-plate training-plate-four"></span>
+              </span>
+              <span class="training-floor-shadow"></span>
+              <span class="training-energy">
+                <i></i><i></i><i></i>
+              </span>
             </span>
             <span class="training-set-meta">
               <small>Satz für Satz</small>
@@ -155,7 +161,7 @@ import { profile } from "../data/profile";
             </span>
             <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </button>
-          <p class="training-move-status" aria-live="polite" data-training-move-status>Der schwierigste Teil ist oft der Weg bis zur Tür.</p>
+          <p class="sr-only" aria-live="polite" data-training-move-status>Noch kein Satz gestartet.</p>
           <p class="fact-kicker" data-training-kicker>Knochen</p>
           <p class="training-fact" aria-live="polite" data-training-copy>
             Krafttraining belastet nicht nur Muskeln. Der gezielte Widerstand setzt auch an den Knochen einen Reiz und kann sie stärken.
@@ -186,16 +192,28 @@ import { profile } from "../data/profile";
             <button type="button" data-card-game="poker" aria-pressed="false">Poker</button>
             <button type="button" data-card-game="schafkopf" aria-pressed="false">Schafkopf</button>
           </div>
-          <div class="card-deck" aria-hidden="true">
-            <span class="playing-card card-back"></span>
-            <span class="playing-card card-middle" data-hand-card>A<span>♣</span></span>
-            <span class="playing-card card-front" data-hand-card>Q<span>♥</span></span>
+          <div class="card-table" data-card-table aria-label="Bewegliche Spielkarten">
+            <button class="playing-card is-red" type="button" data-table-card data-rank="Q" data-suit="♥" aria-label="Dame Herz bewegen">
+              <span class="card-corner"><strong>Q</strong><i>♥</i></span><span class="card-suit">♥</span>
+            </button>
+            <button class="playing-card" type="button" data-table-card data-rank="A" data-suit="♣" aria-label="Ass Kreuz bewegen">
+              <span class="card-corner"><strong>A</strong><i>♣</i></span><span class="card-suit">♣</span>
+            </button>
+            <button class="playing-card is-red" type="button" data-table-card data-rank="10" data-suit="♦" aria-label="Zehn Karo bewegen">
+              <span class="card-corner"><strong>10</strong><i>♦</i></span><span class="card-suit">♦</span>
+            </button>
+            <button class="playing-card" type="button" data-table-card data-rank="K" data-suit="♠" aria-label="König Pik bewegen">
+              <span class="card-corner"><strong>K</strong><i>♠</i></span><span class="card-suit">♠</span>
+            </button>
+            <button class="playing-card is-red" type="button" data-table-card data-rank="9" data-suit="♥" aria-label="Neun Herz bewegen">
+              <span class="card-corner"><strong>9</strong><i>♥</i></span><span class="card-suit">♥</span>
+            </button>
           </div>
           <div class="cards-action-row">
             <button class="play-card-action" type="button" data-draw-card>
               Neu mischen <i class="ph ph-arrows-clockwise" aria-hidden="true"></i>
             </button>
-            <p class="play-status" aria-live="polite" data-card-status>Die Runde ist eröffnet.</p>
+            <p class="sr-only" aria-live="polite" data-card-status>Die Karten können bewegt oder neu gemischt werden.</p>
           </div>
         </article>
 
@@ -379,26 +397,45 @@ import { profile } from "../data/profile";
   const trainingMoveStatus = document.querySelector<HTMLElement>("[data-training-move-status]");
   const trainingSetLabel = document.querySelector<HTMLElement>("[data-training-set-label]");
   const trainingSetCounter = document.querySelector<HTMLElement>("[data-training-set-counter]");
+  const trainingRack = trainingMove?.querySelector<HTMLElement>(".training-rack");
+  const trainingEnergy = Array.from(trainingMove?.querySelectorAll<HTMLElement>(".training-energy i") ?? []);
   const trainingSteps = [
-    { label: "Aufwärmen", counter: "1 von 3", status: "Angefangen. Der erste Widerstand ist erledigt." },
-    { label: "Arbeitssatz", counter: "2 von 3", status: "Der Rhythmus ist da. Jetzt wird konzentriert gearbeitet." },
-    { label: "Letzter Satz", counter: "3 von 3", status: "Nicht spektakulär, aber erledigt. Genau darum geht es mir." },
-    { label: "Neu starten", counter: "0 von 3", status: "Der schwierigste Teil ist oft der Weg bis zur Tür." },
+    { label: "Aufwärmen", counter: "1 von 3", status: "Erster Satz abgeschlossen." },
+    { label: "Arbeitssatz", counter: "2 von 3", status: "Zweiter Satz abgeschlossen." },
+    { label: "Letzter Satz", counter: "3 von 3", status: "Dritter Satz abgeschlossen." },
+    { label: "Aufwärmen", counter: "0 von 3", status: "Sätze zurückgesetzt." },
   ];
   let trainingStep = 0;
   trainingMove?.addEventListener("click", () => {
     const step = trainingSteps[trainingStep % trainingSteps.length];
     const stage = (trainingStep % trainingSteps.length) + 1;
     if (!prefersReducedMotion()) {
-      trainingMove.getAnimations().forEach((animation) => animation.cancel());
-      trainingMove.animate(
-        [{ scale: "1" }, { scale: "0.992", offset: 0.28 }, { scale: "1.012", offset: 0.68 }, { scale: "1" }],
-        { duration: 420, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+      trainingRack?.getAnimations().forEach((animation) => animation.cancel());
+      trainingRack?.animate(
+        [
+          { transform: "translate3d(0, 0, 0) rotate(0deg)" },
+          { transform: "translate3d(0, 0.35rem, 0) rotate(-0.8deg)", offset: 0.16 },
+          { transform: `translate3d(0, ${stage === 3 ? "-1.65rem" : "-1.25rem"}, 0) rotate(0.65deg)`, offset: 0.56 },
+          { transform: "translate3d(0, -0.15rem, 0) rotate(-0.25deg)", offset: 0.84 },
+          { transform: "translate3d(0, 0, 0) rotate(0deg)" },
+        ],
+        { duration: 720, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
       );
+      trainingEnergy.forEach((line, index) => {
+        line.getAnimations().forEach((animation) => animation.cancel());
+        line.animate(
+          [
+            { opacity: 0, transform: "translate3d(0, 0.8rem, 0) scaleY(0.35)" },
+            { opacity: 0.72, transform: "translate3d(0, -0.15rem, 0) scaleY(1)", offset: 0.42 },
+            { opacity: 0, transform: "translate3d(0, -1rem, 0) scaleY(0.5)" },
+          ],
+          { duration: 520, delay: 90 + index * 55, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        );
+      });
     }
     trainingMove.dataset.trainingStage = String(stage === 4 ? 0 : stage);
     animateContentSwap(
-      [trainingSetLabel, trainingSetCounter, trainingMoveStatus],
+      [trainingSetLabel, trainingSetCounter],
       () => {
         if (trainingSetLabel) trainingSetLabel.textContent = step.label;
         if (trainingSetCounter) trainingSetCounter.textContent = step.counter;
@@ -432,35 +469,213 @@ import { profile } from "../data/profile";
     });
   });
 
-  const cardHands = [
-    [["A", "♠"], ["Q", "♥"], "Ass und Dame. Die Karten liegen neu."],
-    [["10", "♦"], ["K", "♣"], "Zehn und König. Noch sagt die Hand wenig."],
-    [["9", "♥"], ["J", "♠"], "Neun und Bube. Neu gemischt."],
-    [["7", "♣"], ["A", "♦"], "Sieben und Ass. Die nächste Runde kann beginnen."],
-  ] as const;
   const drawButton = document.querySelector<HTMLButtonElement>("[data-draw-card]");
-  const handCards = document.querySelectorAll<HTMLElement>("[data-hand-card]");
+  const cardTable = document.querySelector<HTMLElement>("[data-card-table]");
+  const tableCards = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-table-card]"));
   const cardStatus = document.querySelector<HTMLElement>("[data-card-status]");
-  let cardIndex = 0;
-  drawButton?.addEventListener("click", () => {
-    const hand = cardHands[cardIndex % cardHands.length];
-    cardIndex += 1;
-    handCards.forEach((card, index) => {
-      card.innerHTML = `${hand[index][0]}<span>${hand[index][1]}</span>`;
+  const tableLayout = [
+    { x: 0.02, y: 0.28, rotation: -13 },
+    { x: 0.24, y: 0.06, rotation: -6 },
+    { x: 0.48, y: 0.24, rotation: 3 },
+    { x: 0.71, y: 0.02, rotation: 9 },
+    { x: 0.94, y: 0.2, rotation: 15 },
+  ];
+  const deck = [
+    ["A", "♠"], ["K", "♣"], ["Q", "♥"], ["J", "♦"], ["10", "♠"],
+    ["9", "♥"], ["8", "♣"], ["7", "♦"], ["A", "♥"], ["K", "♠"],
+    ["Q", "♣"], ["J", "♥"], ["10", "♦"],
+  ] as const;
+  const suitNames: Record<string, string> = { "♠": "Pik", "♣": "Kreuz", "♥": "Herz", "♦": "Karo" };
+  let cardLayer = 10;
+  let shuffleRun = 0;
+  let isShuffling = false;
+
+  const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+  const cardTransform = (x: number, y: number, rotation: number) =>
+    `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
+
+  const setCardPosition = (card: HTMLButtonElement, x: number, y: number, rotation: number) => {
+    card.dataset.cardX = String(x);
+    card.dataset.cardY = String(y);
+    card.dataset.cardRotation = String(rotation);
+    card.style.transform = cardTransform(x, y, rotation);
+  };
+
+  const getTablePositions = () => {
+    if (!cardTable || !tableCards.length) return [];
+    const cardWidth = tableCards[0]?.offsetWidth ?? 0;
+    const cardHeight = tableCards[0]?.offsetHeight ?? 0;
+    const availableX = Math.max(0, cardTable.clientWidth - cardWidth);
+    const availableY = Math.max(0, cardTable.clientHeight - cardHeight);
+    return tableLayout.map((position) => ({
+      x: position.x * availableX,
+      y: position.y * availableY,
+      rotation: position.rotation,
+    }));
+  };
+
+  const layoutTableCards = () => {
+    if (isShuffling) return;
+    const positions = getTablePositions();
+    tableCards.forEach((card, index) => {
+      const position = positions[index];
+      if (position) setCardPosition(card, position.x, position.y, position.rotation);
+    });
+  };
+
+  const updateCardFace = (card: HTMLButtonElement, rank: string, suit: string) => {
+    const cornerRank = card.querySelector<HTMLElement>(".card-corner strong");
+    const cornerSuit = card.querySelector<HTMLElement>(".card-corner i");
+    const centerSuit = card.querySelector<HTMLElement>(".card-suit");
+    if (cornerRank) cornerRank.textContent = rank;
+    if (cornerSuit) cornerSuit.textContent = suit;
+    if (centerSuit) centerSuit.textContent = suit;
+    card.classList.toggle("is-red", suit === "♥" || suit === "♦");
+    card.setAttribute("aria-label", `${rank} ${suitNames[suit] ?? suit} bewegen`);
+  };
+
+  tableCards.forEach((card) => {
+    let pointerId: number | null = null;
+    let startX = 0;
+    let startY = 0;
+    let originX = 0;
+    let originY = 0;
+    let velocityX = 0;
+    let velocityY = 0;
+    let lastX = 0;
+    let lastY = 0;
+    let lastTime = 0;
+
+    card.addEventListener("pointerdown", (event) => {
+      if (isShuffling || pointerId !== null || (event.pointerType === "mouse" && event.button !== 0)) return;
+      pointerId = event.pointerId;
+      startX = lastX = event.clientX;
+      startY = lastY = event.clientY;
+      lastTime = performance.now();
+      originX = Number(card.dataset.cardX ?? 0);
+      originY = Number(card.dataset.cardY ?? 0);
+      cardLayer += 1;
+      card.style.zIndex = String(cardLayer);
+      card.classList.add("is-dragging");
+      card.setPointerCapture(event.pointerId);
+    });
+
+    card.addEventListener("pointermove", (event) => {
+      if (event.pointerId !== pointerId || !cardTable) return;
+      const now = performance.now();
+      const elapsed = Math.max(1, now - lastTime);
+      velocityX = (event.clientX - lastX) / elapsed;
+      velocityY = (event.clientY - lastY) / elapsed;
+      lastX = event.clientX;
+      lastY = event.clientY;
+      lastTime = now;
+      const maxX = Math.max(0, cardTable.clientWidth - card.offsetWidth);
+      const maxY = Math.max(0, cardTable.clientHeight - card.offsetHeight);
+      const x = clamp(originX + event.clientX - startX, -10, maxX + 10);
+      const y = clamp(originY + event.clientY - startY, -10, maxY + 10);
+      const rotation = Number(card.dataset.cardRotation ?? 0) + clamp((event.clientX - startX) * 0.035, -7, 7);
+      card.style.transform = cardTransform(x, y, rotation);
+      card.dataset.cardX = String(x);
+      card.dataset.cardY = String(y);
+    });
+
+    const finishDrag = (event: PointerEvent, useMomentum: boolean) => {
+      if (event.pointerId !== pointerId || !cardTable) return;
+      const maxX = Math.max(0, cardTable.clientWidth - card.offsetWidth);
+      const maxY = Math.max(0, cardTable.clientHeight - card.offsetHeight);
+      const currentX = Number(card.dataset.cardX ?? 0);
+      const currentY = Number(card.dataset.cardY ?? 0);
+      const rotation = Number(card.dataset.cardRotation ?? 0);
+      const targetX = clamp(currentX + (useMomentum ? velocityX * 72 : 0), -8, maxX + 8);
+      const targetY = clamp(currentY + (useMomentum ? velocityY * 72 : 0), -8, maxY + 8);
+      const targetRotation = rotation + (useMomentum ? clamp(velocityX * 4, -5, 5) : 0);
+      const from = card.style.transform;
+      setCardPosition(card, targetX, targetY, targetRotation);
+      card.classList.remove("is-dragging");
       if (!prefersReducedMotion()) {
-        card.getAnimations().forEach((animation) => animation.cancel());
         card.animate(
-          [
-            { translate: "0 0.9rem", scale: "0.98", opacity: 0.5 },
-            { translate: "0 -0.35rem", scale: "1.015", opacity: 1, offset: 0.62 },
-            { translate: "0 0", scale: "1", opacity: 1 },
-          ],
-          { duration: 360, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+          [{ transform: from }, { transform: card.style.transform }],
+          { duration: 420, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
         );
       }
-    });
-    animateContentSwap([cardStatus], () => {
-      if (cardStatus) cardStatus.textContent = hand[2];
+      pointerId = null;
+    };
+
+    card.addEventListener("pointerup", (event) => finishDrag(event, true));
+    card.addEventListener("pointercancel", (event) => finishDrag(event, false));
+    card.addEventListener("keydown", (event) => {
+      const directions: Record<string, [number, number]> = {
+        ArrowLeft: [-10, 0], ArrowRight: [10, 0], ArrowUp: [0, -10], ArrowDown: [0, 10],
+      };
+      const direction = directions[event.key];
+      if (!direction || !cardTable) return;
+      event.preventDefault();
+      const maxX = Math.max(0, cardTable.clientWidth - card.offsetWidth);
+      const maxY = Math.max(0, cardTable.clientHeight - card.offsetHeight);
+      setCardPosition(
+        card,
+        clamp(Number(card.dataset.cardX ?? 0) + direction[0], 0, maxX),
+        clamp(Number(card.dataset.cardY ?? 0) + direction[1], 0, maxY),
+        Number(card.dataset.cardRotation ?? 0),
+      );
     });
   });
+
+  drawButton?.addEventListener("click", async () => {
+    if (!cardTable || isShuffling) return;
+    const currentRun = ++shuffleRun;
+    isShuffling = true;
+    drawButton.disabled = true;
+    const positions = getTablePositions();
+    const centerX = Math.max(0, (cardTable.clientWidth - (tableCards[0]?.offsetWidth ?? 0)) / 2);
+    const centerY = Math.max(0, (cardTable.clientHeight - (tableCards[0]?.offsetHeight ?? 0)) / 2);
+    const centerTransform = cardTransform(centerX, centerY, 0);
+    const shuffledDeck = [...deck];
+    for (let index = shuffledDeck.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [shuffledDeck[index], shuffledDeck[swapIndex]] = [shuffledDeck[swapIndex], shuffledDeck[index]];
+    }
+
+    if (!prefersReducedMotion()) {
+      const gather = tableCards.map((card, index) => card.animate(
+        [{ transform: card.style.transform }, { transform: centerTransform }],
+        { duration: 300, delay: index * 32, easing: "cubic-bezier(0.77, 0, 0.175, 1)", fill: "forwards" },
+      ));
+      await Promise.allSettled(gather.map((animation) => animation.finished));
+    }
+    if (currentRun !== shuffleRun) return;
+
+    tableCards.forEach((card, index) => {
+      const [rank, suit] = shuffledDeck[index];
+      updateCardFace(card, rank, suit);
+      setCardPosition(card, centerX, centerY, 0);
+      card.style.zIndex = String(index + 1);
+    });
+
+    if (!prefersReducedMotion()) {
+      const deal = tableCards.map((card, index) => {
+        const position = positions[index];
+        const destination = position ? cardTransform(position.x, position.y, position.rotation) : centerTransform;
+        return card.animate(
+          [{ transform: centerTransform }, { transform: destination }],
+          { duration: 520, delay: index * 55, easing: "cubic-bezier(0.23, 1, 0.32, 1)", fill: "forwards" },
+        );
+      });
+      await Promise.allSettled(deal.map((animation) => animation.finished));
+    }
+
+    tableCards.forEach((card, index) => {
+      const position = positions[index];
+      if (position) setCardPosition(card, position.x, position.y, position.rotation);
+      card.getAnimations().forEach((animation) => animation.cancel());
+    });
+    if (cardStatus) cardStatus.textContent = "Karten neu gemischt.";
+    drawButton.disabled = false;
+    isShuffling = false;
+  });
+
+  if (cardTable && tableCards.length) {
+    requestAnimationFrame(layoutTableCards);
+    new ResizeObserver(layoutTableCards).observe(cardTable);
+  }
 </script>

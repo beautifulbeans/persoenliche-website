@@ -26,21 +26,28 @@
   <div class="tea-visual">
     <button class="teapot" type="button" data-teapot aria-label="Nächste Teesorte probieren">
       <span class="teapot-shadow" aria-hidden="true"></span>
-      <span class="teapot-handle" aria-hidden="true"></span>
-      <span class="teapot-spout" aria-hidden="true"><span></span></span>
-      <span class="teapot-lid" aria-hidden="true"></span>
-      <span class="teapot-body" aria-hidden="true">
-        <span class="tea-liquid">
-          <span class="tea-surface"></span>
-          <i class="ph ph-leaf tea-leaf tea-leaf-one"></i>
-          <i class="ph ph-leaf tea-leaf tea-leaf-two"></i>
+      <span class="teapot-vessel" aria-hidden="true">
+        <span class="teapot-handle"></span>
+        <span class="teapot-spout"><span></span></span>
+        <span class="teapot-lid"></span>
+        <span class="teapot-body">
+          <span class="tea-liquid">
+            <span class="tea-surface"></span>
+            <i class="ph ph-leaf tea-leaf tea-leaf-one"></i>
+            <i class="ph ph-leaf tea-leaf tea-leaf-two"></i>
+          </span>
         </span>
+        <span class="steam steam-one"></span>
+        <span class="steam steam-two"></span>
+        <span class="steam steam-three"></span>
       </span>
-      <span class="steam steam-one" aria-hidden="true"></span>
-      <span class="steam steam-two" aria-hidden="true"></span>
-      <span class="steam steam-three" aria-hidden="true"></span>
+      <span class="tea-pour-stream" aria-hidden="true"></span>
+      <span class="tea-cup" aria-hidden="true">
+        <span class="tea-cup-liquid"></span>
+        <span class="tea-cup-steam tea-cup-steam-one"></span>
+        <span class="tea-cup-steam tea-cup-steam-two"></span>
+      </span>
     </button>
-    <p><i class="ph ph-hand-tap" aria-hidden="true"></i>Kanne anklicken: nächste Sorte aufgießen</p>
   </div>
 </article>
 
@@ -110,7 +117,7 @@
         pot?.classList.add("is-brewing");
         window.setTimeout(() => {
           if (currentRun === brewingRun) pot?.classList.remove("is-brewing");
-        }, 1400);
+        }, 1700);
       });
     };
 
