@@ -11,6 +11,18 @@
 
 Die Galerie erkennt neue Bilddateien automatisch. Sind keine Bilder vorhanden, bleiben die drei Platzhalter sichtbar.
 
+## Albumcover
+
+Der Vinylbereich besitzt vorbereitete lokale Cover-Slots. Lege Bilder – nur wenn du die nötigen Nutzungsrechte dafür hast – unter `src/assets/vinyl/` mit diesen Namen ab:
+
+- `dark-side-of-the-moon.jpg`
+- `brothers-in-arms.jpg`
+- `blonde.jpg`
+- `igor.jpg`
+- `swimming.jpg`
+
+Ohne diese Dateien zeigt die Website bewusst typografische Ersatzcover. Dadurch entstehen keine externen Bildanfragen und die Datenschutzerklärung bleibt unverändert.
+
 ## Bachelorarbeit
 
 1. Die PDF unter `public/` in einem beschreibend benannten Ordner ablegen.

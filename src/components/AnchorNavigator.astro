@@ -1,0 +1,99 @@
+<div class="anchor-flight" data-anchor-flight aria-hidden="true">
+  <span class="anchor-flight-track"></span>
+  <span class="anchor-flight-marker"><i class="ph ph-arrow-down"></i></span>
+</div>
+
+<script>
+  import { prefersReducedMotion } from "../scripts/motion";
+
+  const flight = document.querySelector<HTMLElement>("[data-anchor-flight]");
+  const marker = flight?.querySelector<HTMLElement>(".anchor-flight-marker");
+  let scrollFrame = 0;
+  let markerAnimation: Animation | undefined;
+
+  const easeOutQuint = (value: number) => 1 - Math.pow(1 - value, 5);
+
+  const stopJourney = () => {
+    if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
+    scrollFrame = 0;
+    markerAnimation?.cancel();
+    markerAnimation = undefined;
+    flight?.classList.remove("is-active");
+    document.body.classList.remove("is-anchor-travelling");
+  };
+
+  const travelTo = (link: HTMLAnchorElement, target: HTMLElement) => {
+    const header = document.querySelector<HTMLElement>("[data-site-header]");
+    const headerOffset = (header?.offsetHeight ?? 64) + 24;
+    const startY = window.scrollY;
+    const destinationY = Math.max(
+      0,
+      target.getBoundingClientRect().top + window.scrollY - headerOffset,
+    );
+    const distance = destinationY - startY;
+    const direction = distance >= 0 ? "down" : "up";
+
+    if (prefersReducedMotion() || Math.abs(distance) < 8) {
+      window.scrollTo({ top: destinationY });
+      history.pushState(null, "", link.hash);
+      target.focus?.({ preventScroll: true });
+      return;
+    }
+
+    stopJourney();
+    document.body.classList.add("is-anchor-travelling");
+    flight?.classList.add("is-active");
+    flight?.setAttribute("data-direction", direction);
+
+    const duration = Math.min(1150, Math.max(680, 600 + Math.abs(distance) * 0.12));
+    markerAnimation = marker?.animate(
+      direction === "down"
+        ? [{ transform: "translateY(0)" }, { transform: "translateY(var(--anchor-track))" }]
+        : [{ transform: "translateY(var(--anchor-track))" }, { transform: "translateY(0)" }],
+      {
+        duration,
+        easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+        fill: "both",
+      },
+    );
+
+    const startedAt = performance.now();
+    const step = (time: number) => {
+      const progress = Math.min(1, (time - startedAt) / duration);
+      window.scrollTo({ top: startY + distance * easeOutQuint(progress) });
+
+      if (progress < 1) {
+        scrollFrame = window.requestAnimationFrame(step);
+        return;
+      }
+
+      history.pushState(null, "", link.hash);
+      target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: true });
+      target.animate(
+        [
+          { filter: "brightness(1)" },
+          { filter: "brightness(1.035)", offset: 0.35 },
+          { filter: "brightness(1)" },
+        ],
+        { duration: 520, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
+      );
+      window.setTimeout(stopJourney, 180);
+    };
+
+    scrollFrame = window.requestAnimationFrame(step);
+  };
+
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((link) => {
+    link.addEventListener("click", (event) => {
+      if (!link.hash || link.hash === "#") return;
+      const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+      if (!target) return;
+      event.preventDefault();
+      travelTo(link, target);
+    });
+  });
+
+  window.addEventListener("wheel", stopJourney, { passive: true });
+  window.addEventListener("touchstart", stopJourney, { passive: true });
+</script>

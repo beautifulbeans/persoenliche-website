@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import AnchorNavigator from "../components/AnchorNavigator.astro";
 import BachelorThesis from "../components/BachelorThesis.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CameraPlayground from "../components/CameraPlayground.astro";
@@ -8,6 +9,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import TeaRitual from "../components/TeaRitual.astro";
 import Timeline from "../components/Timeline.astro";
+import VinylPlayer from "../components/VinylPlayer.astro";
 import portrait from "../assets/portrait/fabian-deragisch.jpg";
 import { profile } from "../data/profile";
 ---
@@ -15,6 +17,7 @@ import { profile } from "../data/profile";
 <BaseLayout>
   <IntroReveal />
   <SiteHeader />
+  <AnchorNavigator />
 
   <main id="inhalt">
     <section class="hero section-shell" id="oben" aria-labelledby="hero-title">
@@ -32,7 +35,6 @@ import { profile } from "../data/profile";
           <div class="hero-portrait-art" aria-hidden="true">
             <span class="portrait-orbit portrait-orbit-one"></span>
             <span class="portrait-orbit portrait-orbit-two"></span>
-            <span class="portrait-index">Farbe <i class="ph ph-arrows-left-right"></i> Schwarzweiß</span>
           </div>
           <figure class="hero-photo">
             <Image
@@ -56,9 +58,9 @@ import { profile } from "../data/profile";
           </figure>
         </div>
 
-        <div class="hero-role-index">
-          <span aria-hidden="true"><i class="ph ph-briefcase"></i></span>
-          <p><small>Aktuell als Mitarbeiter</small><strong>Marketing und E-Commerce</strong></p>
+        <div class="hero-role-index" aria-label="Aktuelle berufliche Rolle">
+          <span class="hero-role-label">Aktuell</span>
+          <strong>Marketing &amp; E-Commerce</strong>
         </div>
       </div>
     </section>
@@ -165,26 +167,7 @@ import { profile } from "../data/profile";
           </div>
         </article>
 
-        <article class="play-card sound-card" id="vinyl" data-reveal="left" data-sound-card data-album-theme="pink-floyd">
-          <div class="sound-stage">
-            <button class="vinyl-button" type="button" aria-pressed="false" data-vinyl-button>
-              <i class="ph ph-vinyl-record" aria-hidden="true"></i>
-              <span class="sr-only">Plattenspieler starten oder stoppen</span>
-            </button>
-            <span class="turntable-arm" aria-hidden="true"><span></span></span>
-            <p class="turntable-caption">Vier Alben, die ich gern von Anfang bis Ende höre.</p>
-          </div>
-          <p class="fact-kicker">Vier Platten für den Anfang</p>
-          <h3 data-album-title>The Dark Side of the Moon</h3>
-          <p class="album-artist" data-album-artist>Pink Floyd, 1973</p>
-          <p class="album-note" aria-live="polite" data-album-note>Ein durchgehendes Konzept über Zeit, Druck, Geld und Vergänglichkeit. Übergänge und Sounddesign machen es für mich zu einem Album am Stück.</p>
-          <div class="album-switch" role="group" aria-label="Album auswählen">
-            <button class="is-selected" type="button" data-album="pink-floyd" aria-pressed="true">Pink Floyd</button>
-            <button type="button" data-album="dire-straits" aria-pressed="false">Dire Straits</button>
-            <button type="button" data-album="frank-ocean" aria-pressed="false">Frank Ocean</button>
-            <button type="button" data-album="tyler" aria-pressed="false">Tyler, the Creator</button>
-          </div>
-        </article>
+        <VinylPlayer />
 
         <article class="play-card cards-card" id="spielkarten" data-reveal="scale">
           <div class="cards-heading">
@@ -275,63 +258,27 @@ import { profile } from "../data/profile";
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   if (portraitFrame && finePointer.matches && !prefersReducedMotion()) {
     let portraitBounds: DOMRect | null = null;
-    let targetTiltX = 0;
-    let targetTiltY = 0;
-    let currentTiltX = 0;
-    let currentTiltY = 0;
-    let velocityX = 0;
-    let velocityY = 0;
-    let portraitFrameRequest = 0;
-    let pointerInside = false;
-
-    const renderPortraitTilt = () => {
-      const spring = 0.12;
-      const damping = 0.76;
-      velocityX = (velocityX + (targetTiltX - currentTiltX) * spring) * damping;
-      velocityY = (velocityY + (targetTiltY - currentTiltY) * spring) * damping;
-      currentTiltX += velocityX;
-      currentTiltY += velocityY;
-      portraitFrame.style.transform = `perspective(900px) rotateX(${currentTiltY * -4}deg) rotateY(${currentTiltX * 5}deg) translate3d(0, -0.35rem, 0)`;
-
-      const settled =
-        Math.abs(targetTiltX - currentTiltX) < 0.002 &&
-        Math.abs(targetTiltY - currentTiltY) < 0.002 &&
-        Math.abs(velocityX) < 0.002 &&
-        Math.abs(velocityY) < 0.002;
-
-      if (!settled) {
-        portraitFrameRequest = window.requestAnimationFrame(renderPortraitTilt);
-      } else {
-        portraitFrameRequest = 0;
-        if (!pointerInside) {
-          portraitFrame.style.transform = "";
-          portraitFrame.classList.remove("is-tracking");
-        }
-      }
-    };
-
-    const requestPortraitTilt = () => {
-      if (!portraitFrameRequest) portraitFrameRequest = window.requestAnimationFrame(renderPortraitTilt);
-    };
 
     portraitFrame.addEventListener("pointerenter", () => {
-      pointerInside = true;
       portraitBounds = portraitFrame.getBoundingClientRect();
       portraitFrame.classList.add("is-tracking");
     });
     portraitFrame.addEventListener("pointermove", (event) => {
       portraitBounds ??= portraitFrame.getBoundingClientRect();
-      targetTiltX = (event.clientX - portraitBounds.left) / portraitBounds.width - 0.5;
-      targetTiltY = (event.clientY - portraitBounds.top) / portraitBounds.height - 0.5;
-      portraitFrame.style.setProperty("--portrait-x", `${(targetTiltX + 0.5) * 100}%`);
-      portraitFrame.style.setProperty("--portrait-y", `${(targetTiltY + 0.5) * 100}%`);
-      requestPortraitTilt();
+      const x = (event.clientX - portraitBounds.left) / portraitBounds.width;
+      const y = (event.clientY - portraitBounds.top) / portraitBounds.height;
+      portraitFrame.style.setProperty("--portrait-x", `${x * 100}%`);
+      portraitFrame.style.setProperty("--portrait-y", `${y * 100}%`);
+      portraitFrame.style.setProperty("--portrait-shift-x", `${(x - 0.5) * -1.1}rem`);
+      portraitFrame.style.setProperty("--portrait-shift-y", `${(y - 0.5) * -0.7}rem`);
     });
     portraitFrame.addEventListener("pointerleave", () => {
-      pointerInside = false;
-      targetTiltX = 0;
-      targetTiltY = 0;
-      requestPortraitTilt();
+      portraitBounds = null;
+      portraitFrame.classList.remove("is-tracking");
+      portraitFrame.style.setProperty("--portrait-x", "50%");
+      portraitFrame.style.setProperty("--portrait-y", "42%");
+      portraitFrame.style.setProperty("--portrait-shift-x", "0rem");
+      portraitFrame.style.setProperty("--portrait-shift-y", "0rem");
     });
     window.addEventListener("resize", () => (portraitBounds = null), { passive: true });
   }
@@ -340,79 +287,16 @@ import { profile } from "../data/profile";
   if (chapterTransition) {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const chapterStage = chapterTransition.querySelector<HTMLElement>(".chapter-transition-stage");
-    const personalPanel = chapterTransition.querySelector<HTMLElement>(".chapter-transition-personal");
-    const aperture = chapterTransition.querySelector<HTMLElement>(".chapter-transition-aperture");
-    const apertureRing = chapterTransition.querySelector<HTMLElement>(".chapter-aperture-ring");
-    const apertureCore = chapterTransition.querySelector<HTMLElement>(".chapter-aperture-core");
-    const apertureBlades = Array.from(chapterTransition.querySelectorAll<HTMLElement>("[data-aperture-angle]"));
-    const chapterCenter = chapterTransition.querySelector<HTMLElement>(".chapter-transition-center");
-    const chapterTitleLines = Array.from(chapterTransition.querySelectorAll<HTMLElement>(".chapter-transition-center h2 span"));
-    const chapterCue = chapterTransition.querySelector<HTMLElement>(".chapter-transition-cue");
     const transitionHeader = document.querySelector<HTMLElement>("[data-site-header]");
-    const clamp = (value: number) => Math.min(1, Math.max(0, value));
-    const smoothstep = (value: number) => value * value * (3 - 2 * value);
     let chapterFrame = 0;
-    let chapterIsNear = true;
-
-    const setChapterState = (progress: number) => {
-      const apertureProgress = smoothstep(clamp((progress - 0.02) / 0.62));
-      const personalProgress = smoothstep(clamp((progress - 0.12) / 0.76));
-      const copyProgress = smoothstep(clamp((progress - 0.05) / 0.36));
-      const exitProgress = smoothstep(clamp((progress - 0.76) / 0.22));
-      const apertureFade = 1 - smoothstep(clamp((personalProgress - 0.72) / 0.28));
-
-      if (personalPanel) {
-        personalPanel.style.clipPath = `circle(${personalProgress * 154}% at 50% 50%)`;
-        personalPanel.style.opacity = String(clamp(personalProgress * 1.5));
-      }
-      if (aperture) {
-        aperture.style.opacity = String(apertureFade);
-        aperture.style.transform = `translate3d(0, ${(1 - copyProgress) * 0.8}rem, 0) rotate(${-10 + apertureProgress * 36}deg) scale(${0.76 + apertureProgress * 0.34})`;
-      }
-      if (apertureRing) {
-        apertureRing.style.opacity = String(0.76 * apertureFade);
-        apertureRing.style.transform = `scale(${0.9 + apertureProgress * 0.22}) rotate(${-apertureProgress * 54}deg)`;
-      }
-      if (apertureCore) {
-        apertureCore.style.transform = `translate(-50%, -50%) scale(${0.72 + apertureProgress * 2.6})`;
-        apertureCore.style.opacity = String(apertureFade);
-      }
-      apertureBlades.forEach((blade) => {
-        const angle = Number(blade.dataset.apertureAngle ?? 0);
-        blade.style.opacity = String(apertureFade);
-        blade.style.transform = `rotate(${angle + apertureProgress * 34}deg) translate3d(0, ${apertureProgress * -118}%, 0) scale(${1 - apertureProgress * 0.08})`;
-      });
-      if (chapterCenter) {
-        chapterCenter.style.opacity = String(copyProgress * (1 - exitProgress));
-        chapterCenter.style.transform = `translate3d(0, ${(1 - copyProgress) * 1.1 - exitProgress * 0.7}rem, 0) scale(${0.96 + copyProgress * 0.04})`;
-      }
-      chapterTitleLines.forEach((line, index) => {
-        const direction = index === 0 ? -1 : 1;
-        line.style.transform = `translate3d(${direction * (1 - copyProgress) * 0.9}rem, 0, 0)`;
-      });
-      if (chapterCue) chapterCue.style.opacity = String(copyProgress * (1 - exitProgress));
-      transitionHeader?.setAttribute("data-section-mode", personalProgress > 0.52 ? "personal" : "professional");
-    };
 
     const updateChapterTransition = () => {
       chapterFrame = 0;
       const bounds = chapterTransition.getBoundingClientRect();
-      const viewport = window.innerHeight;
-
-      if (reduceMotion.matches) {
-        setChapterState(bounds.top <= viewport * 0.5 ? 1 : 0);
-        if (chapterCenter) {
-          chapterCenter.style.opacity = "1";
-          chapterCenter.style.transform = "none";
-        }
-        chapterTitleLines.forEach((line) => (line.style.transform = "none"));
-        if (chapterCue) chapterCue.style.opacity = "1";
-        chapterStage?.classList.remove("is-motion-active");
-        return;
-      }
-      if (!chapterIsNear) return;
-      const scrollDistance = Math.max(1, bounds.height - viewport);
-      setChapterState(clamp(-bounds.top / scrollDistance));
+      const opened = bounds.top <= window.innerHeight * 0.48;
+      chapterStage?.classList.toggle("is-personal-open", opened);
+      chapterStage?.classList.toggle("is-motion-active", !reduceMotion.matches);
+      transitionHeader?.setAttribute("data-section-mode", opened ? "personal" : "professional");
     };
 
     const requestChapterUpdate = () => {
@@ -420,25 +304,10 @@ import { profile } from "../data/profile";
       chapterFrame = window.requestAnimationFrame(updateChapterTransition);
     };
 
-    if ("IntersectionObserver" in window) {
-      const chapterObserver = new IntersectionObserver(
-        ([entry]) => {
-          chapterIsNear = entry?.isIntersecting ?? false;
-          chapterStage?.classList.toggle("is-motion-active", chapterIsNear && !reduceMotion.matches);
-          if (chapterIsNear) requestChapterUpdate();
-        },
-        { rootMargin: "75% 0px" },
-      );
-      chapterObserver.observe(chapterTransition);
-    }
-
     updateChapterTransition();
     window.addEventListener("scroll", requestChapterUpdate, { passive: true });
     window.addEventListener("resize", requestChapterUpdate, { passive: true });
-    reduceMotion.addEventListener("change", () => {
-      chapterStage?.classList.toggle("is-motion-active", chapterIsNear && !reduceMotion.matches);
-      requestChapterUpdate();
-    });
+    reduceMotion.addEventListener("change", requestChapterUpdate);
   }
 
   const storyCards = document.querySelectorAll<HTMLElement>("[data-story-card]");
@@ -538,39 +407,6 @@ import { profile } from "../data/profile";
       { duration: 190, offset: 4, stagger: 12 },
     );
     trainingStep += 1;
-  });
-
-  const vinylButton = document.querySelector<HTMLButtonElement>("[data-vinyl-button]");
-  vinylButton?.addEventListener("click", () => {
-    const playing = vinylButton.getAttribute("aria-pressed") !== "true";
-    vinylButton.setAttribute("aria-pressed", String(playing));
-  });
-
-  const albums = {
-    "pink-floyd": ["The Dark Side of the Moon", "Pink Floyd, 1973", "Ein durchgehendes Konzept über Zeit, Druck, Geld und Vergänglichkeit. Übergänge und Sounddesign machen es für mich zu einem Album am Stück."],
-    "dire-straits": ["Brothers in Arms", "Dire Straits, 1985", "Groß und präzise produziert, aber nie überladen. Besonders das Titelstück lebt von Raum, Dynamik und einer sehr zurückhaltenden Spannung."],
-    "frank-ocean": ["Blonde", "Frank Ocean, 2016", "Reduziert, intim und stellenweise fast fragmentarisch. Viele Details und Perspektivwechsel fallen erst nach mehreren Durchläufen auf."],
-    tyler: ["IGOR", "Tyler, the Creator, 2019", "Synthesizer, Soul und verzerrte Texturen erzählen eine geschlossene Geschichte. Für mich funktioniert IGOR stärker als Album als in einzelnen Songs."],
-  } as const;
-  const albumButtons = document.querySelectorAll<HTMLButtonElement>("[data-album]");
-  const albumTitle = document.querySelector<HTMLElement>("[data-album-title]");
-  const albumArtist = document.querySelector<HTMLElement>("[data-album-artist]");
-  const albumNote = document.querySelector<HTMLElement>("[data-album-note]");
-  const soundCard = document.querySelector<HTMLElement>("[data-sound-card]");
-  albumButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const key = button.dataset.album as keyof typeof albums;
-      const album = albums[key];
-      if (!album) return;
-      setPressedState(albumButtons, button);
-      animateContentSwap([albumTitle, albumArtist, albumNote], () => {
-        if (albumTitle) albumTitle.textContent = album[0];
-        if (albumArtist) albumArtist.textContent = album[1];
-        if (albumNote) albumNote.textContent = album[2];
-        if (soundCard) soundCard.dataset.albumTheme = key;
-      });
-      vinylButton?.setAttribute("aria-pressed", "true");
-    });
   });
 
   const cardGames = {

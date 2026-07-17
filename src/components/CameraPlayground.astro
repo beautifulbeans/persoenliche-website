@@ -175,6 +175,7 @@ const shots = importedPhotos.length
 
   document.querySelectorAll<HTMLElement>(".camera-card").forEach((card) => {
     const viewer = card.querySelector<HTMLElement>("[data-camera-viewer]");
+    const cameraDisplay = card.querySelector<HTMLElement>(".camera-display");
     const frameArea = card.querySelector<HTMLElement>(".camera-frames");
     const frames = Array.from(card.querySelectorAll<HTMLElement>(".camera-shot"));
     const flash = card.querySelector<HTMLElement>("[data-camera-flash]");
@@ -196,7 +197,10 @@ const shots = importedPhotos.length
     const simulationButtons = card.querySelectorAll<HTMLButtonElement>("[data-film-simulation]");
     const frameNames = JSON.parse(viewer?.dataset.frameNames ?? "[]") as string[];
     let frameIndex = 0;
+    let frameTransition = 0;
     let captureRun = 0;
+    let captureAnimations: Animation[] = [];
+    let simulationAnimation: Animation | undefined;
 
     const showFrame = (index: number, direction: 1 | -1 = 1) => {
       if (!frames.length) return;
@@ -204,6 +208,7 @@ const shots = importedPhotos.length
       const nextIndex = (index + frames.length) % frames.length;
       const nextFrame = frames[nextIndex];
       if (previousFrame === nextFrame) return;
+      const transitionRun = ++frameTransition;
 
       frames.forEach((frame) => {
         frame.getAnimations().forEach((animation) => animation.cancel());
@@ -212,27 +217,29 @@ const shots = importedPhotos.length
       frameIndex = nextIndex;
 
       if (prefersReducedMotion()) {
-        previousFrame?.classList.remove("is-active");
+        frames.forEach((frame) => frame.classList.toggle("is-active", frame === nextFrame));
       } else {
         const outgoing = previousFrame?.animate(
           [
             { opacity: 1, transform: "translate3d(0, 0, 0)" },
             { opacity: 0, transform: `translate3d(${direction * -7}%, 0, 0)` },
           ],
-          { duration: 190, easing: "cubic-bezier(0.23, 1, 0.32, 1)", fill: "forwards" },
+          { duration: 220, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" },
         );
-        nextFrame?.animate(
+        const incoming = nextFrame?.animate(
           [
             { opacity: 0, transform: `translate3d(${direction * 9}%, 0, 0)` },
             { opacity: 1, transform: "translate3d(0, 0, 0)" },
           ],
-          { duration: 230, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+          { duration: 280, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" },
         );
-        void outgoing?.finished
-          .catch(() => undefined)
-          .then(() => {
-            if (frames[frameIndex] !== previousFrame) previousFrame?.classList.remove("is-active");
+        void Promise.allSettled([outgoing?.finished, incoming?.finished]).then(() => {
+          if (transitionRun !== frameTransition) return;
+          frames.forEach((frame) => {
+            frame.getAnimations().forEach((animation) => animation.cancel());
+            frame.classList.toggle("is-active", frame === nextFrame);
           });
+        });
       }
       if (counter) counter.textContent = `${frameIndex + 1} / ${frames.length}`;
       if (fileName) fileName.textContent = frameNames[frameIndex] ?? `DSCF${String(frameIndex + 1).padStart(4, "0")}.JPG`;
@@ -265,8 +272,8 @@ const shots = importedPhotos.length
 
     const runCapture = () => {
       const currentRun = ++captureRun;
-      const captureElements = [frameArea, flash, curtainTop, curtainBottom, sensorScan, captureReadout, focusFrame];
-      captureElements.forEach((element) => element?.getAnimations().forEach((animation) => animation.cancel()));
+      captureAnimations.forEach((animation) => animation.cancel());
+      captureAnimations = [];
       if (captureStatus) captureStatus.textContent = "Foto aufgenommen. Das angezeigte Galeriebild bleibt unverändert.";
 
       if (prefersReducedMotion()) {
@@ -277,7 +284,7 @@ const shots = importedPhotos.length
         return;
       }
 
-      frameArea?.animate(
+      const framePulse = frameArea?.animate(
         [
           { transform: "scale(1)" },
           { transform: "scale(1.008)", offset: 0.18 },
@@ -285,7 +292,7 @@ const shots = importedPhotos.length
         ],
         { duration: 620, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
-      focusFrame?.animate(
+      const focusPulse = focusFrame?.animate(
         [
           { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
           { transform: "translate(-50%, -50%) scale(0.72)", opacity: 1, offset: 0.22 },
@@ -294,7 +301,7 @@ const shots = importedPhotos.length
         ],
         { duration: 620, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
-      flash?.animate(
+      const flashPulse = flash?.animate(
         [
           { opacity: 0 },
           { opacity: 0.84, offset: 0.08 },
@@ -303,7 +310,7 @@ const shots = importedPhotos.length
         ],
         { duration: 560, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
-      curtainTop?.animate(
+      const curtainTopMotion = curtainTop?.animate(
         [
           { transform: "translate3d(0, -102%, 0)" },
           { transform: "translate3d(0, 0, 0)", offset: 0.31 },
@@ -312,7 +319,7 @@ const shots = importedPhotos.length
         ],
         { duration: 560, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
       );
-      curtainBottom?.animate(
+      const curtainBottomMotion = curtainBottom?.animate(
         [
           { transform: "translate3d(0, 102%, 0)" },
           { transform: "translate3d(0, 0, 0)", offset: 0.31 },
@@ -321,7 +328,7 @@ const shots = importedPhotos.length
         ],
         { duration: 560, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
       );
-      sensorScan?.animate(
+      const scanMotion = sensorScan?.animate(
         [
           { opacity: 0, transform: "translate3d(0, -120%, 0)" },
           { opacity: 0.86, offset: 0.16 },
@@ -329,7 +336,7 @@ const shots = importedPhotos.length
         ],
         { duration: 380, delay: 240, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
-      captureReadout?.animate(
+      const readoutMotion = captureReadout?.animate(
         [
           { opacity: 0, transform: "translate3d(0, 0.35rem, 0)" },
           { opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.2 },
@@ -338,6 +345,8 @@ const shots = importedPhotos.length
         ],
         { duration: 760, delay: 250, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
+      captureAnimations = [framePulse, focusPulse, flashPulse, curtainTopMotion, curtainBottomMotion, scanMotion, readoutMotion]
+        .filter((animation): animation is Animation => Boolean(animation));
     };
 
     shutter?.addEventListener("click", runCapture);
@@ -360,9 +369,9 @@ const shots = importedPhotos.length
       button.addEventListener("click", () => {
         setPressedState(simulationButtons, button);
         if (viewer) viewer.dataset.simulation = button.dataset.filmSimulation ?? "provia";
-        if (frameArea && !prefersReducedMotion()) {
-          frameArea.getAnimations().forEach((animation) => animation.cancel());
-          frameArea.animate(
+        if (cameraDisplay && !prefersReducedMotion()) {
+          simulationAnimation?.cancel();
+          simulationAnimation = cameraDisplay.animate(
             [
               { opacity: 0.58, filter: "blur(2px)" },
               { opacity: 1, filter: "blur(0)" },

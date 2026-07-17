@@ -258,4 +258,27 @@ import { education, work } from "../data/profile";
     if (front) cardResizeObserver.observe(front);
     if (back) cardResizeObserver.observe(back);
   });
+
+  const timelineGroups = Array.from(document.querySelectorAll<HTMLElement>(".journey-cards"));
+  let timelineFrame = 0;
+
+  const updateTimelineProgress = () => {
+    timelineFrame = 0;
+    const viewportMarker = window.innerHeight * 0.54;
+    timelineGroups.forEach((group) => {
+      const bounds = group.getBoundingClientRect();
+      const travel = Math.max(1, bounds.height - window.innerHeight * 0.18);
+      const progress = Math.min(1, Math.max(0, (viewportMarker - bounds.top) / travel));
+      group.style.setProperty("--timeline-progress", progress.toFixed(4));
+    });
+  };
+
+  const requestTimelineProgress = () => {
+    if (timelineFrame) return;
+    timelineFrame = window.requestAnimationFrame(updateTimelineProgress);
+  };
+
+  updateTimelineProgress();
+  window.addEventListener("scroll", requestTimelineProgress, { passive: true });
+  window.addEventListener("resize", requestTimelineProgress, { passive: true });
 </script>

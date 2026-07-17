@@ -1,0 +1,197 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+const coverModules = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/vinyl/*.{jpg,jpeg,png,webp,avif}",
+  { eager: true },
+);
+
+const albums = [
+  {
+    key: "pink-floyd",
+    coverFile: "dark-side-of-the-moon.jpg",
+    title: "The Dark Side of the Moon",
+    artist: "Pink Floyd",
+    year: "1973",
+    monogram: "DS",
+    note: "Ein durchgehendes Konzept über Zeit, Druck, Geld und Vergänglichkeit. Übergänge und Sounddesign machen es für mich zu einem Album am Stück.",
+    tracks: ["Time", "The Great Gig in the Sky", "Us and Them"],
+  },
+  {
+    key: "dire-straits",
+    coverFile: "brothers-in-arms.jpg",
+    title: "Brothers in Arms",
+    artist: "Dire Straits",
+    year: "1985",
+    monogram: "BA",
+    note: "Groß und präzise produziert, aber nie überladen. Besonders das Titelstück lebt von Raum, Dynamik und zurückhaltender Spannung.",
+    tracks: ["Money for Nothing", "Your Latest Trick", "Brothers in Arms"],
+  },
+  {
+    key: "frank-ocean",
+    coverFile: "blonde.jpg",
+    title: "Blonde",
+    artist: "Frank Ocean",
+    year: "2016",
+    monogram: "BL",
+    note: "Reduziert, intim und stellenweise fast fragmentarisch. Viele Details und Perspektivwechsel fallen erst nach mehreren Durchläufen auf.",
+    tracks: ["Ivy", "Self Control", "Nights"],
+  },
+  {
+    key: "tyler",
+    coverFile: "igor.jpg",
+    title: "IGOR",
+    artist: "Tyler, the Creator",
+    year: "2019",
+    monogram: "IG",
+    note: "Synthesizer, Soul und verzerrte Texturen erzählen eine geschlossene Geschichte. Für mich funktioniert IGOR stärker als Album als in einzelnen Songs.",
+    tracks: ["EARFQUAKE", "I THINK", "GONE, GONE / THANK YOU"],
+  },
+  {
+    key: "mac-miller",
+    coverFile: "swimming.jpg",
+    title: "Swimming",
+    artist: "Mac Miller",
+    year: "2018",
+    monogram: "SW",
+    note: "Ruhig, warm und sehr persönlich. Das Album hält Melancholie und Leichtigkeit gleichzeitig aus, ohne daraus einen großen Effekt machen zu müssen.",
+    tracks: ["Come Back to Earth", "Self Care", "2009"],
+  },
+].map((album) => ({
+  ...album,
+  cover: coverModules[`../assets/vinyl/${album.coverFile}`]?.default,
+}));
+---
+
+<article class="play-card sound-card" id="vinyl" data-reveal="left" data-sound-card data-album-theme={albums[0].key}>
+  <div class="sound-stage">
+    <div class="album-sleeves" aria-live="polite">
+      {albums.map((album, index) => (
+        <figure class:list={["album-sleeve", index === 0 && "is-active"]} data-album-panel={album.key}>
+          {album.cover ? (
+            <Image src={album.cover} alt={`Cover von ${album.title} von ${album.artist}`} widths={[320, 480]} sizes="12rem" loading="lazy" />
+          ) : (
+            <span class="album-sleeve-fallback" aria-label={`${album.title} – Cover kann lokal ergänzt werden`}>
+              <strong>{album.monogram}</strong>
+              <small>{album.title}</small>
+            </span>
+          )}
+        </figure>
+      ))}
+    </div>
+
+    <div class="turntable" data-turntable>
+      <button class="vinyl-button" type="button" aria-pressed="true" data-vinyl-button>
+        <i class="ph ph-vinyl-record" aria-hidden="true"></i>
+        <span class="sr-only">Plattenspieler starten oder stoppen</span>
+      </button>
+      <span class="turntable-arm" aria-hidden="true"><span></span></span>
+      <span class="vinyl-caretaker" aria-hidden="true"><i class="ph ph-person-simple-walk"></i></span>
+    </div>
+
+    <p class="turntable-caption" data-turntable-status>Die Platte läuft. Antippen pausiert sie.</p>
+  </div>
+
+  <div class="album-copy-stack">
+    {albums.map((album, index) => (
+      <section class:list={["album-copy-panel", index === 0 && "is-active"]} data-album-panel={album.key} hidden={index !== 0}>
+        <p class="album-collection-note">Album für den ganzen Durchlauf</p>
+        <h3>{album.title}</h3>
+        <p class="album-artist">{album.artist}, {album.year}</p>
+        <p class="album-note">{album.note}</p>
+        <div class="favorite-tracks">
+          <span>Meine Favoriten</span>
+          <ol>
+            {album.tracks.map((track) => (
+              <li><i class="ph ph-star" aria-hidden="true"></i>{track}</li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <div class="album-switch" role="group" aria-label="Album auswählen">
+    {albums.map((album, index) => (
+      <button class:list={[index === 0 && "is-selected"]} type="button" data-album={album.key} aria-pressed={index === 0}>
+        <span>{album.title}</span>
+        <small>{album.artist}</small>
+      </button>
+    ))}
+  </div>
+</article>
+
+<script>
+  import { prefersReducedMotion, setPressedState } from "../scripts/motion";
+
+  document.querySelectorAll<HTMLElement>("[data-sound-card]").forEach((soundCard) => {
+    const vinylButton = soundCard.querySelector<HTMLButtonElement>("[data-vinyl-button]");
+    const turntable = soundCard.querySelector<HTMLElement>("[data-turntable]");
+    const status = soundCard.querySelector<HTMLElement>("[data-turntable-status]");
+    const albumButtons = soundCard.querySelectorAll<HTMLButtonElement>("[data-album]");
+    const panels = soundCard.querySelectorAll<HTMLElement>("[data-album-panel]");
+    let rescueTimer = 0;
+    let rescueRestartTimer = 0;
+    let rescueFinishTimer = 0;
+
+    const setPlaying = (playing: boolean) => {
+      vinylButton?.setAttribute("aria-pressed", String(playing));
+      if (status) status.textContent = playing ? "Die Platte läuft. Antippen pausiert sie." : "Kurze Pause. Jemand wird das gleich bemerken.";
+    };
+
+    const clearRescue = () => {
+      window.clearTimeout(rescueTimer);
+      window.clearTimeout(rescueRestartTimer);
+      window.clearTimeout(rescueFinishTimer);
+      turntable?.classList.remove("is-rescuing");
+    };
+
+    const scheduleRescue = () => {
+      clearRescue();
+      rescueTimer = window.setTimeout(() => {
+        if (vinylButton?.getAttribute("aria-pressed") === "true") return;
+        turntable?.classList.add("is-rescuing");
+        if (status) status.textContent = "Da stimmt etwas nicht …";
+        rescueRestartTimer = window.setTimeout(() => setPlaying(true), prefersReducedMotion() ? 0 : 1350);
+        rescueFinishTimer = window.setTimeout(() => {
+          turntable?.classList.remove("is-rescuing");
+          if (status) status.textContent = "Läuft wieder. Als wäre nichts gewesen.";
+        }, prefersReducedMotion() ? 100 : 2900);
+      }, 10000);
+    };
+
+    vinylButton?.addEventListener("click", () => {
+      const playing = vinylButton.getAttribute("aria-pressed") === "true";
+      clearRescue();
+      setPlaying(!playing);
+      if (playing) scheduleRescue();
+    });
+
+    albumButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const key = button.dataset.album;
+        if (!key) return;
+        setPressedState(albumButtons, button);
+        soundCard.dataset.albumTheme = key;
+
+        panels.forEach((panel) => {
+          const active = panel.dataset.albumPanel === key;
+          panel.classList.toggle("is-active", active);
+          panel.toggleAttribute("hidden", !active);
+          if (active && !prefersReducedMotion()) {
+            panel.animate(
+              [
+                { opacity: 0, transform: "translate3d(0, 0.5rem, 0)", filter: "blur(3px)" },
+                { opacity: 1, transform: "translate3d(0, 0, 0)", filter: "blur(0)" },
+              ],
+              { duration: 360, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
+            );
+          }
+        });
+        clearRescue();
+        setPlaying(true);
+      });
+    });
+  });
+</script>

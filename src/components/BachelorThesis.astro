@@ -11,10 +11,12 @@ const { thesis } = profile;
       <h2 id="thesis-title">Bachelorarbeit: Kreative Synergien.</h2>
       <p>{thesis.summary}</p>
 
-      <div class="thesis-facts" aria-label="Angaben zur Bachelorarbeit">
-        <span><i class="ph ph-graduation-cap" aria-hidden="true"></i>B.A. Medien und Kommunikation</span>
-        <span><i class="ph ph-buildings" aria-hidden="true"></i>Universität Passau, 2024</span>
-        <a href={thesis.readerUrl} aria-label="Bachelorarbeit in der Leseansicht öffnen">
+      <div class="thesis-meta" aria-label="Angaben zur Bachelorarbeit">
+        <div class="thesis-meta-facts">
+          <span><i class="ph ph-graduation-cap" aria-hidden="true"></i>B.A. Medien und Kommunikation</span>
+          <span><i class="ph ph-buildings" aria-hidden="true"></i>Universität Passau · 2024</span>
+        </div>
+        <a class="thesis-reader-link" href={thesis.readerUrl} aria-label="Bachelorarbeit in der Leseansicht öffnen">
           <i class="ph ph-book-open-text" aria-hidden="true"></i>In der Leseansicht öffnen
         </a>
       </div>

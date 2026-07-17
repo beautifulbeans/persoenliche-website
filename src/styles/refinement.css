@@ -80,6 +80,7 @@
   --motion-panel: 480ms;
 }
 
+
 body {
   background: var(--professional-page);
 }
@@ -1744,6 +1745,93 @@ body.intro-complete .hero-scene {
   }
 }
 
+/* Letzte Kaskadenkorrekturen: alte experimentelle Regeln dürfen die neue UI nicht verbiegen. */
+.hero-name span::before {
+  inset: auto 0 0.035em;
+  z-index: -1;
+  height: 0.09em;
+  background: color-mix(in srgb, var(--accent) 52%, transparent);
+  clip-path: none;
+  content: "";
+  opacity: 0;
+  transform: scaleX(0.18);
+  transform-origin: left center;
+}
+
+.hero-name span::after {
+  display: none;
+  content: "";
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-name:hover span::before {
+    opacity: 0.55;
+    transform: scaleX(1);
+  }
+
+  .hero-portrait-frame.is-tracking .hero-portrait-image {
+    transform: translate3d(var(--portrait-shift-x), var(--portrait-shift-y), 0) scale(1.045);
+  }
+}
+
+.journey-switcher a {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.turntable-caption {
+  position: static;
+  max-width: none;
+  margin: 0;
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font: 560 var(--type-caption) / 1.45 var(--font-sans);
+}
+
+.vinyl-button {
+  overflow: hidden;
+  border: 0.22rem solid color-mix(in srgb, var(--album-color) 36%, #171914);
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle, rgb(255 255 255 / 0.035) 0 1px, transparent 2px 5px),
+    radial-gradient(circle, var(--album-color) 0 14%, #d9d3bf 14.5% 17%, #20231e 17.5% 100%);
+  box-shadow:
+    0 0.7rem 1.5rem rgb(31 35 27 / 0.18),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  color: transparent;
+  animation: record-spin 4.8s linear infinite;
+}
+
+.vinyl-button::after {
+  position: absolute;
+  inset: 45%;
+  border-radius: 50%;
+  background: #eee8d7;
+  content: "";
+  box-shadow: 0 0 0 1px rgb(28 31 25 / 0.35);
+}
+
+.vinyl-button i {
+  display: none;
+  animation: none;
+}
+
+.vinyl-button[aria-pressed="false"] {
+  animation-play-state: paused;
+}
+
+.turntable-arm {
+  z-index: 3;
+  transform: rotate(-7deg);
+}
+
+.vinyl-button[aria-pressed="true"] + .turntable-arm {
+  transform: rotate(19deg);
+}
+
+.vinyl-button[aria-pressed="false"] + .turntable-arm {
+  transform: rotate(-24deg);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .chapter-transition {
     min-height: 100svh;
@@ -1805,5 +1893,930 @@ body.intro-complete .hero-scene {
 
   .hero-portrait-image-mono {
     display: none;
+  }
+}
+/*
+ * UI-Konsolidierung 2026-07
+ * Eine Schriftfamilie, fünf belastbare Typostufen und klare Affordanzen.
+ * Die Kamera darf als einziges inhaltlich begründetes Objekt System-Mono nutzen.
+ */
+:root {
+  --font-mono: var(--font-sans);
+  --font-camera: ui-monospace, "SFMono-Regular", "Cascadia Mono", monospace;
+  --type-caption: 0.75rem;
+  --type-small: 0.875rem;
+  --type-body: 1rem;
+  --type-lead: clamp(1.05rem, 1.5vw, 1.2rem);
+  --type-card-title: clamp(1.65rem, 3.1vw, 2.4rem);
+  --type-section: clamp(2.65rem, 5.8vw, 5rem);
+  --anchor-track: min(46vh, 22rem);
+}
+
+body {
+  font-size: var(--type-body);
+}
+
+h2 {
+  font-size: var(--type-section);
+}
+
+h3 {
+  font-size: var(--type-card-title);
+}
+
+.section-heading > p,
+.personal-heading > p,
+.contact-copy > p,
+.thesis-copy > p {
+  font-size: var(--type-lead);
+}
+
+.fact-kicker,
+.section-eyebrow,
+.journey-group-heading p,
+.journey-date,
+.journey-context,
+.journey-back-top > span,
+.thesis-cover-copy > p,
+.thesis-cover-footer > span,
+.thesis-back-heading > span,
+.album-collection-note,
+.favorite-tracks > span,
+.simulation-controls > span {
+  font-family: var(--font-sans);
+  font-size: var(--type-caption);
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.journey-description,
+.journey-organization,
+.journey-back-intro,
+.journey-details li,
+.journey-back-grid p,
+.thesis-takeaway-list p,
+.album-note,
+.camera-personal,
+.camera-fact-panel > p:last-child {
+  font-size: var(--type-small);
+  line-height: 1.58;
+}
+
+.journey-switcher a,
+.journey-flip-button,
+.thesis-reader-link,
+.thesis-cover-footer button,
+.thesis-back-actions :is(a, button),
+.album-switch button,
+.camera-fact-switch button,
+.simulation-controls button {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+}
+
+/* Animierte Ankerreise: sichtbar, aber außerhalb des Inhaltsflusses. */
+.anchor-flight {
+  position: fixed;
+  top: 23vh;
+  right: max(1.1rem, calc((100vw - var(--page-width)) / 2 + 1.2rem));
+  z-index: 46;
+  width: 2.25rem;
+  height: calc(var(--anchor-track) + 2.25rem);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(1rem);
+  transition:
+    opacity 180ms ease,
+    transform 360ms var(--ease-out);
+}
+
+.anchor-flight.is-active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.anchor-flight-track {
+  position: absolute;
+  top: 1.1rem;
+  bottom: 1.1rem;
+  left: 50%;
+  width: 1px;
+  background: color-mix(in srgb, var(--accent) 48%, transparent);
+}
+
+.anchor-flight-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--accent-strong) 26%, transparent);
+}
+
+.anchor-flight[data-direction="up"] .anchor-flight-marker i {
+  transform: rotate(180deg);
+}
+
+body.is-anchor-travelling {
+  cursor: progress;
+}
+
+/* Porträt: stabiler Farbschnitt statt 3D-Feder; keine erklärende UI im Bild. */
+.hero-portrait-frame {
+  --portrait-shift-x: 0rem;
+  --portrait-shift-y: 0rem;
+  isolation: isolate;
+  transform: none !important;
+}
+
+.hero-portrait-frame::after {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: 1px solid rgb(247 249 244 / 0.35);
+  content: "";
+  pointer-events: none;
+}
+
+.hero-portrait-image {
+  transform: translate3d(var(--portrait-shift-x), var(--portrait-shift-y), 0) scale(1.035);
+  transition:
+    clip-path 520ms var(--ease-out),
+    filter 360ms ease,
+    transform 460ms var(--ease-out);
+}
+
+.hero-portrait-image-mono {
+  clip-path: circle(0 at var(--portrait-x) var(--portrait-y));
+}
+
+.hero-portrait-frame.is-tracking .hero-portrait-image-mono {
+  clip-path: circle(34% at var(--portrait-x) var(--portrait-y));
+}
+
+.hero-portrait-frame.is-tracking .portrait-orbit-one {
+  transform: rotate(12deg) scale(1.02);
+}
+
+.hero-portrait-frame.is-tracking .portrait-orbit-two {
+  transform: rotate(-14deg) scale(0.94);
+}
+
+.hero-role-index {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  z-index: 5;
+  display: grid;
+  width: min(21rem, 88%);
+  min-height: 0;
+  align-self: flex-end;
+  margin-top: -1.35rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-block: 1px solid var(--line-strong);
+  border-radius: 0;
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.hero-role-label {
+  padding-right: 0.85rem;
+  border-right: 1px solid var(--line);
+  color: var(--accent-strong);
+  font-size: var(--type-caption);
+  font-weight: 650;
+}
+
+.hero-role-index strong {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+/* Laufbahn: klare Sprungziele und eine tatsächlich fortschreitende Linie. */
+.journey-switcher {
+  display: grid;
+  width: min(100%, 45rem);
+  margin-top: 2.5rem;
+  padding: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.journey-switcher a {
+  min-width: 0;
+  min-height: 4.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.journey-switcher a::after {
+  align-self: center;
+  color: var(--muted);
+  content: "↘";
+  font-size: 1rem;
+  grid-column: 3;
+  grid-row: 1 / 3;
+}
+
+.journey-switcher span {
+  font-family: var(--font-sans);
+  font-size: var(--type-caption);
+  font-weight: 500;
+  text-transform: none;
+}
+
+.journey-cards {
+  --timeline-progress: 0;
+}
+
+.journey-cards::before,
+.journey-cards::after {
+  top: 1.2rem;
+  bottom: 1.2rem;
+  left: 0.45rem;
+  width: 2px;
+}
+
+.journey-cards::after {
+  position: absolute;
+  background: var(--accent);
+  content: "";
+  transform: scaleY(var(--timeline-progress));
+  transform-origin: top;
+  transition: transform 120ms linear;
+}
+
+.journey-cards-education::after {
+  background: var(--study);
+}
+
+.journey-card h4,
+.journey-card .journey-card-back h4 {
+  font-size: var(--type-card-title);
+}
+
+.journey-card-face {
+  padding: clamp(1.35rem, 3vw, 2.15rem);
+}
+
+.journey-date,
+.journey-context {
+  min-height: auto;
+  padding: 0.4rem 0.7rem;
+}
+
+.journey-back-grid h5 {
+  font-size: 0.9375rem;
+}
+
+.journey-flip-button {
+  min-height: 2.75rem;
+}
+
+/* Metadaten sehen nach Metadaten aus; nur die Leseansicht ist eine Aktion. */
+.thesis-meta {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.thesis-meta-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1.25rem;
+  padding-block: 0.85rem;
+  border-block: 1px solid color-mix(in srgb, var(--study) 34%, var(--line));
+}
+
+.thesis-meta-facts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--study-strong);
+  font-size: var(--type-small);
+}
+
+.thesis-meta-facts i {
+  font-size: 1rem;
+}
+
+.thesis-reader-link {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 2.9rem;
+  align-items: center;
+  gap: 0.55rem;
+  padding-inline: 1rem;
+  border-radius: var(--radius-control);
+  background: var(--study-strong);
+  color: var(--on-accent);
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    transform var(--motion-press) var(--ease-out),
+    background-color var(--motion-ui) ease;
+}
+
+.thesis-takeaway-list h4 {
+  font-size: 0.9375rem;
+}
+
+/* Kapitelwechsel: ein ausgelöster Film, kein Scroll-Scrubbing. */
+.chapter-transition {
+  min-height: 100svh;
+  overflow: clip;
+  background: var(--study-canvas);
+}
+
+.chapter-transition-stage {
+  position: relative;
+  top: auto;
+  display: grid;
+  width: 100%;
+  height: 100svh;
+  overflow: clip;
+  place-items: center;
+  isolation: isolate;
+  background: var(--study-canvas);
+}
+
+.chapter-transition-personal {
+  clip-path: circle(0 at 50% 50%);
+  opacity: 0;
+  transition:
+    clip-path 1250ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 260ms ease;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-transition-personal {
+  clip-path: circle(150% at 50% 50%);
+  opacity: 1;
+}
+
+.chapter-transition-aperture {
+  opacity: 1;
+  transform: rotate(-12deg) scale(0.76);
+  transition:
+    transform 1180ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 260ms 900ms ease;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-transition-aperture {
+  opacity: 0;
+  transform: rotate(28deg) scale(1.14);
+}
+
+.chapter-aperture-ring {
+  transform: scale(0.9) rotate(0deg);
+  transition: transform 1150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chapter-transition-stage.is-personal-open .chapter-aperture-ring {
+  transform: scale(1.2) rotate(-58deg);
+}
+
+.chapter-aperture-blade[data-aperture-angle="0"] { --blade-angle: 0deg; }
+.chapter-aperture-blade[data-aperture-angle="60"] { --blade-angle: 60deg; }
+.chapter-aperture-blade[data-aperture-angle="120"] { --blade-angle: 120deg; }
+.chapter-aperture-blade[data-aperture-angle="180"] { --blade-angle: 180deg; }
+.chapter-aperture-blade[data-aperture-angle="240"] { --blade-angle: 240deg; }
+.chapter-aperture-blade[data-aperture-angle="300"] { --blade-angle: 300deg; }
+
+.chapter-aperture-blade {
+  opacity: 1;
+  transform: rotate(var(--blade-angle)) translate3d(0, 0, 0) scale(1);
+  transition:
+    transform 1050ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 240ms 820ms ease;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-aperture-blade {
+  opacity: 0;
+  transform: rotate(calc(var(--blade-angle) + 38deg)) translate3d(0, -118%, 0) scale(0.92);
+}
+
+.chapter-aperture-core {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(0.72);
+  transition:
+    transform 1080ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 220ms 830ms ease;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-aperture-core {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(3.4);
+}
+
+.chapter-transition-center {
+  opacity: 0;
+  transform: translate3d(0, 1.2rem, 0) scale(0.97);
+  transition:
+    opacity 520ms 360ms ease,
+    transform 900ms 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chapter-transition-center h2 span {
+  transition: transform 920ms 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chapter-transition-center h2 span:first-child {
+  transform: translateX(-1.2rem);
+}
+
+.chapter-transition-center h2 span:last-child {
+  transform: translateX(1.2rem);
+}
+
+.chapter-transition-cue {
+  opacity: 0;
+  transition: opacity 500ms 660ms ease;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-transition-center {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.chapter-transition-stage.is-personal-open .chapter-transition-center h2 span {
+  transform: translateX(0);
+}
+
+.chapter-transition-stage.is-personal-open .chapter-transition-cue {
+  opacity: 1;
+}
+
+/* Plattenspieler: läuft standardmäßig; Cover-Slots und Favoriten bilden eine Einheit. */
+.sound-card {
+  --album-color: var(--tone-vinyl-strong);
+  min-height: 0;
+  gap: 0;
+}
+
+.sound-card[data-album-theme="dire-straits"] { --album-color: #76563f; }
+.sound-card[data-album-theme="frank-ocean"] { --album-color: #4f7453; }
+.sound-card[data-album-theme="tyler"] { --album-color: #865268; }
+.sound-card[data-album-theme="mac-miller"] { --album-color: #3f6f85; }
+
+.sound-stage {
+  position: relative;
+  display: grid;
+  height: auto;
+  min-height: 13rem;
+  grid-template-columns: minmax(7.5rem, 0.8fr) minmax(9rem, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.album-sleeves {
+  position: relative;
+  width: min(100%, 11rem);
+  aspect-ratio: 1;
+}
+
+.album-sleeve {
+  position: absolute;
+  inset: 0;
+  display: none;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 0.35rem;
+  background: var(--album-color);
+  box-shadow: 0.45rem 0.45rem 0 color-mix(in srgb, var(--album-color) 20%, transparent);
+}
+
+.album-sleeve.is-active {
+  display: block;
+}
+
+.album-sleeve img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.album-sleeve-fallback {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  padding: 0.8rem;
+  background: color-mix(in srgb, var(--album-color) 82%, var(--warm-soft));
+  color: var(--personal-on-accent);
+  flex-direction: column;
+}
+
+.album-sleeve-fallback strong {
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+
+.album-sleeve-fallback small {
+  font-size: var(--type-caption);
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.turntable {
+  position: relative;
+  min-height: 11rem;
+}
+
+.vinyl-button {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 9.5rem;
+  height: 9.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--album-color);
+  cursor: pointer;
+  font-size: 9.5rem;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.vinyl-button i {
+  display: block;
+  animation: vinyl-spin 4.8s linear infinite;
+}
+
+.vinyl-button[aria-pressed="false"] i {
+  animation-play-state: paused;
+}
+
+.turntable-arm {
+  top: 0.6rem;
+  left: 7.8rem;
+  height: 8rem;
+  transform: rotate(-7deg);
+}
+
+.vinyl-button[aria-pressed="false"] + .turntable-arm {
+  transform: rotate(-24deg);
+}
+
+.vinyl-caretaker {
+  position: absolute;
+  right: -0.4rem;
+  bottom: 0.3rem;
+  z-index: 6;
+  color: var(--warm-strong);
+  font-size: 1.55rem;
+  opacity: 0;
+  transform: translateX(1.2rem);
+}
+
+.turntable.is-rescuing .vinyl-caretaker {
+  animation: vinyl-caretaker 2.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.turntable-caption {
+  grid-column: 1 / -1;
+  min-height: 1.5rem;
+  color: var(--muted);
+  font-size: var(--type-caption);
+}
+
+.album-copy-stack {
+  margin-top: 1.5rem;
+}
+
+.album-copy-panel[hidden],
+.album-sleeve[hidden] {
+  display: none;
+}
+
+.album-copy-panel h3 {
+  max-width: 16ch;
+  margin-top: 0.45rem;
+  font-size: var(--type-card-title);
+}
+
+.album-artist {
+  margin-top: 0.5rem;
+  color: var(--warm-strong);
+  font-size: var(--type-small);
+  font-weight: 650;
+}
+
+.album-note {
+  max-width: 36rem;
+  min-height: 0;
+  margin-top: 0.9rem;
+  color: var(--muted);
+}
+
+.favorite-tracks {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--warm) 32%, var(--line));
+}
+
+.favorite-tracks > span {
+  color: var(--warm-strong);
+}
+
+.favorite-tracks ol {
+  display: grid;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  gap: 0.45rem;
+  list-style: none;
+}
+
+.favorite-tracks li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--ink);
+  font-size: var(--type-small);
+}
+
+.favorite-tracks i {
+  color: var(--warm-strong);
+}
+
+.album-switch {
+  display: grid;
+  overflow: visible;
+  margin-top: 1.5rem;
+  padding: 0;
+  gap: 0;
+  border-top: 1px solid color-mix(in srgb, var(--warm) 34%, var(--line));
+}
+
+.album-switch button {
+  display: grid;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.7rem 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--warm) 24%, var(--line));
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+}
+
+.album-switch button small {
+  color: inherit;
+  font-size: var(--type-caption);
+}
+
+.album-switch button.is-selected,
+.album-switch button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--warm) 40%, var(--line));
+  background: transparent;
+  color: var(--warm-strong);
+}
+
+.album-switch button.is-selected span::before {
+  margin-right: 0.5rem;
+  content: "●";
+  font-size: 0.6rem;
+}
+
+@keyframes vinyl-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes vinyl-caretaker {
+  0% { opacity: 0; transform: translateX(1.2rem); }
+  18% { opacity: 1; }
+  55% { opacity: 1; transform: translateX(-5.5rem); }
+  72% { opacity: 1; transform: translateX(-5.5rem) rotate(-10deg); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+/* Kamera: feste 3:2-Bühne, klare Einzelspalte auf Mobil und isolierte Animationen. */
+.camera-card {
+  grid-template-columns: minmax(0, 1.25fr) minmax(19rem, 0.75fr);
+}
+
+.camera-screen-top,
+.camera-shot figcaption,
+.camera-capture-readout,
+.camera-playback-mode,
+.camera-file-name,
+.camera-screen-bottom .camera-gallery-nav > span {
+  font-family: var(--font-camera);
+}
+
+.camera-shot {
+  visibility: hidden;
+}
+
+.camera-shot.is-active {
+  visibility: visible;
+}
+
+.camera-fact-panel {
+  min-height: 0;
+  margin-bottom: 1.5rem;
+}
+
+.camera-fact-panel h4 {
+  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+}
+
+.camera-fact-panel > p:last-child {
+  margin-bottom: 0.75rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .thesis-reader-link:hover {
+    transform: translateY(-0.12rem);
+  }
+
+  .album-switch button:hover {
+    color: var(--warm-strong);
+  }
+}
+
+@media (max-width: 48rem) {
+  .anchor-flight {
+    top: 27vh;
+    right: 0.75rem;
+  }
+
+  .hero-role-index {
+    right: auto;
+    bottom: auto;
+    width: min(20rem, 92%);
+    margin-top: -1rem;
+  }
+
+  .journey-layout {
+    margin-top: 3.5rem;
+  }
+
+  .journey-card-face {
+    padding: 1.35rem;
+  }
+
+  .journey-card h4,
+  .journey-card .journey-card-back h4 {
+    font-size: clamp(1.55rem, 7vw, 2.1rem);
+  }
+
+  .journey-back-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chapter-transition,
+  .chapter-transition-stage {
+    min-height: 100svh;
+    height: 100svh;
+  }
+
+  .chapter-transition-aperture {
+    width: min(76vw, 20rem);
+  }
+
+  .sound-stage {
+    min-height: 11.5rem;
+    grid-template-columns: minmax(6.8rem, 0.75fr) minmax(8.6rem, 1fr);
+  }
+
+  .vinyl-button {
+    width: 8.5rem;
+    height: 8.5rem;
+    font-size: 8.5rem;
+  }
+
+  .turntable-arm {
+    left: 7rem;
+    height: 7.2rem;
+  }
+
+  .camera-card {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .camera-viewer {
+    min-width: 0;
+    min-height: 0;
+    border-radius: calc(var(--radius-card) - 1px) calc(var(--radius-card) - 1px) 0 0;
+  }
+
+  .camera-copy {
+    min-width: 0;
+    padding: 1.35rem;
+  }
+
+  .camera-display,
+  .camera-frames {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .camera-fact-panel {
+    min-height: 0;
+  }
+
+  .camera-fact-switch,
+  .simulation-controls > div {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.35rem;
+  }
+
+  .camera-fact-switch button,
+  .simulation-controls button {
+    min-width: max-content;
+  }
+}
+
+@media (max-width: 40rem) {
+  .journey-switcher {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .journey-switcher a {
+    min-height: 4.5rem;
+  }
+
+  .thesis-meta-facts {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 24rem) {
+  .sound-stage {
+    grid-template-columns: 1fr;
+  }
+
+  .album-sleeves {
+    width: 8.5rem;
+  }
+
+  .turntable {
+    min-height: 9.5rem;
+  }
+
+  .album-switch button {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+
+  .camera-screen-bottom {
+    grid-template-columns: auto 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anchor-flight {
+    display: none;
+  }
+
+  .chapter-transition-personal,
+  .chapter-transition-aperture,
+  .chapter-aperture-ring,
+  .chapter-aperture-blade,
+  .chapter-aperture-core,
+  .chapter-transition-center,
+  .chapter-transition-center h2 span,
+  .chapter-transition-cue,
+  .hero-portrait-image,
+  .journey-cards::after {
+    transition: none !important;
+  }
+
+  .vinyl-button,
+  .vinyl-button i,
+  .turntable.is-rescuing .vinyl-caretaker {
+    animation: none !important;
+  }
+
+  .vinyl-button,
+  .vinyl-button i {
+    transform: none;
   }
 }
