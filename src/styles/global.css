@@ -22,7 +22,8 @@
   --shadow-small: 0 12px 30px rgb(52 65 45 / 0.1);
   --radius-card: 1.5rem;
   --radius-control: 999px;
-  --font-sans: "Afacad Flux Variable", "Afacad", "Helvetica Neue", sans-serif;
+  --font-display: "Cormorant Garamond Variable", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Manrope Variable", "Manrope", "Helvetica Neue", sans-serif;
   --font-mono: var(--font-sans);
   --page-width: 78rem;
   --gutter: clamp(1.15rem, 4vw, 3.5rem);

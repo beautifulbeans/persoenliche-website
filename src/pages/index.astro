@@ -360,10 +360,9 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
         if (!center) return;
         const distance = Math.hypot(pointerX - center.x, pointerY - center.y);
         const proximity = Math.max(0, 1 - distance / radius);
-        letter.style.setProperty("--letter-weight", `${Math.round(590 + proximity * 300)}`);
-        letter.style.setProperty("--letter-slant", `${(-2 + proximity * 11).toFixed(2)}`);
-        letter.style.setProperty("--letter-lift", `${(-proximity * 0.09).toFixed(3)}em`);
-        letter.style.setProperty("--letter-scale", `${(1 + proximity * 0.045).toFixed(3)}`);
+        letter.style.setProperty("--letter-weight", `${Math.round(560 + proximity * 140)}`);
+        letter.style.setProperty("--letter-lift", `${(-proximity * 0.075).toFixed(3)}em`);
+        letter.style.setProperty("--letter-scale", `${(1 + proximity * 0.04).toFixed(3)}`);
         letter.style.setProperty("--letter-accent", proximity.toFixed(3));
       });
     };
@@ -380,7 +379,6 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
       nameFrame = 0;
       letters.forEach((letter) => {
         letter.style.removeProperty("--letter-weight");
-        letter.style.removeProperty("--letter-slant");
         letter.style.removeProperty("--letter-lift");
         letter.style.removeProperty("--letter-scale");
         letter.style.removeProperty("--letter-accent");

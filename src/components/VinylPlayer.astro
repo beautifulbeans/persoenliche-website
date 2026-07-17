@@ -15,7 +15,11 @@ const albums = [
     artist: "Pink Floyd",
     year: "1973",
     monogram: "DS",
-    tracks: ["Time", "The Great Gig in the Sky", "Any Colour You Like"],
+    tracks: [
+      { position: "04", title: "Time" },
+      { position: "05", title: "The Great Gig in the Sky" },
+      { position: "08", title: "Any Colour You Like" },
+    ],
   },
   {
     key: "dire-straits",
@@ -24,7 +28,11 @@ const albums = [
     artist: "Dire Straits",
     year: "1978",
     monogram: "DR",
-    tracks: ["Sultans of Swing", "Six Blade Knife", "Down to the Waterline"],
+    tracks: [
+      { position: "06", title: "Sultans of Swing" },
+      { position: "04", title: "Six Blade Knife" },
+      { position: "01", title: "Down to the Waterline" },
+    ],
   },
   {
     key: "frank-ocean",
@@ -33,7 +41,11 @@ const albums = [
     artist: "Frank Ocean",
     year: "2016",
     monogram: "BL",
-    tracks: ["Nights", "White Ferrari", "Seigfried"],
+    tracks: [
+      { position: "09", title: "Nights" },
+      { position: "14", title: "White Ferrari" },
+      { position: "15", title: "Seigfried" },
+    ],
   },
   {
     key: "tyler",
@@ -42,7 +54,11 @@ const albums = [
     artist: "Tyler, the Creator",
     year: "2019",
     monogram: "IG",
-    tracks: ["IGOR'S THEME", "PUPPET", "ARE WE STILL FRIENDS?"],
+    tracks: [
+      { position: "01", title: "IGOR'S THEME" },
+      { position: "08", title: "PUPPET" },
+      { position: "12", title: "ARE WE STILL FRIENDS?" },
+    ],
   },
   {
     key: "mac-miller",
@@ -51,7 +67,11 @@ const albums = [
     artist: "Mac Miller",
     year: "2018",
     monogram: "SW",
-    tracks: ["What's the Use?", "Wings", "Dunno"],
+    tracks: [
+      { position: "03", title: "What's the Use?" },
+      { position: "06", title: "Wings" },
+      { position: "10", title: "Dunno" },
+    ],
   },
 ].map((album) => ({
   ...album,
@@ -102,8 +122,8 @@ const albums = [
           <div class="favorite-tracks">
             <span>Meine Favoriten</span>
             <ol>
-              {album.tracks.map((track, trackIndex) => (
-                <li><span>{String(trackIndex + 1).padStart(2, "0")}</span><strong>{track}</strong></li>
+              {album.tracks.map((track) => (
+                <li><span>{track.position}</span><strong>{track.title}</strong></li>
               ))}
             </ol>
           </div>
@@ -163,10 +183,10 @@ const albums = [
       rescueTimer = window.setTimeout(() => {
         if (vinylButton?.getAttribute("aria-pressed") === "true") return;
         turntable?.classList.add("is-rescuing");
-        rescueRestartTimer = window.setTimeout(() => setPlaying(true), prefersReducedMotion() ? 0 : 980);
+        rescueRestartTimer = window.setTimeout(() => setPlaying(true), prefersReducedMotion() ? 0 : 790);
         rescueFinishTimer = window.setTimeout(() => {
           turntable?.classList.remove("is-rescuing");
-        }, prefersReducedMotion() ? 100 : 2050);
+        }, prefersReducedMotion() ? 100 : 1700);
       }, 5000);
     };
 

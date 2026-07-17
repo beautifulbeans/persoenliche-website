@@ -3947,12 +3947,13 @@ body.is-anchor-travelling {
 }
 
 /*
- * Identität 2026-07: Afacad Flux, getrennte Navigation und reaktive Hero-Ebene.
+ * Identität 2026-07: getrennte Navigation und reaktive Hero-Ebene.
  * Die Bewegung zitiert Variable Proximity und Pixel Transition, bleibt aber
  * als native, auf die Seite zugeschnittene Interaktion leichtgewichtig.
  */
 :root {
-  --font-sans: "Afacad Flux Variable", "Afacad", "Helvetica Neue", sans-serif;
+  --font-display: "Cormorant Garamond Variable", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Manrope Variable", "Manrope", "Helvetica Neue", sans-serif;
   --font-mono: var(--font-sans);
   --ease-spring-soft: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-cut: cubic-bezier(0.76, 0, 0.24, 1);
@@ -5195,5 +5196,780 @@ a[data-anchor-travelling="true"] {
 
   body.intro-complete .hero-name .hero-name-line {
     animation: none !important;
+  }
+}
+
+/*
+ * Editoriale Ausgabe 2026-07-17
+ * Display-Serif, eine lesbare Sans, eine zweispurige Laufbahn und eine
+ * einmalige Eröffnung wie bei einer analogen Portfolio-Mappe.
+ */
+:root {
+  --font-display: "Cormorant Garamond Variable", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Manrope Variable", "Manrope", "Helvetica Neue", sans-serif;
+  --font-mono: var(--font-sans);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-variation-settings: "wght" 430;
+  letter-spacing: -0.008em;
+}
+
+h1,
+h2,
+h3,
+h4,
+.intro-folio-title,
+.contact-copy h2,
+.legal-page h1,
+.not-found h1 {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "wght" 570;
+  font-weight: 570;
+  letter-spacing: -0.035em;
+}
+
+button,
+input,
+textarea,
+select,
+.site-header,
+.journey-date,
+.journey-context,
+.fact-kicker,
+.section-eyebrow,
+.favorite-tracks,
+.camera-ui {
+  font-family: var(--font-sans);
+}
+
+.section-heading h2,
+.personal-heading h2,
+.thesis-copy h2 {
+  max-width: 12ch;
+  font-size: clamp(3.4rem, 7vw, 6.3rem);
+  line-height: 0.89;
+}
+
+.hero h1.hero-name {
+  max-width: 100%;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 10vw, 8.6rem);
+  font-variation-settings: "wght" 560;
+  font-weight: 560;
+  line-height: 0.77;
+  letter-spacing: -0.055em;
+}
+
+.hero h1.hero-name > .hero-name-line {
+  overflow: visible;
+  padding-right: 0.05em !important;
+  padding-bottom: 0.09em !important;
+}
+
+.hero h1.hero-name > .hero-name-line:last-child {
+  margin-top: -0.01em !important;
+  padding-bottom: 0.18em !important;
+}
+
+.hero h1.hero-name .hero-letter {
+  --letter-weight: 560;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-variation-settings: "wght" var(--letter-weight);
+  transition:
+    color 180ms ease,
+    font-variation-settings 180ms ease,
+    transform 180ms var(--ease-spring-soft);
+}
+
+.journey-card h4,
+.journey-card .journey-card-back h4,
+.thesis-cover-copy h3,
+.thesis-back-heading h3,
+.album-copy-panel h3,
+.vinyl-intro h3,
+.cards-heading h3,
+.tea-copy h3,
+.play-card h3 {
+  font-family: var(--font-display);
+  font-variation-settings: "wght" 580;
+  font-weight: 580;
+  letter-spacing: -0.025em;
+  line-height: 0.98;
+}
+
+/* Ein geschlossener Portfolio-Folio öffnet sich und gibt die Seite frei. */
+body.intro-active {
+  overflow: hidden;
+}
+
+.intro-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: hidden;
+  background: transparent;
+  perspective: 1800px;
+  pointer-events: none;
+}
+
+.intro-folio {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #dde1d6;
+  transform: scale(1.035);
+  transform-style: preserve-3d;
+  transition: transform 880ms var(--ease-spring-soft);
+}
+
+.intro-reveal.is-running .intro-folio {
+  transform: scale(1);
+}
+
+.intro-folio-paper,
+.intro-folio-cover {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.intro-folio-paper {
+  inset-inline: 0;
+  transform: translate3d(0, 0, -2px);
+  transition: transform 760ms 230ms var(--ease-cut);
+}
+
+.intro-folio-paper-back {
+  z-index: 1;
+  background: #cbd2c2;
+}
+
+.intro-folio-paper-middle {
+  z-index: 2;
+  inset: 1.2vh 0.8vw;
+  border: 1px solid rgb(68 78 60 / 0.12);
+  background: #eff0e9;
+}
+
+.intro-folio-cover {
+  z-index: 3;
+  width: calc(50% + 1px);
+  overflow: hidden;
+  backface-visibility: hidden;
+  color: #f5f4e9;
+  transform: rotateY(0deg) translateZ(1px);
+  transition: transform 900ms var(--ease-cut);
+}
+
+.intro-folio-cover-left {
+  left: 0;
+  background: #4e5a41;
+  transform-origin: right center;
+}
+
+.intro-folio-cover-right {
+  right: 0;
+  background: #657252;
+  transform-origin: left center;
+}
+
+.intro-folio-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0.32rem;
+  background: rgb(24 32 21 / 0.16);
+}
+
+.intro-folio-cover-left .intro-folio-edge {
+  right: 0;
+}
+
+.intro-folio-cover-right .intro-folio-edge {
+  left: 0;
+}
+
+.intro-folio-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  z-index: 5;
+  width: 1px;
+  background: rgb(247 247 235 / 0.38);
+  box-shadow: 0 0 1.2rem rgb(21 28 19 / 0.22);
+  opacity: 0;
+  transform: scaleY(0.1);
+  transition:
+    opacity 320ms ease,
+    transform 780ms var(--ease-spring-soft);
+}
+
+.intro-reveal.is-running .intro-folio-spine {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.intro-folio-index,
+.intro-folio-monogram,
+.intro-folio-caption,
+.intro-folio-title {
+  position: absolute;
+  opacity: 0;
+  transform: translate3d(0, 1rem, 0);
+  transition:
+    opacity 420ms ease,
+    transform 620ms var(--ease-spring-soft);
+}
+
+.intro-folio-index {
+  top: clamp(1.2rem, 4vw, 3.5rem);
+  left: clamp(1.2rem, 5vw, 4.5rem);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.intro-folio-monogram {
+  top: clamp(1.2rem, 4vw, 3.5rem);
+  right: clamp(1.2rem, 4vw, 3.5rem);
+  display: grid;
+  width: 3.2rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgb(245 244 233 / 0.56);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.intro-folio-title {
+  top: 50%;
+  left: clamp(1.2rem, 5vw, 4.5rem);
+  display: grid;
+  font-size: clamp(3.6rem, 8vw, 7.6rem);
+  line-height: 0.72;
+  transform: translate3d(0, -38%, 0);
+}
+
+.intro-folio-title span:last-child {
+  margin-top: 0.08em;
+  padding-bottom: 0.12em;
+}
+
+.intro-folio-caption {
+  right: clamp(1.2rem, 4vw, 3.5rem);
+  bottom: clamp(1.2rem, 4vw, 3rem);
+  left: clamp(1.2rem, 5vw, 4.5rem);
+  padding-top: 0.7rem;
+  border-top: 1px solid rgb(245 244 233 / 0.46);
+  font-size: 0.72rem;
+  font-weight: 560;
+  letter-spacing: 0.03em;
+}
+
+.intro-reveal.is-running :is(.intro-folio-index, .intro-folio-monogram, .intro-folio-caption) {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.intro-reveal.is-running .intro-folio-title {
+  opacity: 1;
+  transform: translate3d(0, -50%, 0);
+}
+
+.intro-reveal.is-leaving .intro-folio-cover-left {
+  transform: rotateY(104deg) translateZ(1px);
+}
+
+.intro-reveal.is-leaving .intro-folio-cover-right {
+  transform: rotateY(-104deg) translateZ(1px);
+}
+
+.intro-reveal.is-leaving .intro-folio-paper-back {
+  transform: translate3d(0, -104%, -2px);
+}
+
+.intro-reveal.is-leaving .intro-folio-paper-middle {
+  transform: translate3d(0, 104%, -1px);
+}
+
+.intro-reveal.is-leaving .intro-folio-spine,
+.intro-reveal.is-leaving :is(.intro-folio-index, .intro-folio-monogram, .intro-folio-title, .intro-folio-caption) {
+  opacity: 0;
+}
+
+/* Die Übersicht zeigt Beruf und Studium auf derselben Zeitachse. */
+.journey-map {
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 1.15rem;
+  background: color-mix(in srgb, var(--surface) 92%, var(--brand-soft));
+  box-shadow: 0 0.35rem 0 rgb(73 84 58 / 0.08);
+}
+
+.journey-map-scroll {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: var(--line-strong) transparent;
+  scrollbar-width: thin;
+}
+
+.journey-map-scroll:focus-visible {
+  outline-offset: -2px;
+}
+
+.journey-map-canvas {
+  position: relative;
+  min-width: 55rem;
+  height: 20rem;
+  padding: 0;
+}
+
+.journey-map-years,
+.journey-map-axis,
+.journey-map-lane {
+  position: absolute;
+  right: 1.3rem;
+  left: 8.5rem;
+}
+
+.journey-map-years {
+  top: 1rem;
+  height: 1.5rem;
+}
+
+.journey-map-years span {
+  position: absolute;
+  left: var(--year-position);
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  transform: translateX(-50%);
+}
+
+.journey-map-years span:first-child {
+  transform: none;
+}
+
+.journey-map-years span:last-child {
+  transform: translateX(-100%);
+}
+
+.journey-map-axis {
+  top: 2.75rem;
+  bottom: 3.45rem;
+  border-top: 1px solid var(--line);
+}
+
+.journey-map-axis i {
+  position: absolute;
+  top: -0.22rem;
+  bottom: 0;
+  left: var(--axis-position);
+  width: 1px;
+  background: color-mix(in srgb, var(--line) 58%, transparent);
+}
+
+.journey-map-axis i::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0.44rem;
+  aspect-ratio: 1;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--line-strong);
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.journey-map-lane {
+  height: 4.6rem;
+}
+
+.journey-map-lane-education {
+  top: 4rem;
+}
+
+.journey-map-lane-work {
+  top: 10.25rem;
+}
+
+.journey-map-lane-name {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 1.25rem);
+  display: flex;
+  width: 6.7rem;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 650;
+  transform: translateY(-50%);
+}
+
+.journey-map-lane-name i {
+  color: var(--accent-strong);
+  font-size: 1rem;
+}
+
+.journey-map-bar {
+  position: absolute;
+  top: 0;
+  display: grid;
+  height: 4.6rem;
+  align-content: center;
+  overflow: hidden;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--brand) 42%, var(--line));
+  border-radius: 0.75rem;
+  background: var(--brand-soft);
+  color: var(--professional-ink);
+  text-decoration: none;
+  transition:
+    transform 220ms var(--ease-spring-soft),
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.journey-map-bar small {
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 570;
+}
+
+.journey-map-bar strong {
+  overflow: hidden;
+  font-size: 0.75rem;
+  font-weight: 660;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journey-map-bar-business {
+  left: 1%;
+  width: 12.3%;
+}
+
+.journey-map-bar-bachelor {
+  left: 15.1%;
+  width: 55.3%;
+}
+
+.journey-map-bar-working-student {
+  left: 43.2%;
+  width: 27.2%;
+}
+
+.journey-map-bar-current {
+  left: 72.3%;
+  width: 27.7%;
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.journey-map-bar-current small {
+  color: var(--on-brand-muted);
+}
+
+.journey-map-lane-education .journey-map-bar {
+  border-color: color-mix(in srgb, var(--study) 44%, var(--line));
+  background: var(--study-soft);
+}
+
+.journey-map-event {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  transform: translate(-50%, -50%);
+}
+
+.journey-map-event i {
+  width: 0.8rem;
+  aspect-ratio: 1;
+  border: 3px solid var(--surface);
+  border-radius: 50%;
+  background: var(--study);
+  box-shadow: 0 0 0 1px var(--study);
+}
+
+.journey-map-event em {
+  margin-top: 0.35rem;
+  color: var(--study-strong);
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 650;
+}
+
+.journey-map-overlap {
+  position: absolute;
+  right: 1.3rem;
+  bottom: 0.72rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.journey-map-overlap i {
+  color: var(--study-strong);
+  font-size: 1rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .journey-map-bar:hover {
+    z-index: 3;
+    border-color: var(--accent);
+    transform: translateY(-0.22rem);
+  }
+}
+
+.journey-layout {
+  margin-top: clamp(4rem, 7vw, 6.5rem);
+}
+
+.journey-cards {
+  --timeline-x: 0.5rem;
+  padding-left: 2.15rem;
+}
+
+.journey-cards::before,
+.journey-cards::after {
+  left: var(--timeline-x);
+}
+
+.journey-cards::after {
+  transform: scaleY(1);
+  transition: none;
+}
+
+.journey-card::before {
+  left: calc(var(--timeline-x) - 2.15rem);
+  transform: translateX(-50%);
+}
+
+.journey-card.is-active::before {
+  transform: translateX(-50%) scale(1.3);
+}
+
+@supports (animation-timeline: view()) {
+  .journey-cards::after {
+    animation: journey-line-grow linear both;
+    animation-range: entry 8% cover 78%;
+    animation-timeline: view();
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+}
+
+@keyframes journey-line-grow {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.journey-date {
+  padding: 0 0 0.38rem;
+  border-bottom: 1px solid var(--line-strong);
+  border-radius: 0;
+  background: transparent;
+  font-variant-numeric: tabular-nums;
+}
+
+.journey-card-education .journey-date {
+  background: transparent;
+}
+
+/* Eine kleine Tatze stupst den Tonarm an und verschwindet wieder. */
+.vinyl-cat-paw {
+  right: -0.3rem;
+  bottom: -0.18rem;
+  width: 4.35rem;
+  filter: drop-shadow(0 0.25rem 0.3rem rgb(54 45 37 / 0.14));
+  transform: translate3d(122%, 0.2rem, 0) rotate(8deg);
+}
+
+.vinyl-cat-silhouette {
+  fill: #c9b49d;
+  stroke: rgb(92 72 57 / 0.28);
+  stroke-width: 1.2;
+}
+
+.turntable.is-rescuing .vinyl-cat-paw {
+  animation: vinyl-paw-nudge 1.7s cubic-bezier(0.65, 0, 0.2, 1) both;
+}
+
+@keyframes vinyl-paw-nudge {
+  0% {
+    opacity: 0;
+    transform: translate3d(122%, 0.2rem, 0) rotate(8deg);
+  }
+  14% {
+    opacity: 1;
+  }
+  44% {
+    opacity: 1;
+    transform: translate3d(56%, -330%, 0) rotate(-12deg);
+  }
+  54% {
+    opacity: 1;
+    transform: translate3d(52%, -342%, 0) rotate(-17deg) scale(0.97);
+  }
+  65% {
+    opacity: 1;
+    transform: translate3d(56%, -330%, 0) rotate(-12deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(126%, 0.15rem, 0) rotate(6deg);
+  }
+}
+
+@media (max-width: 48rem) {
+  .hero h1.hero-name {
+    font-size: clamp(4.35rem, 20vw, 6.2rem);
+    line-height: 0.79;
+    letter-spacing: -0.055em;
+  }
+
+  .section-heading h2,
+  .personal-heading h2,
+  .thesis-copy h2 {
+    font-size: clamp(3.2rem, 15vw, 5rem);
+  }
+
+  .intro-folio-cover-left {
+    width: 25%;
+  }
+
+  .intro-folio-cover-right {
+    width: 75%;
+  }
+
+  .intro-folio-spine {
+    left: 25%;
+  }
+
+  .intro-folio-title {
+    font-size: clamp(3.2rem, 14vw, 5.2rem);
+  }
+
+  .journey-map {
+    margin-inline: -0.1rem;
+    padding: 0.45rem;
+  }
+
+  .journey-map-scroll {
+    overflow: visible;
+  }
+
+  .journey-map-canvas {
+    display: grid;
+    min-width: 0;
+    height: auto;
+    padding: 0.8rem;
+    gap: 1.25rem;
+  }
+
+  .journey-map-years,
+  .journey-map-axis {
+    display: none;
+  }
+
+  .journey-map-lane {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    display: grid;
+    height: auto;
+    padding-left: 5.75rem;
+    gap: 0.5rem;
+  }
+
+  .journey-map-lane-name {
+    top: 0.85rem;
+    right: calc(100% - 4.85rem);
+    width: 4.85rem;
+    align-items: flex-start;
+    line-height: 1.2;
+    transform: none;
+  }
+
+  .journey-map-bar,
+  .journey-map-event {
+    position: static;
+    width: 100%;
+    transform: none;
+  }
+
+  .journey-map-bar {
+    min-height: 4.15rem;
+    height: auto;
+  }
+
+  .journey-map-bar strong {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .journey-map-event {
+    display: flex;
+    min-height: 2.3rem;
+    align-items: center;
+    justify-items: normal;
+    gap: 0.55rem;
+  }
+
+  .journey-map-event em {
+    margin-top: 0;
+  }
+
+  .journey-map-overlap {
+    position: static;
+    max-width: none;
+    margin-left: 5.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .vinyl-cat-paw {
+    right: -0.25rem;
+    width: 4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-reveal {
+    display: none;
+  }
+
+  .journey-cards::after {
+    animation: none;
+    transform: scaleY(1);
+  }
+
+  .journey-map-bar,
+  .hero-letter {
+    transition: none;
   }
 }

@@ -7,20 +7,50 @@ import { education, work } from "../data/profile";
     <h2 id="journey-title">Beruf und Studium.</h2>
   </header>
 
-  <nav class="journey-switcher" aria-label="Bereiche der Laufbahn" data-reveal="up">
-    <a href="#beruf">
-      <i class="ph ph-briefcase" aria-hidden="true"></i>
-      Berufserfahrung
-      <span>{work.length} Stationen</span>
-      <i class="ph ph-arrow-down-right journey-switcher-arrow" aria-hidden="true"></i>
-    </a>
-    <a href="#ausbildung">
-      <i class="ph ph-graduation-cap" aria-hidden="true"></i>
-      Studium + Bachelorarbeit
-      <span>{education.length} Stationen</span>
-      <i class="ph ph-arrow-down-right journey-switcher-arrow" aria-hidden="true"></i>
-    </a>
-  </nav>
+  <div class="journey-map" data-reveal="up">
+    <div class="journey-map-scroll" tabindex="0" role="region" aria-label="Zeitlicher Überblick über Beruf und Studium">
+      <div class="journey-map-canvas">
+        <div class="journey-map-years" aria-hidden="true">
+          <span style="--year-position: 0%">2019</span>
+          <span style="--year-position: 14.3%">2020</span>
+          <span style="--year-position: 42.8%">2022</span>
+          <span style="--year-position: 71.4%">2024</span>
+          <span style="--year-position: 100%">Heute</span>
+        </div>
+
+        <div class="journey-map-axis" aria-hidden="true">
+          {Array.from({ length: 8 }).map((_, index) => <i style={`--axis-position: ${(index / 7) * 100}%`}></i>)}
+        </div>
+
+        <div class="journey-map-lane journey-map-lane-education">
+          <span class="journey-map-lane-name"><i class="ph ph-graduation-cap" aria-hidden="true"></i>Studium</span>
+          <span class="journey-map-event journey-map-event-abitur" aria-label="Abitur 2019"><i></i><em>Abitur</em></span>
+          <a class="journey-map-bar journey-map-bar-business" href="#ausbildung" aria-label="Business Administration and Economics, 2019 bis 2020">
+            <small>2019 - 2020</small>
+            <strong>BWL &amp; VWL</strong>
+          </a>
+          <a class="journey-map-bar journey-map-bar-bachelor" href="#ausbildung">
+            <small>2020 - 2024</small>
+            <strong>Medien und Kommunikation</strong>
+          </a>
+        </div>
+
+        <div class="journey-map-lane journey-map-lane-work">
+          <span class="journey-map-lane-name"><i class="ph ph-briefcase" aria-hidden="true"></i>Beruf</span>
+          <a class="journey-map-bar journey-map-bar-working-student" href="#beruf">
+            <small>2022 - 2024</small>
+            <strong>Werkstudent Marketing</strong>
+          </a>
+          <a class="journey-map-bar journey-map-bar-current" href="#beruf">
+            <small>seit 2024</small>
+            <strong>Marketing und E-Commerce</strong>
+          </a>
+        </div>
+
+        <p class="journey-map-overlap"><i class="ph ph-intersect-three" aria-hidden="true"></i>Studium und Marketingpraxis liefen zwei Jahre parallel.</p>
+      </div>
+    </div>
+  </div>
 
   <div class="journey-layout">
     <aside class="journey-companion" data-journey-companion data-mode="work">
@@ -261,26 +291,4 @@ import { education, work } from "../data/profile";
     if (back) cardResizeObserver.observe(back);
   });
 
-  const timelineGroups = Array.from(document.querySelectorAll<HTMLElement>(".journey-cards"));
-  let timelineFrame = 0;
-
-  const updateTimelineProgress = () => {
-    timelineFrame = 0;
-    const viewportMarker = window.innerHeight * 0.54;
-    timelineGroups.forEach((group) => {
-      const bounds = group.getBoundingClientRect();
-      const travel = Math.max(1, bounds.height - window.innerHeight * 0.18);
-      const progress = Math.min(1, Math.max(0, (viewportMarker - bounds.top) / travel));
-      group.style.setProperty("--timeline-progress", progress.toFixed(4));
-    });
-  };
-
-  const requestTimelineProgress = () => {
-    if (timelineFrame) return;
-    timelineFrame = window.requestAnimationFrame(updateTimelineProgress);
-  };
-
-  updateTimelineProgress();
-  window.addEventListener("scroll", requestTimelineProgress, { passive: true });
-  window.addEventListener("resize", requestTimelineProgress, { passive: true });
 </script>

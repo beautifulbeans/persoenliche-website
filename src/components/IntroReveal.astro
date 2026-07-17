@@ -1,34 +1,24 @@
----
-const introWords = ["Fabian", "Deragisch"];
-const introPanels = Array.from({ length: 7 });
----
-
 <div class="intro-reveal" data-intro-reveal aria-hidden="true">
-  <div class="intro-panel-field">
-    {introPanels.map((_, index) => <span style={`--intro-panel: ${index}`}></span>)}
-  </div>
+  <div class="intro-folio">
+    <div class="intro-folio-paper intro-folio-paper-back"></div>
+    <div class="intro-folio-paper intro-folio-paper-middle"></div>
 
-  <div class="intro-sight" aria-hidden="true">
-    <span class="intro-sight-ring intro-sight-ring-outer"></span>
-    <span class="intro-sight-ring intro-sight-ring-inner"></span>
-    <span class="intro-sight-line intro-sight-line-horizontal"></span>
-    <span class="intro-sight-line intro-sight-line-vertical"></span>
-  </div>
+    <div class="intro-folio-cover intro-folio-cover-left">
+      <span class="intro-folio-edge"></span>
+    </div>
 
-  <div class="intro-wordmark">
-    {introWords.map((word, wordIndex) => (
-      <span class="intro-word">
-        {Array.from(word).map((letter, letterIndex) => (
-          <i style={`--intro-letter: ${letterIndex + wordIndex * 3}`}>{letter}</i>
-        ))}
-      </span>
-    ))}
-  </div>
+    <div class="intro-folio-cover intro-folio-cover-right">
+      <span class="intro-folio-index">Portfolio<br />2026</span>
+      <span class="intro-folio-monogram">FD</span>
+      <div class="intro-folio-title">
+        <span>Fabian</span>
+        <span>Deragisch</span>
+      </div>
+      <span class="intro-folio-caption">Berufliches und Persönliches</span>
+      <span class="intro-folio-edge"></span>
+    </div>
 
-  <div class="intro-meta">
-    <span>Portfolio</span>
-    <span class="intro-meta-line"></span>
-    <span>Persönlichkeit</span>
+    <span class="intro-folio-spine"></span>
   </div>
 </div>
 
@@ -41,8 +31,8 @@ const introPanels = Array.from({ length: 7 });
     let alreadySeen = false;
 
     try {
-      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v4") === "true";
-      sessionStorage.setItem("fabian-intro-seen-v4", "true");
+      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v5") === "true";
+      sessionStorage.setItem("fabian-intro-seen-v5", "true");
     } catch {
       alreadySeen = false;
     }
@@ -60,9 +50,9 @@ const introPanels = Array.from({ length: 7 });
       intro.classList.add("is-leaving");
       document.body.classList.add("intro-complete");
       document.body.classList.remove("intro-active");
-    }, 1280);
+    }, 1420);
 
-    window.setTimeout(() => intro.remove(), 2080);
+    window.setTimeout(() => intro.remove(), 2440);
   })();
 </script>
 
