@@ -1,8 +1,8 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://beautifulbeans.github.io",
-  base: "/persoenliche-website",
+  site: "https://fabianderagisch.com",
+  base: "/",
   output: "static",
   trailingSlash: "always",
 });
