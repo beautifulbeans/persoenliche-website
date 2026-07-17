@@ -12,6 +12,12 @@ import Timeline from "../components/Timeline.astro";
 import VinylPlayer from "../components/VinylPlayer.astro";
 import portrait from "../assets/portrait/fabian-deragisch.jpg";
 import { profile } from "../data/profile";
+
+const heroNameLines = ["Fabian", "Deragisch"];
+const portraitPixels = Array.from({ length: 80 }, (_, index) => ({
+  index,
+  order: (index * 29) % 80,
+}));
 ---
 
 <BaseLayout>
@@ -22,7 +28,19 @@ import { profile } from "../data/profile";
   <main id="inhalt">
     <section class="hero section-shell" id="oben" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <h1 class="hero-name" id="hero-title" data-hero-name><span data-text="Fabian">Fabian</span><span data-text="Deragisch">Deragisch</span></h1>
+        <h1 class="hero-name" id="hero-title" data-hero-name aria-label="Fabian Deragisch">
+          {heroNameLines.map((line, lineIndex) => (
+            <span class="hero-name-line" data-text={line} aria-hidden="true">
+              {Array.from(line).map((letter, letterIndex) => (
+                <span
+                  class="hero-letter"
+                  data-hero-letter
+                  style={`--letter-index: ${letterIndex}; --line-index: ${lineIndex}`}
+                >{letter}</span>
+              ))}
+            </span>
+          ))}
+        </h1>
         <p class="hero-statement">{profile.statement}</p>
         <div class="hero-actions">
           <a class="primary-button" href="#beruf">Berufserfahrung <i class="ph ph-arrow-down-right" aria-hidden="true"></i></a>
@@ -56,6 +74,11 @@ import { profile } from "../data/profile";
               loading="eager"
             />
           </figure>
+          <span class="portrait-pixel-grid" aria-hidden="true">
+            {portraitPixels.map((pixel) => (
+              <i style={`--pixel-index: ${pixel.index}; --pixel-order: ${pixel.order}`}></i>
+            ))}
+          </span>
         </div>
 
         <div class="hero-role-index" aria-label="Aktuelle berufliche Rolle">
@@ -276,12 +299,29 @@ import { profile } from "../data/profile";
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   if (portraitFrame && finePointer.matches && !prefersReducedMotion()) {
     let portraitBounds: DOMRect | null = null;
+    let pixelTimer = 0;
 
     portraitFrame.addEventListener("pointerenter", () => {
       portraitBounds = portraitFrame.getBoundingClientRect();
       portraitFrame.classList.add("is-tracking");
+      portraitFrame.classList.remove("is-pixelating");
+      window.clearTimeout(pixelTimer);
+      window.requestAnimationFrame(() => {
+        portraitFrame.classList.add("is-pixelating");
+        pixelTimer = window.setTimeout(() => portraitFrame.classList.remove("is-pixelating"), 860);
+      });
     });
     portraitFrame.addEventListener("pointermove", (event) => {
+      const wasTracking = portraitFrame.classList.contains("is-tracking");
+      portraitFrame.classList.add("is-tracking");
+      if (!wasTracking) {
+        portraitFrame.classList.remove("is-pixelating");
+        window.clearTimeout(pixelTimer);
+        window.requestAnimationFrame(() => {
+          portraitFrame.classList.add("is-pixelating");
+          pixelTimer = window.setTimeout(() => portraitFrame.classList.remove("is-pixelating"), 860);
+        });
+      }
       portraitBounds ??= portraitFrame.getBoundingClientRect();
       const x = (event.clientX - portraitBounds.left) / portraitBounds.width;
       const y = (event.clientY - portraitBounds.top) / portraitBounds.height;
@@ -299,6 +339,58 @@ import { profile } from "../data/profile";
       portraitFrame.style.setProperty("--portrait-shift-y", "0rem");
     });
     window.addEventListener("resize", () => (portraitBounds = null), { passive: true });
+  }
+
+  const heroName = document.querySelector<HTMLElement>("[data-hero-name]");
+  if (heroName && finePointer.matches && !prefersReducedMotion()) {
+    const letters = Array.from(heroName.querySelectorAll<HTMLElement>("[data-hero-letter]"));
+    let letterCenters: Array<{ x: number; y: number }> = [];
+    let nameFrame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+
+    const measureLetters = () => {
+      letterCenters = letters.map((letter) => {
+        const bounds = letter.getBoundingClientRect();
+        return { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 };
+      });
+    };
+
+    const renderNameProximity = () => {
+      nameFrame = 0;
+      const radius = Math.max(135, heroName.getBoundingClientRect().width * 0.28);
+      letters.forEach((letter, index) => {
+        const center = letterCenters[index];
+        if (!center) return;
+        const distance = Math.hypot(pointerX - center.x, pointerY - center.y);
+        const proximity = Math.max(0, 1 - distance / radius);
+        letter.style.setProperty("--letter-weight", `${Math.round(590 + proximity * 300)}`);
+        letter.style.setProperty("--letter-slant", `${(-2 + proximity * 11).toFixed(2)}`);
+        letter.style.setProperty("--letter-lift", `${(-proximity * 0.09).toFixed(3)}em`);
+        letter.style.setProperty("--letter-scale", `${(1 + proximity * 0.045).toFixed(3)}`);
+        letter.style.setProperty("--letter-accent", proximity.toFixed(3));
+      });
+    };
+
+    heroName.addEventListener("pointerenter", measureLetters);
+    heroName.addEventListener("pointermove", (event) => {
+      if (!letterCenters.length) measureLetters();
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (!nameFrame) nameFrame = window.requestAnimationFrame(renderNameProximity);
+    });
+    heroName.addEventListener("pointerleave", () => {
+      if (nameFrame) window.cancelAnimationFrame(nameFrame);
+      nameFrame = 0;
+      letters.forEach((letter) => {
+        letter.style.removeProperty("--letter-weight");
+        letter.style.removeProperty("--letter-slant");
+        letter.style.removeProperty("--letter-lift");
+        letter.style.removeProperty("--letter-scale");
+        letter.style.removeProperty("--letter-accent");
+      });
+    });
+    window.addEventListener("resize", measureLetters, { passive: true });
   }
 
   const chapterTransition = document.querySelector<HTMLElement>("[data-chapter-transition]");

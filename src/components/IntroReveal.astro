@@ -1,14 +1,34 @@
+---
+const introWords = ["Fabian", "Deragisch"];
+const introPanels = Array.from({ length: 7 });
+---
+
 <div class="intro-reveal" data-intro-reveal aria-hidden="true">
-  <div class="intro-field intro-field-warm"></div>
-  <div class="intro-field intro-field-deep"></div>
-  <div class="intro-type intro-type-first">Fabian</div>
-  <div class="intro-type intro-type-last">Deragisch</div>
-  <div class="intro-aperture">
-    <span></span><span></span><span></span>
+  <div class="intro-panel-field">
+    {introPanels.map((_, index) => <span style={`--intro-panel: ${index}`}></span>)}
   </div>
-  <div class="intro-mark">
-    <span>FD</span>
-    <p>Portfolio + Persönlichkeit</p>
+
+  <div class="intro-sight" aria-hidden="true">
+    <span class="intro-sight-ring intro-sight-ring-outer"></span>
+    <span class="intro-sight-ring intro-sight-ring-inner"></span>
+    <span class="intro-sight-line intro-sight-line-horizontal"></span>
+    <span class="intro-sight-line intro-sight-line-vertical"></span>
+  </div>
+
+  <div class="intro-wordmark">
+    {introWords.map((word, wordIndex) => (
+      <span class="intro-word">
+        {Array.from(word).map((letter, letterIndex) => (
+          <i style={`--intro-letter: ${letterIndex + wordIndex * 3}`}>{letter}</i>
+        ))}
+      </span>
+    ))}
+  </div>
+
+  <div class="intro-meta">
+    <span>Portfolio</span>
+    <span class="intro-meta-line"></span>
+    <span>Persönlichkeit</span>
   </div>
 </div>
 
@@ -21,14 +41,15 @@
     let alreadySeen = false;
 
     try {
-      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v3") === "true";
-      sessionStorage.setItem("fabian-intro-seen-v3", "true");
+      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v4") === "true";
+      sessionStorage.setItem("fabian-intro-seen-v4", "true");
     } catch {
       alreadySeen = false;
     }
 
     if (alreadySeen || reducedMotion) {
       intro.remove();
+      document.body.classList.add("intro-complete");
       return;
     }
 
@@ -39,9 +60,9 @@
       intro.classList.add("is-leaving");
       document.body.classList.add("intro-complete");
       document.body.classList.remove("intro-active");
-    }, 1050);
+    }, 1280);
 
-    window.setTimeout(() => intro.remove(), 1720);
+    window.setTimeout(() => intro.remove(), 2080);
   })();
 </script>
 
