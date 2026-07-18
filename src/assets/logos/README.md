@@ -2,7 +2,7 @@
 
 Lege die freigegebenen Logos hier unter diesen Dateinamen ab:
 
-- `dertour-austria.svg` (alternativ `.png`, `.jpg`, `.webp` oder `.avif`)
+- `dertour-austria.svg` (alternativ `.png`, `.jpg`, `.jpeg`, `.webp` oder `.avif`)
 - `landkreis-passau-gesundheit.svg`
 - `universitaet-passau.svg`
 - `asg-passau.svg`

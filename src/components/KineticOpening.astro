@@ -1,0 +1,308 @@
+<canvas class="opening-threads" data-opening-threads aria-hidden="true"></canvas>
+<div class="opening-grain" aria-hidden="true"></div>
+
+<script>
+  import { prefersReducedMotion } from "../scripts/motion";
+
+  type ThreadPoint = {
+    x: number;
+    baseY: number;
+    offset: number;
+    velocity: number;
+  };
+
+  type Ripple = {
+    x: number;
+    y: number;
+    radius: number;
+    life: number;
+  };
+
+  document.querySelectorAll<HTMLCanvasElement>("[data-opening-threads]").forEach((canvas) => {
+    const stage = canvas.closest<HTMLElement>("[data-opening-stage]");
+    const context = canvas.getContext("2d");
+    if (!stage || !context) return;
+
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reducedMotion = prefersReducedMotion();
+    const name = stage.querySelector<HTMLElement>("[data-opening-name]");
+    const letters = Array.from(stage.querySelectorAll<HTMLElement>("[data-opening-letter]"));
+    const echoes = Array.from(stage.querySelectorAll<HTMLElement>("[data-opening-name-echo]"));
+    let bounds = stage.getBoundingClientRect();
+    let nameBounds = name?.getBoundingClientRect();
+    let letterCenters: Array<{ x: number; y: number }> = [];
+    let threads: ThreadPoint[][] = [];
+    let ripples: Ripple[] = [];
+    let pixelRatio = 1;
+    let frame = 0;
+    let visible = true;
+    let pointerActive = false;
+    let pointerX = bounds.width * 0.54;
+    let pointerY = bounds.height * 0.43;
+    let targetX = pointerX;
+    let targetY = pointerY;
+    let entranceStart = performance.now();
+    let entranceComplete = reducedMotion;
+
+    const measureName = () => {
+      nameBounds = name?.getBoundingClientRect();
+      letterCenters = letters.map((letter) => {
+        const rect = letter.getBoundingClientRect();
+        return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      });
+    };
+
+    const rebuild = () => {
+      bounds = stage.getBoundingClientRect();
+      pixelRatio = Math.min(window.devicePixelRatio || 1, finePointer.matches ? 1.5 : 1.25);
+      canvas.width = Math.max(1, Math.round(bounds.width * pixelRatio));
+      canvas.height = Math.max(1, Math.round(bounds.height * pixelRatio));
+      canvas.style.width = `${bounds.width}px`;
+      canvas.style.height = `${bounds.height}px`;
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+      const lineCount = bounds.width < 640 ? 9 : bounds.width < 1000 ? 11 : 13;
+      const pointCount = Math.max(18, Math.min(34, Math.ceil(bounds.width / 46) + 2));
+      const top = Math.max(82, bounds.height * 0.13);
+      const bottom = Math.max(48, bounds.height * 0.08);
+      const usableHeight = Math.max(1, bounds.height - top - bottom);
+
+      threads = Array.from({ length: lineCount }, (_, lineIndex) => {
+        const baseY = top + (usableHeight * lineIndex) / Math.max(1, lineCount - 1);
+        return Array.from({ length: pointCount }, (_, pointIndex) => ({
+          x: (-42 + (bounds.width + 84) * pointIndex / Math.max(1, pointCount - 1)),
+          baseY,
+          offset: 0,
+          velocity: 0,
+        }));
+      });
+
+      pointerX = Math.min(bounds.width, Math.max(0, pointerX));
+      pointerY = Math.min(bounds.height, Math.max(0, pointerY));
+      targetX = Math.min(bounds.width, Math.max(0, targetX));
+      targetY = Math.min(bounds.height, Math.max(0, targetY));
+      measureName();
+      draw(true);
+    };
+
+    const drawPath = (points: ThreadPoint[]) => {
+      if (!points.length) return;
+      context.beginPath();
+      context.moveTo(points[0].x, points[0].baseY + points[0].offset);
+      for (let index = 1; index < points.length - 1; index += 1) {
+        const current = points[index];
+        const next = points[index + 1];
+        const currentY = current.baseY + current.offset;
+        const nextY = next.baseY + next.offset;
+        context.quadraticCurveTo(current.x, currentY, (current.x + next.x) / 2, (currentY + nextY) / 2);
+      }
+      const finalPoint = points.at(-1);
+      if (finalPoint) context.lineTo(finalPoint.x, finalPoint.baseY + finalPoint.offset);
+      context.stroke();
+    };
+
+    const draw = (staticOnly = false, timestamp = performance.now()) => {
+      if (!visible && !staticOnly) {
+        frame = 0;
+        return;
+      }
+
+      context.clearRect(0, 0, bounds.width, bounds.height);
+
+      const entranceElapsed = timestamp - entranceStart;
+      const entranceProgress = Math.min(1, entranceElapsed / 1450);
+      if (entranceProgress >= 1) entranceComplete = true;
+
+      let influenceX = pointerX;
+      let influenceY = pointerY;
+      let influenceActive = pointerActive;
+      let maxDisplacement = 0;
+      let maxVelocity = 0;
+
+      if (!entranceComplete && !reducedMotion) {
+        const eased = 1 - Math.pow(1 - entranceProgress, 3);
+        influenceX = -bounds.width * 0.12 + eased * bounds.width * 1.24;
+        influenceY = bounds.height * (0.43 + Math.sin(entranceProgress * Math.PI * 2) * 0.08);
+        influenceActive = true;
+      } else {
+        pointerX += (targetX - pointerX) * 0.11;
+        pointerY += (targetY - pointerY) * 0.11;
+      }
+
+      stage.style.setProperty("--opening-pointer-x", `${influenceX}px`);
+      stage.style.setProperty("--opening-pointer-y", `${influenceY}px`);
+      stage.style.setProperty("--opening-sweep", `${Math.min(1, entranceProgress)}`);
+
+      const radius = Math.max(235, Math.min(340, bounds.width * 0.28));
+      const displacement = bounds.width < 640 ? 23 : 36;
+      const stiffness = 0.055;
+      const damping = 0.79;
+
+      threads.forEach((thread, lineIndex) => {
+        thread.forEach((point) => {
+          let desired = 0;
+          if (influenceActive && !staticOnly) {
+            const dx = point.x - influenceX;
+            const dy = point.baseY - influenceY;
+            const distance = Math.hypot(dx, dy);
+            if (distance < radius) {
+              const proximity = Math.pow(1 - distance / radius, 2);
+              const direction = Math.abs(dy) < 5
+                ? Math.sin((dx / radius) * Math.PI) || (lineIndex % 2 ? 1 : -1)
+                : Math.sign(dy);
+              desired += direction * proximity * displacement;
+            }
+          }
+
+          ripples.forEach((ripple) => {
+            const distance = Math.hypot(point.x - ripple.x, point.baseY - ripple.y);
+            const waveDistance = Math.abs(distance - ripple.radius);
+            if (waveDistance < 62) {
+              desired += Math.sin((1 - waveDistance / 62) * Math.PI) * ripple.life * 13 * Math.sign(point.baseY - ripple.y || 1);
+            }
+          });
+
+          if (!staticOnly) {
+            point.velocity += (desired - point.offset) * stiffness;
+            point.velocity *= damping;
+            point.offset += point.velocity;
+          }
+          maxDisplacement = Math.max(maxDisplacement, Math.abs(point.offset));
+          maxVelocity = Math.max(maxVelocity, Math.abs(point.velocity));
+        });
+
+        context.strokeStyle = lineIndex % 3 === 0
+          ? "rgba(91, 104, 76, 0.36)"
+          : "rgba(91, 104, 76, 0.20)";
+        context.lineWidth = lineIndex % 3 === 0 ? 1.2 : 0.85;
+        drawPath(thread);
+      });
+
+      ripples = ripples
+        .map((ripple) => ({ ...ripple, radius: ripple.radius + 6.2, life: ripple.life * 0.935 }))
+        .filter((ripple) => ripple.life > 0.045);
+
+      const pointerSettled = Math.abs(targetX - pointerX) < 0.15 && Math.abs(targetY - pointerY) < 0.15;
+      const fieldSettled = maxDisplacement < 0.08 && maxVelocity < 0.04;
+      if (!staticOnly && (!entranceComplete || pointerActive || ripples.length || !pointerSettled || !fieldSettled)) {
+        frame = window.requestAnimationFrame((nextTimestamp) => draw(false, nextTimestamp));
+      } else {
+        frame = 0;
+      }
+    };
+
+    const requestDraw = () => {
+      if (!frame && visible && !reducedMotion) {
+        frame = window.requestAnimationFrame((nextTimestamp) => draw(false, nextTimestamp));
+      }
+    };
+
+    const resetName = () => {
+      name?.classList.remove("is-reacting");
+      letters.forEach((letter) => {
+        letter.style.removeProperty("--opening-letter-weight");
+        letter.style.removeProperty("--opening-letter-lift");
+      });
+      echoes.forEach((echo) => { echo.style.transform = "translate3d(0, 0, 0)"; });
+    };
+
+    const updateName = (clientX: number, clientY: number) => {
+      if (!name || !nameBounds || reducedMotion) return;
+      const inside = clientX >= nameBounds.left && clientX <= nameBounds.right
+        && clientY >= nameBounds.top && clientY <= nameBounds.bottom;
+      name.classList.toggle("is-reacting", inside);
+      if (!inside) {
+        resetName();
+        return;
+      }
+
+      const radius = Math.max(92, nameBounds.width * 0.18);
+      letters.forEach((letter, index) => {
+        const center = letterCenters[index];
+        if (!center) return;
+        const proximity = Math.max(0, 1 - Math.hypot(clientX - center.x, clientY - center.y) / radius);
+        letter.style.setProperty("--opening-letter-weight", `${Math.round(545 + proximity * 155)}`);
+        letter.style.setProperty("--opening-letter-lift", `${(-1.8 * proximity).toFixed(2)}px`);
+      });
+
+      const x = ((clientX - nameBounds.left) / Math.max(1, nameBounds.width) - 0.5) * -12;
+      const y = ((clientY - nameBounds.top) / Math.max(1, nameBounds.height) - 0.5) * -8;
+      echoes.forEach((echo, index) => {
+        const factor = index ? 0.82 : 1;
+        echo.style.transform = `translate3d(${(x * factor).toFixed(2)}px, ${(y * factor).toFixed(2)}px, 0)`;
+      });
+    };
+
+    const setPointer = (event: PointerEvent) => {
+      targetX = event.clientX - bounds.left;
+      targetY = event.clientY - bounds.top;
+      stage.classList.add("is-pointer-active");
+      updateName(event.clientX, event.clientY);
+      requestDraw();
+    };
+
+    if (!reducedMotion && finePointer.matches) {
+      stage.addEventListener("pointerenter", (event) => {
+        pointerActive = true;
+        setPointer(event);
+      });
+      stage.addEventListener("pointermove", setPointer);
+      stage.addEventListener("pointerleave", () => {
+        pointerActive = false;
+        stage.classList.remove("is-pointer-active");
+        resetName();
+        requestDraw();
+      });
+    }
+
+    if (!reducedMotion) {
+      stage.addEventListener("pointerdown", (event) => {
+        if ((event.target as Element).closest("a, button")) return;
+        const x = event.clientX - bounds.left;
+        const y = event.clientY - bounds.top;
+        ripples.push({ x, y, radius: 8, life: 1 });
+        if (!finePointer.matches) {
+          targetX = x;
+          targetY = y;
+          pointerX = x;
+          pointerY = y;
+          pointerActive = true;
+          window.setTimeout(() => {
+            pointerActive = false;
+            requestDraw();
+          }, 380);
+        }
+        requestDraw();
+      });
+    }
+
+    const resizeObserver = new ResizeObserver(rebuild);
+    resizeObserver.observe(stage);
+    const nameObserver = name ? new ResizeObserver(measureName) : null;
+    if (name && nameObserver) nameObserver.observe(name);
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible) requestDraw();
+        else if (frame) {
+          window.cancelAnimationFrame(frame);
+          frame = 0;
+        }
+      }, { threshold: 0.01 });
+      observer.observe(stage);
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      visible = !document.hidden;
+      if (visible) requestDraw();
+      else if (frame) {
+        window.cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    });
+
+    rebuild();
+    if (!reducedMotion) requestDraw();
+  });
+</script>

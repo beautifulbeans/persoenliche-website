@@ -1,7 +1,7 @@
 ---
 import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
-import { education, work } from "../data/profile";
+import { education, work, type TimelineEntry } from "../data/profile";
 
 const organizationLogoModules = import.meta.glob<{ default: ImageMetadata }>(
   "../assets/logos/*.{svg,png,jpg,jpeg,webp,avif}",
@@ -16,6 +16,23 @@ const organizationLogos = Object.fromEntries(
 ) as Record<string, ImageMetadata>;
 
 const getOrganizationLogo = (key?: string) => (key ? organizationLogos[key] : undefined);
+
+const getOrganizationLogoAlt = (entry: TimelineEntry) =>
+  entry.logoAlt ?? (entry.organization ? `Logo von ${entry.organization}` : `Logo zu ${entry.title}`);
+
+const getOrganizationMonogram = (entry: TimelineEntry) => {
+  if (entry.logoMonogram) return entry.logoMonogram;
+
+  const initials = entry.organization
+    ?.split(/\s+/)
+    .filter((word) => /[\p{L}\p{N}]/u.test(word))
+    .slice(0, 3)
+    .map((word) => word.match(/[\p{L}\p{N}]/u)?.[0] ?? "")
+    .join("")
+    .toUpperCase();
+
+  return initials || entry.title.slice(0, 2).toUpperCase();
+};
 ---
 
 <section class="journey section-shell" id="laufbahn" aria-labelledby="journey-title">
@@ -45,8 +62,11 @@ const getOrganizationLogo = (key?: string) => (key ? organizationLogos[key] : un
         </header>
 
         <div class="journey-cards" data-timeline-group>
-          {work.map((entry) => (
-            <article
+          {work.map((entry) => {
+            const organizationLogo = getOrganizationLogo(entry.logoKey);
+
+            return (
+              <article
               class:list={["journey-card", entry.current && "is-current", entry.backDetails && "has-flip"]}
               data-flip-card={entry.backDetails ? "true" : undefined}
               data-story-card
@@ -62,11 +82,22 @@ const getOrganizationLogo = (key?: string) => (key ? organizationLogos[key] : un
                   <div class="journey-card-top">
                     <span class="journey-date">{entry.period}</span>
                     {entry.logoKey ? (
-                      <span class="journey-card-icon journey-organization-logo" aria-hidden="true">
-                        {getOrganizationLogo(entry.logoKey) ? (
-                          <Image src={getOrganizationLogo(entry.logoKey)!} alt="" width={180} loading="lazy" />
+                      <span
+                        class:list={["journey-card-icon", "journey-organization-logo", !organizationLogo && "is-fallback"]}
+                        data-logo-key={entry.logoKey}
+                        role={organizationLogo ? undefined : "img"}
+                        aria-label={organizationLogo ? undefined : getOrganizationLogoAlt(entry)}
+                      >
+                        {organizationLogo ? (
+                          <Image
+                            src={organizationLogo}
+                            alt={getOrganizationLogoAlt(entry)}
+                            width={180}
+                            loading="lazy"
+                            decoding="async"
+                          />
                         ) : (
-                          <strong>{entry.logoMonogram}</strong>
+                          <strong aria-hidden="true">{getOrganizationMonogram(entry)}</strong>
                         )}
                       </span>
                     ) : (
@@ -115,8 +146,9 @@ const getOrganizationLogo = (key?: string) => (key ? organizationLogos[key] : un
                   </div>
                 )}
               </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </section>
 
@@ -130,8 +162,11 @@ const getOrganizationLogo = (key?: string) => (key ? organizationLogos[key] : un
         </header>
 
         <div class="journey-cards journey-cards-education" data-timeline-group>
-          {education.map((entry) => (
-            <article
+          {education.map((entry) => {
+            const organizationLogo = getOrganizationLogo(entry.logoKey);
+
+            return (
+              <article
               class:list={["journey-card", "journey-card-education", entry.backDetails && "has-flip"]}
               data-flip-card={entry.backDetails ? "true" : undefined}
               data-story-card
@@ -147,11 +182,22 @@ const getOrganizationLogo = (key?: string) => (key ? organizationLogos[key] : un
                   <div class="journey-card-top">
                     <span class="journey-date">{entry.period}</span>
                     {entry.logoKey ? (
-                      <span class="journey-card-icon journey-organization-logo" aria-hidden="true">
-                        {getOrganizationLogo(entry.logoKey) ? (
-                          <Image src={getOrganizationLogo(entry.logoKey)!} alt="" width={180} loading="lazy" />
+                      <span
+                        class:list={["journey-card-icon", "journey-organization-logo", !organizationLogo && "is-fallback"]}
+                        data-logo-key={entry.logoKey}
+                        role={organizationLogo ? undefined : "img"}
+                        aria-label={organizationLogo ? undefined : getOrganizationLogoAlt(entry)}
+                      >
+                        {organizationLogo ? (
+                          <Image
+                            src={organizationLogo}
+                            alt={getOrganizationLogoAlt(entry)}
+                            width={180}
+                            loading="lazy"
+                            decoding="async"
+                          />
                         ) : (
-                          <strong>{entry.logoMonogram}</strong>
+                          <strong aria-hidden="true">{getOrganizationMonogram(entry)}</strong>
                         )}
                       </span>
                     ) : (
@@ -193,13 +239,88 @@ const getOrganizationLogo = (key?: string) => (key ? organizationLogos[key] : un
                   </div>
                 )}
               </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </section>
     </div>
   </div>
 </section>
+
+<style is:global>
+  /* The uploaded logos use different canvas sizes. These presentation tokens keep
+     the marks visually balanced without modifying the source files. */
+  .journey .journey-card-icon.journey-organization-logo {
+    --organization-logo-scale: 1;
+    --organization-logo-hover-scale: 1.035;
+    --organization-logo-shift-x: 0;
+    --organization-logo-shift-y: 0;
+    overflow: hidden;
+    width: clamp(5.4rem, 8.6vw, 7.1rem);
+    height: 3.55rem;
+    flex: none;
+    isolation: isolate;
+  }
+
+  .journey .journey-organization-logo img {
+    max-width: none;
+    filter: saturate(0.82) contrast(0.96);
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+    transform: translate(var(--organization-logo-shift-x), var(--organization-logo-shift-y)) scale(var(--organization-logo-scale));
+  }
+
+  .journey .journey-organization-logo[data-logo-key="dertour-austria"] {
+    --organization-logo-scale: 1.7;
+    --organization-logo-hover-scale: 1.74;
+    --organization-logo-shift-x: 0.16rem;
+  }
+
+  .journey .journey-organization-logo[data-logo-key="landkreis-passau-gesundheit"] {
+    --organization-logo-scale: 1;
+    --organization-logo-hover-scale: 1.035;
+  }
+
+  .journey .journey-organization-logo[data-logo-key="universitaet-passau"] {
+    --organization-logo-scale: 1.62;
+    --organization-logo-hover-scale: 1.68;
+  }
+
+  .journey .journey-organization-logo[data-logo-key="asg-passau"] {
+    --organization-logo-scale: 1.02;
+    --organization-logo-hover-scale: 1.06;
+  }
+
+  .journey .journey-organization-logo.is-fallback {
+    background: color-mix(in srgb, var(--surface-2) 78%, transparent);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .journey .journey-card:hover .journey-organization-logo img {
+      filter: saturate(1) contrast(1);
+      opacity: 1;
+      transform: translate(var(--organization-logo-shift-x), var(--organization-logo-shift-y)) scale(var(--organization-logo-hover-scale));
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .journey .journey-card-icon.journey-organization-logo {
+      width: 4.8rem;
+      height: 3rem;
+    }
+
+    .journey .journey-organization-logo[data-logo-key="dertour-austria"] {
+      --organization-logo-shift-x: 0.08rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .journey .journey-organization-logo img {
+      transition: none;
+    }
+  }
+</style>
 
 <script>
   document.querySelectorAll<HTMLElement>(".journey-card.has-flip").forEach((card) => {

@@ -81,8 +81,8 @@ const shots = Object.entries(photoModules)
       <div class="gallery-toolbar section-shell">
         <p id="gallery-space-title">
           <i class="ph ph-hand-grabbing" aria-hidden="true"></i>
-          <span class="gallery-toolbar-desktop">Fotos bewegen und zum Ansehen antippen.</span>
-          <span class="gallery-toolbar-mobile">Wischen, auswählen und antippen.</span>
+          <span class="gallery-toolbar-desktop">Bild anklicken zum Ansehen. Am Griff lassen sich Fotos bewegen.</span>
+          <span class="gallery-toolbar-mobile">Wischen zum Wechseln. Antippen öffnet die Großansicht.</span>
         </p>
         <div class="gallery-toolbar-actions">
           <button type="button" data-gallery-previous aria-label="Vorheriges Foto">
@@ -91,6 +91,10 @@ const shots = Object.entries(photoModules)
           <output data-gallery-active-title aria-live="polite"></output>
           <button type="button" data-gallery-next aria-label="Nächstes Foto">
             <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </button>
+          <button class="gallery-view-active" type="button" data-gallery-view-active>
+            <span>Groß ansehen</span>
+            <i class="ph ph-arrows-out" aria-hidden="true"></i>
           </button>
           <button class="gallery-reset" type="button" data-gallery-reset>
             Zurücklegen
@@ -138,13 +142,26 @@ const shots = Object.entries(photoModules)
                     loading={index === 0 ? "eager" : "lazy"}
                   />
                   <span class="gallery-inspect-icon" aria-hidden="true">
+                    <span>Ansehen</span>
                     <i class="ph ph-arrows-out"></i>
                   </span>
                 </button>
                 <footer>
-                  <strong>{shot.title}</strong>
-                  <span>{shot.note}</span>
+                  <div class="gallery-print-meta">
+                    <strong>{shot.title}</strong>
+                    <span data-gallery-note>{shot.note}</span>
+                  </div>
                   {shot.isNew && <small>Neu</small>}
+                  <button
+                    class="gallery-drag-handle"
+                    type="button"
+                    data-gallery-drag-handle
+                    aria-label={`${shot.title} bewegen`}
+                    aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"
+                    title="Foto bewegen"
+                  >
+                    <i class="ph ph-dots-six" aria-hidden="true"></i>
+                  </button>
                 </footer>
               </article>
             ))
@@ -202,6 +219,7 @@ const shots = Object.entries(photoModules)
   const dialogNote = dialog?.querySelector<HTMLElement>("[data-gallery-dialog-note]");
   const dialogCounter = dialog?.querySelector<HTMLElement>("[data-gallery-counter]");
   const closeButton = dialog?.querySelector<HTMLButtonElement>("[data-gallery-close]");
+  const viewActiveButton = document.querySelector<HTMLButtonElement>("[data-gallery-view-active]");
   const deckLayout = window.matchMedia("(max-width: 48rem), (pointer: coarse)");
   const reduceMotion = prefersReducedMotion();
 
@@ -289,7 +307,7 @@ const shots = Object.entries(photoModules)
     const image = card.querySelector<HTMLImageElement>("img");
     const openButton = card.querySelector<HTMLButtonElement>("[data-gallery-open]");
     const title = card.querySelector<HTMLElement>("footer strong")?.textContent?.trim() ?? "Fotografie";
-    const note = card.querySelector<HTMLElement>("footer > span")?.textContent?.trim() ?? "";
+    const note = card.querySelector<HTMLElement>("[data-gallery-note]")?.textContent?.trim() ?? "";
 
     if (image) {
       dialogImage.src = openButton?.dataset.galleryFull || image.currentSrc || image.src;
@@ -320,6 +338,7 @@ const shots = Object.entries(photoModules)
 
   cards.forEach((card, index) => {
     const openButton = card.querySelector<HTMLButtonElement>("[data-gallery-open]");
+    const dragHandle = card.querySelector<HTMLButtonElement>("[data-gallery-drag-handle]");
     let pointerId: number | null = null;
     let startX = 0;
     let startY = 0;
@@ -341,13 +360,42 @@ const shots = Object.entries(photoModules)
         selectPhoto(index);
         return;
       }
-      liftCard(card);
+      selectPhoto(index, false);
       openDialog(index, openButton);
+    });
+
+    dragHandle?.addEventListener("click", () => selectPhoto(index, false));
+
+    dragHandle?.addEventListener("keydown", (event) => {
+      if (deckLayout.matches || !stage || !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      const bounds = card.getBoundingClientRect();
+      const container = stage.getBoundingClientRect();
+      const currentX = Number(card.dataset.dragX ?? 0);
+      const currentY = Number(card.dataset.dragY ?? 0);
+      const step = event.shiftKey ? 32 : 12;
+      const deltaX = event.key === "ArrowLeft" ? -step : event.key === "ArrowRight" ? step : 0;
+      const deltaY = event.key === "ArrowUp" ? -step : event.key === "ArrowDown" ? step : 0;
+      const x = clamp(currentX + deltaX, container.left - bounds.left + currentX, container.right - bounds.right + currentX);
+      const y = clamp(currentY + deltaY, container.top - bounds.top + currentY, container.bottom - bounds.bottom + currentY);
+
+      card.dataset.dragX = String(x);
+      card.dataset.dragY = String(y);
+      card.style.setProperty("--drag-x", `${x}px`);
+      card.style.setProperty("--drag-y", `${y}px`);
+      selectPhoto(index, false);
     });
 
     card.addEventListener("pointerdown", (event) => {
       if ((event.pointerType === "mouse" && event.button !== 0) || !stage) return;
-      if (deckLayout.matches && index !== activeIndex) return;
+      const isDeck = deckLayout.matches;
+      const target = event.target as Element;
+      if (isDeck && index !== activeIndex) return;
+      if (!isDeck && !target.closest("[data-gallery-drag-handle]")) return;
 
       pointerId = event.pointerId;
       startX = event.clientX;
@@ -359,9 +407,10 @@ const shots = Object.entries(photoModules)
       stageBounds = stage.getBoundingClientRect();
       moved = false;
       horizontalGesture = false;
-      liftCard(card);
-      card.classList.add("is-dragging");
-      card.setPointerCapture(event.pointerId);
+      if (!isDeck) {
+        event.preventDefault();
+        card.setPointerCapture(event.pointerId);
+      }
     });
 
     card.addEventListener("pointermove", (event) => {
@@ -369,9 +418,16 @@ const shots = Object.entries(photoModules)
       const deltaX = event.clientX - startX;
       const deltaY = event.clientY - startY;
 
-      if (!moved && Math.hypot(deltaX, deltaY) > 5) {
-        moved = true;
+      if (!moved && Math.hypot(deltaX, deltaY) > (deckLayout.matches ? 9 : 4)) {
         horizontalGesture = Math.abs(deltaX) > Math.abs(deltaY);
+        if (deckLayout.matches && !horizontalGesture) {
+          pointerId = null;
+          return;
+        }
+        moved = true;
+        selectPhoto(index, false);
+        card.classList.add("is-dragging");
+        card.setPointerCapture(event.pointerId);
       }
 
       if (deckLayout.matches) {
@@ -429,6 +485,7 @@ const shots = Object.entries(photoModules)
   document.querySelector<HTMLButtonElement>("[data-gallery-next]")?.addEventListener("click", () =>
     selectPhoto(activeIndex + 1),
   );
+  viewActiveButton?.addEventListener("click", () => openDialog(activeIndex, viewActiveButton));
 
   document.querySelector<HTMLButtonElement>("[data-gallery-reset]")?.addEventListener("click", () => {
     cards.forEach((card, index) => {
