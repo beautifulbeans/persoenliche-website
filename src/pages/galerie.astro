@@ -3,6 +3,7 @@ import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { photographyCopy } from "../data/photography";
+import "../styles/gallery-canvas.css";
 
 const photoModules = import.meta.glob<{ default: ImageMetadata }>(
   "../assets/fotografie/*.{jpg,jpeg,png,webp,avif}",
@@ -18,13 +19,13 @@ const humanizeFileName = (fileName: string) =>
     .replace(/^./, (character) => character.toUpperCase());
 
 const tablePositions = [
-  { x: 2, y: 9, rotation: -6 },
-  { x: 36, y: 2, rotation: 4 },
-  { x: 68, y: 15, rotation: 7 },
-  { x: 9, y: 54, rotation: 3 },
-  { x: 40, y: 45, rotation: -5 },
-  { x: 70, y: 56, rotation: -3 },
-  { x: 27, y: 69, rotation: 6 },
+  { x: 6, y: 8, rotation: -5.5 },
+  { x: 37, y: 3, rotation: 3.5 },
+  { x: 67, y: 14, rotation: 6 },
+  { x: 10, y: 52, rotation: 4 },
+  { x: 40, y: 46, rotation: -4.5 },
+  { x: 69, y: 55, rotation: -2.5 },
+  { x: 25, y: 70, rotation: 5 },
 ];
 
 const shots = Object.entries(photoModules)
@@ -41,15 +42,14 @@ const shots = Object.entries(photoModules)
       src: module.default,
       fileName,
       title,
-      alt: copy?.alt ?? `${title}: Fotografie von Fabian Deragisch`,
+      alt: copy?.alt ?? `${title}, fotografiert von Fabian Deragisch`,
       note: copy?.note ?? "Fujifilm X-T30 III",
-      number: String(index + 1).padStart(2, "0"),
       orientation,
       isNew: /^new[-_]/i.test(fileName),
       x: position.x,
       y: position.y,
       rotation: position.rotation,
-      width: orientation === "portrait" ? 22 : orientation === "square" ? 25 : 29,
+      width: orientation === "portrait" ? 21 : orientation === "square" ? 25 : 31,
     };
   });
 ---
@@ -58,73 +58,115 @@ const shots = Object.entries(photoModules)
   title="Galerie | Fabian Deragisch"
   description="Favorite Shots und Fotografien von Fabian Deragisch."
 >
-  <main class="gallery-page" id="inhalt">
+  <main class="gallery-page" id="inhalt" data-gallery-page>
+    <div class="gallery-entry" data-gallery-entry aria-hidden="true">
+      <span class="gallery-entry-blade gallery-entry-blade-top"></span>
+      <span class="gallery-entry-blade gallery-entry-blade-bottom"></span>
+      <span class="gallery-entry-flash"></span>
+    </div>
+
     <header class="gallery-header section-shell">
       <a class="gallery-back" href="/#fotografie">
-        <i class="ph ph-arrow-left" aria-hidden="true"></i> Zurück zur Website
+        <i class="ph ph-arrow-left" aria-hidden="true"></i>
+        Zurück zur Website
       </a>
       <div class="gallery-heading">
         <p>Fotografie</p>
         <h1>Favorite Shots.</h1>
-        <p class="gallery-intro">Eine kleine Auswahl. Die Galerie wächst stetig weiter.</p>
+        <p class="gallery-intro">Eine kleine Auswahl, die weiter wächst.</p>
       </div>
     </header>
 
-    <section class="gallery-table-section" aria-labelledby="gallery-table-title">
-      <div class="gallery-table-toolbar section-shell">
-        <p id="gallery-table-title"><i class="ph ph-hand-grabbing" aria-hidden="true"></i> Bilder greifen, nach vorne holen oder groß ansehen.</p>
-        <button type="button" data-gallery-reset>
-          Zurücklegen <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>
-        </button>
+    <section class="gallery-space" aria-labelledby="gallery-space-title">
+      <div class="gallery-toolbar section-shell">
+        <p id="gallery-space-title">
+          <i class="ph ph-hand-grabbing" aria-hidden="true"></i>
+          <span class="gallery-toolbar-desktop">Fotos bewegen und zum Ansehen antippen.</span>
+          <span class="gallery-toolbar-mobile">Wischen, auswählen und antippen.</span>
+        </p>
+        <div class="gallery-toolbar-actions">
+          <button type="button" data-gallery-previous aria-label="Vorheriges Foto">
+            <i class="ph ph-arrow-left" aria-hidden="true"></i>
+          </button>
+          <output data-gallery-active-title aria-live="polite"></output>
+          <button type="button" data-gallery-next aria-label="Nächstes Foto">
+            <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </button>
+          <button class="gallery-reset" type="button" data-gallery-reset>
+            Zurücklegen
+            <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>
+          </button>
+        </div>
       </div>
 
-      <div class="gallery-table section-shell" data-gallery-table style={`--gallery-count: ${shots.length}`}>
-        {shots.map((shot, index) => (
-          <article
-            class:list={["gallery-print", `gallery-print-${shot.orientation}`]}
-            data-gallery-card
-            data-gallery-index={index}
-            style={`--card-x: ${shot.x}%; --card-y: ${shot.y}%; --card-rotation: ${shot.rotation}deg; --card-width: ${shot.width}%; --card-index: ${index};`}
-          >
-            <button
-              class="gallery-print-image"
-              type="button"
-              data-gallery-open
-              aria-label={`${shot.title} groß ansehen`}
-            >
-              <Image
-                src={shot.src}
-                alt={shot.alt}
-                widths={[540, 860, 1280, 1800]}
-                sizes="(max-width: 48rem) calc(100vw - 3rem), 30vw"
-                loading={index === 0 ? "eager" : "lazy"}
-              />
-              <span class="gallery-inspect-icon" aria-hidden="true"><i class="ph ph-arrows-out"></i></span>
-              {shot.isNew && <span class="gallery-new-mark">Neu</span>}
-            </button>
-            <footer>
-              <span>{shot.number}</span>
-              <strong>{shot.title}</strong>
-              <small>{shot.note}</small>
-            </footer>
-          </article>
-        ))}
+      <div class="gallery-stage-shell section-shell">
+        <div
+          class="gallery-stage"
+          data-gallery-stage
+          role="region"
+          tabindex="0"
+          aria-label="Interaktive Fotogalerie"
+          style={`--gallery-count: ${shots.length}`}
+        >
+          {shots.length === 0 ? (
+            <div class="gallery-empty">
+              <i class="ph ph-images" aria-hidden="true"></i>
+              <h2>Noch keine Fotos.</h2>
+              <p>Neue Bilder erscheinen hier automatisch, sobald sie im Fotoordner liegen.</p>
+            </div>
+          ) : (
+            shots.map((shot, index) => (
+              <article
+                class:list={["gallery-print", `gallery-print-${shot.orientation}`]}
+                data-gallery-card
+                data-gallery-index={index}
+                data-gallery-title={shot.title}
+                style={`--card-x: ${shot.x}%; --card-y: ${shot.y}%; --card-rotation: ${shot.rotation}deg; --card-width: ${shot.width}%; --card-index: ${index};`}
+              >
+                <button
+                  class="gallery-print-image"
+                  type="button"
+                  data-gallery-open
+                  data-gallery-full={shot.src.src}
+                  aria-label={`${shot.title} groß ansehen`}
+                >
+                  <Image
+                    src={shot.src}
+                    alt={shot.alt}
+                    widths={[540, 860, 1280, 1800]}
+                    sizes="(max-width: 48rem) 82vw, 31vw"
+                    loading={index === 0 ? "eager" : "lazy"}
+                  />
+                  <span class="gallery-inspect-icon" aria-hidden="true">
+                    <i class="ph ph-arrows-out"></i>
+                  </span>
+                </button>
+                <footer>
+                  <strong>{shot.title}</strong>
+                  <span>{shot.note}</span>
+                  {shot.isNew && <small>Neu</small>}
+                </footer>
+              </article>
+            ))
+          )}
+        </div>
       </div>
     </section>
 
     <footer class="gallery-footer section-shell">
       <a href="/">Fabian Deragisch</a>
-      <span>Wien</span>
+      <span>Portfolio</span>
     </footer>
 
     <dialog class="gallery-lightbox" data-gallery-dialog aria-label="Foto in Großansicht">
       <div class="gallery-lightbox-shell">
         <header>
-          <span data-gallery-counter>1 / {shots.length}</span>
+          <span data-gallery-counter></span>
           <button type="button" data-gallery-close aria-label="Großansicht schließen">
             <i class="ph ph-x" aria-hidden="true"></i>
           </button>
         </header>
+
         <figure data-gallery-swipe-area>
           <img data-gallery-dialog-image alt="" />
           <figcaption>
@@ -132,12 +174,13 @@ const shots = Object.entries(photoModules)
             <span data-gallery-dialog-note></span>
           </figcaption>
         </figure>
-        <nav aria-label="Bilder in der Großansicht wechseln">
-          <button type="button" data-gallery-previous>
-            <i class="ph ph-arrow-left" aria-hidden="true"></i> Vorheriges
+
+        <nav aria-label="Fotos wechseln">
+          <button type="button" data-dialog-previous aria-label="Vorheriges Foto">
+            <i class="ph ph-arrow-left" aria-hidden="true"></i>
           </button>
-          <button type="button" data-gallery-next>
-            Nächstes <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          <button type="button" data-dialog-next aria-label="Nächstes Foto">
+            <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </button>
         </nav>
       </div>
@@ -148,42 +191,121 @@ const shots = Object.entries(photoModules)
 <script>
   import { prefersReducedMotion } from "../scripts/motion";
 
-  const table = document.querySelector<HTMLElement>("[data-gallery-table]");
+  const page = document.querySelector<HTMLElement>("[data-gallery-page]");
+  const entry = document.querySelector<HTMLElement>("[data-gallery-entry]");
+  const stage = document.querySelector<HTMLElement>("[data-gallery-stage]");
   const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-gallery-card]"));
+  const activeTitle = document.querySelector<HTMLOutputElement>("[data-gallery-active-title]");
   const dialog = document.querySelector<HTMLDialogElement>("[data-gallery-dialog]");
   const dialogImage = dialog?.querySelector<HTMLImageElement>("[data-gallery-dialog-image]");
   const dialogTitle = dialog?.querySelector<HTMLElement>("[data-gallery-dialog-title]");
   const dialogNote = dialog?.querySelector<HTMLElement>("[data-gallery-dialog-note]");
   const dialogCounter = dialog?.querySelector<HTMLElement>("[data-gallery-counter]");
   const closeButton = dialog?.querySelector<HTMLButtonElement>("[data-gallery-close]");
-  const mobileLayout = window.matchMedia("(max-width: 48rem)");
-  let activeIndex = 0;
-  let cardLayer = 20;
-  let lastTrigger: HTMLElement | null = null;
+  const deckLayout = window.matchMedia("(max-width: 48rem), (pointer: coarse)");
+  const reduceMotion = prefersReducedMotion();
 
-  const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+  let activeIndex = 0;
+  let cardLayer = cards.length + 4;
+  let lastTrigger: HTMLElement | null = null;
+  let closeTimer = 0;
+
+  const clamp = (value: number, minimum: number, maximum: number) =>
+    Math.min(Math.max(value, minimum), maximum);
+
+  const wrapIndex = (index: number) => {
+    if (!cards.length) return 0;
+    return (index + cards.length) % cards.length;
+  };
+
+  const relativeIndex = (index: number) => {
+    let distance = index - activeIndex;
+    if (distance > cards.length / 2) distance -= cards.length;
+    if (distance < -cards.length / 2) distance += cards.length;
+    return distance;
+  };
+
+  const liftCard = (card: HTMLElement) => {
+    cardLayer += 1;
+    card.style.zIndex = String(cardLayer);
+  };
+
+  const renderSelection = (announce = false) => {
+    if (!cards.length || !stage) return;
+    const isDeck = deckLayout.matches;
+    stage.classList.toggle("is-deck", isDeck);
+
+    cards.forEach((card, index) => {
+      const button = card.querySelector<HTMLButtonElement>("[data-gallery-open]");
+      const distance = relativeIndex(index);
+      const visibleDistance = Math.min(Math.abs(distance), 2);
+      const direction = Math.sign(distance);
+
+      card.classList.toggle("is-active", index === activeIndex);
+      card.dataset.deckDistance = String(distance);
+      card.dataset.deckActive = String(index === activeIndex);
+      card.dataset.deckNeighbor = String(Math.abs(distance) === 1);
+
+      if (isDeck) {
+        const x = distance === 0 ? 0 : direction * (visibleDistance === 1 ? 72 : 132);
+        const y = visibleDistance * 15;
+        const rotation = distance === 0 ? 0 : direction * (visibleDistance === 1 ? 5.5 : 8);
+        const scale = distance === 0 ? 1 : visibleDistance === 1 ? 0.9 : 0.8;
+        const opacity = visibleDistance > 1 ? 0.34 : 1;
+
+        card.style.setProperty("--deck-x", `${x}%`);
+        card.style.setProperty("--deck-y", `${y}px`);
+        card.style.setProperty("--deck-rotation", `${rotation}deg`);
+        card.style.setProperty("--deck-scale", String(scale));
+        card.style.setProperty("--deck-opacity", String(opacity));
+        card.style.zIndex = String(20 - visibleDistance);
+        card.setAttribute("aria-hidden", Math.abs(distance) > 1 ? "true" : "false");
+        if (button) button.tabIndex = index === activeIndex ? 0 : -1;
+      } else {
+        card.removeAttribute("aria-hidden");
+        if (button) button.tabIndex = 0;
+      }
+    });
+
+    const currentCard = cards[activeIndex];
+    if (activeTitle && currentCard) {
+      activeTitle.value = currentCard.dataset.galleryTitle ?? "Fotografie";
+      if (announce) activeTitle.setAttribute("data-announced", "true");
+    }
+  };
+
+  const selectPhoto = (index: number, announce = true) => {
+    if (!cards.length) return;
+    activeIndex = wrapIndex(index);
+    renderSelection(announce);
+    if (!deckLayout.matches) liftCard(cards[activeIndex]);
+  };
 
   const updateDialog = (index: number) => {
     if (!cards.length || !dialogImage) return;
-    activeIndex = (index + cards.length) % cards.length;
+    activeIndex = wrapIndex(index);
+    renderSelection(false);
     const card = cards[activeIndex];
     const image = card.querySelector<HTMLImageElement>("img");
+    const openButton = card.querySelector<HTMLButtonElement>("[data-gallery-open]");
     const title = card.querySelector<HTMLElement>("footer strong")?.textContent?.trim() ?? "Fotografie";
-    const note = card.querySelector<HTMLElement>("footer small")?.textContent?.trim() ?? "";
+    const note = card.querySelector<HTMLElement>("footer > span")?.textContent?.trim() ?? "";
+
     if (image) {
-      dialogImage.src = image.currentSrc || image.src;
+      dialogImage.src = openButton?.dataset.galleryFull || image.currentSrc || image.src;
       dialogImage.alt = image.alt;
     }
     if (dialogTitle) dialogTitle.textContent = title;
     if (dialogNote) dialogNote.textContent = note;
-    if (dialogCounter) dialogCounter.textContent = `${activeIndex + 1} / ${cards.length}`;
+    if (dialogCounter) dialogCounter.textContent = `Bild ${activeIndex + 1} von ${cards.length}`;
   };
 
   const openDialog = (index: number, trigger: HTMLElement) => {
     if (!dialog) return;
+    window.clearTimeout(closeTimer);
     lastTrigger = trigger;
     updateDialog(index);
-    dialog.showModal();
+    if (!dialog.open) dialog.showModal();
     document.body.classList.add("gallery-dialog-open");
     requestAnimationFrame(() => dialog.classList.add("is-open"));
   };
@@ -192,8 +314,8 @@ const shots = Object.entries(photoModules)
     if (!dialog?.open) return;
     dialog.classList.remove("is-open");
     document.body.classList.remove("gallery-dialog-open");
-    if (prefersReducedMotion()) dialog.close();
-    else window.setTimeout(() => dialog.open && dialog.close(), 220);
+    if (reduceMotion) dialog.close();
+    else closeTimer = window.setTimeout(() => dialog.open && dialog.close(), 240);
   };
 
   cards.forEach((card, index) => {
@@ -201,68 +323,112 @@ const shots = Object.entries(photoModules)
     let pointerId: number | null = null;
     let startX = 0;
     let startY = 0;
+    let startTime = 0;
     let originX = 0;
     let originY = 0;
-    let startRect: DOMRect | null = null;
-    let tableRect: DOMRect | null = null;
+    let cardBounds: DOMRect | null = null;
+    let stageBounds: DOMRect | null = null;
     let moved = false;
-
-    const liftCard = () => {
-      cardLayer += 1;
-      card.style.zIndex = String(cardLayer);
-    };
+    let horizontalGesture = false;
 
     openButton?.addEventListener("click", (event) => {
       if (card.dataset.justDragged === "true") {
         event.preventDefault();
         return;
       }
-      liftCard();
+      if (deckLayout.matches && index !== activeIndex) {
+        event.preventDefault();
+        selectPhoto(index);
+        return;
+      }
+      liftCard(card);
       openDialog(index, openButton);
     });
 
     card.addEventListener("pointerdown", (event) => {
-      if (mobileLayout.matches || (event.pointerType === "mouse" && event.button !== 0)) return;
+      if ((event.pointerType === "mouse" && event.button !== 0) || !stage) return;
+      if (deckLayout.matches && index !== activeIndex) return;
+
       pointerId = event.pointerId;
       startX = event.clientX;
       startY = event.clientY;
+      startTime = performance.now();
       originX = Number(card.dataset.dragX ?? 0);
       originY = Number(card.dataset.dragY ?? 0);
-      startRect = card.getBoundingClientRect();
-      tableRect = table?.getBoundingClientRect() ?? null;
+      cardBounds = card.getBoundingClientRect();
+      stageBounds = stage.getBoundingClientRect();
       moved = false;
-      liftCard();
+      horizontalGesture = false;
+      liftCard(card);
       card.classList.add("is-dragging");
       card.setPointerCapture(event.pointerId);
     });
 
     card.addEventListener("pointermove", (event) => {
-      if (event.pointerId !== pointerId || !startRect || !tableRect) return;
-      const rawX = event.clientX - startX;
-      const rawY = event.clientY - startY;
-      moved ||= Math.hypot(rawX, rawY) > 5;
-      const x = clamp(originX + rawX, tableRect.left - startRect.left + originX, tableRect.right - startRect.right + originX);
-      const y = clamp(originY + rawY, tableRect.top - startRect.top + originY, tableRect.bottom - startRect.bottom + originY);
+      if (event.pointerId !== pointerId || !stageBounds || !cardBounds) return;
+      const deltaX = event.clientX - startX;
+      const deltaY = event.clientY - startY;
+
+      if (!moved && Math.hypot(deltaX, deltaY) > 5) {
+        moved = true;
+        horizontalGesture = Math.abs(deltaX) > Math.abs(deltaY);
+      }
+
+      if (deckLayout.matches) {
+        if (!horizontalGesture) return;
+        event.preventDefault();
+        card.style.setProperty("--swipe-x", `${deltaX}px`);
+        card.style.setProperty("--swipe-y", `${clamp(deltaY, -28, 28)}px`);
+        card.style.setProperty("--swipe-rotation", `${clamp(deltaX / 24, -8, 8)}deg`);
+        return;
+      }
+
+      if (!moved) return;
+      event.preventDefault();
+      const minimumX = stageBounds.left - cardBounds.left + originX;
+      const maximumX = stageBounds.right - cardBounds.right + originX;
+      const minimumY = stageBounds.top - cardBounds.top + originY;
+      const maximumY = stageBounds.bottom - cardBounds.bottom + originY;
+      const x = clamp(originX + deltaX, minimumX, maximumX);
+      const y = clamp(originY + deltaY, minimumY, maximumY);
+
       card.dataset.dragX = String(x);
       card.dataset.dragY = String(y);
       card.style.setProperty("--drag-x", `${x}px`);
       card.style.setProperty("--drag-y", `${y}px`);
     });
 
-    const finishDrag = (event: PointerEvent) => {
+    const finishPointer = (event: PointerEvent) => {
       if (event.pointerId !== pointerId) return;
+      const deltaX = event.clientX - startX;
+      const elapsed = Math.max(performance.now() - startTime, 1);
+      const velocityX = Math.abs(deltaX) / elapsed;
+      const shouldChange = deckLayout.matches && horizontalGesture && (Math.abs(deltaX) > 48 || velocityX > 0.48);
+
       pointerId = null;
       card.classList.remove("is-dragging");
+      card.style.setProperty("--swipe-x", "0px");
+      card.style.setProperty("--swipe-y", "0px");
+      card.style.setProperty("--swipe-rotation", "0deg");
       if (card.hasPointerCapture(event.pointerId)) card.releasePointerCapture(event.pointerId);
+
       if (moved) {
         card.dataset.justDragged = "true";
-        window.setTimeout(() => delete card.dataset.justDragged, 40);
+        window.setTimeout(() => delete card.dataset.justDragged, 80);
       }
+      if (shouldChange) selectPhoto(activeIndex + (deltaX < 0 ? 1 : -1));
     };
 
-    card.addEventListener("pointerup", finishDrag);
-    card.addEventListener("pointercancel", finishDrag);
+    card.addEventListener("pointerup", finishPointer);
+    card.addEventListener("pointercancel", finishPointer);
   });
+
+  document.querySelector<HTMLButtonElement>("[data-gallery-previous]")?.addEventListener("click", () =>
+    selectPhoto(activeIndex - 1),
+  );
+  document.querySelector<HTMLButtonElement>("[data-gallery-next]")?.addEventListener("click", () =>
+    selectPhoto(activeIndex + 1),
+  );
 
   document.querySelector<HTMLButtonElement>("[data-gallery-reset]")?.addEventListener("click", () => {
     cards.forEach((card, index) => {
@@ -272,15 +438,37 @@ const shots = Object.entries(photoModules)
       card.style.setProperty("--drag-y", "0px");
       card.style.zIndex = String(index + 1);
     });
-    cardLayer = 20;
+    cardLayer = cards.length + 4;
+    activeIndex = 0;
+    renderSelection();
+  });
+
+  stage?.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      selectPhoto(activeIndex - 1);
+      cards[activeIndex]?.querySelector<HTMLButtonElement>("[data-gallery-open]")?.focus();
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      selectPhoto(activeIndex + 1);
+      cards[activeIndex]?.querySelector<HTMLButtonElement>("[data-gallery-open]")?.focus();
+    }
   });
 
   closeButton?.addEventListener("click", closeDialog);
-  dialog?.querySelector<HTMLButtonElement>("[data-gallery-previous]")?.addEventListener("click", () => updateDialog(activeIndex - 1));
-  dialog?.querySelector<HTMLButtonElement>("[data-gallery-next]")?.addEventListener("click", () => updateDialog(activeIndex + 1));
-
+  dialog?.querySelector<HTMLButtonElement>("[data-dialog-previous]")?.addEventListener("click", () =>
+    updateDialog(activeIndex - 1),
+  );
+  dialog?.querySelector<HTMLButtonElement>("[data-dialog-next]")?.addEventListener("click", () =>
+    updateDialog(activeIndex + 1),
+  );
   dialog?.addEventListener("click", (event) => {
     if (event.target === dialog) closeDialog();
+  });
+  dialog?.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeDialog();
   });
   dialog?.addEventListener("close", () => {
     dialog.classList.remove("is-open");
@@ -293,29 +481,51 @@ const shots = Object.entries(photoModules)
   });
 
   const swipeArea = dialog?.querySelector<HTMLElement>("[data-gallery-swipe-area]");
+  let swipePointer: number | null = null;
   let swipeStartX = 0;
-  swipeArea?.addEventListener("pointerdown", (event) => (swipeStartX = event.clientX));
+  swipeArea?.addEventListener("pointerdown", (event) => {
+    swipePointer = event.pointerId;
+    swipeStartX = event.clientX;
+    swipeArea.setPointerCapture(event.pointerId);
+  });
   swipeArea?.addEventListener("pointerup", (event) => {
+    if (event.pointerId !== swipePointer) return;
     const distance = event.clientX - swipeStartX;
-    if (Math.abs(distance) < 55) return;
-    updateDialog(activeIndex + (distance < 0 ? 1 : -1));
+    swipePointer = null;
+    if (swipeArea.hasPointerCapture(event.pointerId)) swipeArea.releasePointerCapture(event.pointerId);
+    if (Math.abs(distance) >= 55) updateDialog(activeIndex + (distance < 0 ? 1 : -1));
+  });
+  swipeArea?.addEventListener("pointercancel", () => {
+    swipePointer = null;
   });
 
-  if (!prefersReducedMotion() && !mobileLayout.matches && table) {
+  const runEntrance = () => {
+    if (!entry || reduceMotion) {
+      entry?.remove();
+      return;
+    }
     requestAnimationFrame(() => {
-      const tableBounds = table.getBoundingClientRect();
-      cards.forEach((card, index) => {
-        const bounds = card.getBoundingClientRect();
-        const centerX = tableBounds.left + tableBounds.width / 2 - (bounds.left + bounds.width / 2);
-        const centerY = tableBounds.top + tableBounds.height / 2 - (bounds.top + bounds.height / 2);
-        card.animate(
-          [
-            { opacity: 0, transform: `translate3d(${centerX}px, ${centerY}px, 0) rotate(0deg) scale(.82)`, filter: "blur(8px)" },
-            { opacity: 1, transform: "translate3d(0, 0, 0) rotate(var(--card-rotation)) scale(1)", filter: "blur(0)" },
-          ],
-          { duration: 720, delay: 110 + index * 75, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" },
-        );
-      });
+      page?.classList.add("is-ready");
+      entry.classList.add("is-leaving");
+      window.setTimeout(() => entry.remove(), 920);
     });
+  };
+
+  deckLayout.addEventListener("change", () => renderSelection(false));
+  renderSelection(false);
+  runEntrance();
+
+  if (!reduceMotion && stage && cards.length) {
+    const observer = new IntersectionObserver(
+      ([entryRecord]) => {
+        if (!entryRecord.isIntersecting) return;
+        stage.classList.add("has-entered");
+        observer.disconnect();
+      },
+      { threshold: 0.24 },
+    );
+    observer.observe(stage);
+  } else {
+    stage?.classList.add("has-entered");
   }
 </script>

@@ -72,7 +72,7 @@ export const work: TimelineEntry[] = [
     title: "Mitarbeiter im Marketing und E-Commerce",
     organization: "DERTOUR Austria GmbH",
     description:
-      "Zwischen Website, SEO, Newsletter und CRM – mit Blick auf Zahlen und Gestaltung.",
+      "Zwischen Website, SEO, Newsletter und CRM, mit Blick auf Zahlen und Gestaltung.",
     details: [
       "SEO-Maßnahmen und Website-Content",
       "Monitoring mit Search Console und SISTRIX",
@@ -86,7 +86,7 @@ export const work: TimelineEntry[] = [
       {
         icon: "ph-magnifying-glass",
         title: "SEO und Website",
-        text: "SEO-Potenziale identifizieren und Maßnahmen umsetzen – vom Content bis zu ausgewählten technischen Themen. Website-Inhalte und Kampagnen pflege ich in Magnolia.",
+        text: "SEO-Potenziale identifizieren und Maßnahmen umsetzen, vom Content bis zu ausgewählten technischen Themen. Website-Inhalte und Kampagnen pflege ich in Magnolia.",
       },
       {
         icon: "ph-chart-line-up",

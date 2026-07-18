@@ -1,19 +1,41 @@
-<div class="intro-reveal" data-intro-reveal aria-hidden="true">
-  <span class="intro-curtain intro-curtain-left"></span>
-  <span class="intro-curtain intro-curtain-right"></span>
+---
+import { Image } from "astro:assets";
+import photoDetail from "../assets/fotografie/DSCF0716.jpg";
+import photoFlight from "../assets/fotografie/DSCF1991.jpg";
+import photoStreet from "../assets/fotografie/DSCF2348.jpg";
 
-  <div class="intro-kinetic-stage">
-    <span class="intro-orbit"><i></i></span>
-    <div class="intro-monogram" aria-hidden="true">
-      <span class="intro-letter intro-letter-f">F</span>
-      <span class="intro-letter intro-letter-d">D</span>
-    </div>
-    <span class="intro-signal"></span>
-    <div class="intro-caption">
-      <span>Fabian Deragisch</span>
-      <span>Portfolio · Wien</span>
-    </div>
+const frames = [
+  { src: photoDetail, className: "intro-frame-detail", position: "50% 50%" },
+  { src: photoFlight, className: "intro-frame-flight", position: "50% 48%" },
+  { src: photoStreet, className: "intro-frame-street", position: "50% 54%" },
+];
+---
+
+<div class="intro-reveal" data-intro-reveal aria-hidden="true">
+  <span class="intro-first-flash"></span>
+
+  <div class="intro-photo-sequence">
+    {frames.map((frame, index) => (
+      <figure class:list={["intro-photo-frame", frame.className]} style={`--intro-index: ${index}; --intro-position: ${frame.position}`}>
+        <Image
+          src={frame.src}
+          alt=""
+          widths={[720, 1080, 1440]}
+          sizes="34vw"
+          quality={82}
+          loading="eager"
+        />
+      </figure>
+    ))}
   </div>
+
+  <div class="intro-name-lockup">
+    <span><i>Fabian</i></span>
+    <span><i>Deragisch</i></span>
+  </div>
+
+  <span class="intro-exit-panel intro-exit-panel-top"></span>
+  <span class="intro-exit-panel intro-exit-panel-bottom"></span>
 </div>
 
 <script is:inline>
@@ -25,8 +47,8 @@
     let alreadySeen = false;
 
     try {
-      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v8") === "true";
-      sessionStorage.setItem("fabian-intro-seen-v8", "true");
+      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v10") === "true";
+      sessionStorage.setItem("fabian-intro-seen-v10", "true");
     } catch {
       alreadySeen = false;
     }
@@ -44,9 +66,9 @@
       intro.classList.add("is-leaving");
       document.body.classList.add("intro-complete");
       document.body.classList.remove("intro-active");
-    }, 1600);
+    }, 1880);
 
-    window.setTimeout(() => intro.remove(), 2520);
+    window.setTimeout(() => intro.remove(), 2740);
   })();
 </script>
 

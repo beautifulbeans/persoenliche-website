@@ -3,7 +3,7 @@
 Lege die Cover quadratisch und möglichst als JPG oder WebP in diesem Ordner ab.
 Die Website erkennt diese Dateinamen automatisch:
 
-- `dark-side-of-the-moon.jpg`
+- `dark-side-of-the-moon.png`
 - `dire-straits.jpg`
 - `blonde.jpg`
 - `igor.jpg`

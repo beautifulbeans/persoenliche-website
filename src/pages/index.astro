@@ -3,74 +3,85 @@ import AnchorNavigator from "../components/AnchorNavigator.astro";
 import BachelorThesis from "../components/BachelorThesis.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CameraPlayground from "../components/CameraPlayground.astro";
+import GalleryTransition from "../components/GalleryTransition.astro";
 import IntroReveal from "../components/IntroReveal.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import TeaRitual from "../components/TeaRitual.astro";
 import Timeline from "../components/Timeline.astro";
 import VinylPlayer from "../components/VinylPlayer.astro";
+import { Image } from "astro:assets";
 import { profile } from "../data/profile";
+import heroDetail from "../assets/fotografie/DSCF0716.jpg";
+import heroFlight from "../assets/fotografie/DSCF1991.jpg";
+import heroStreet from "../assets/fotografie/DSCF2348.jpg";
 
 const heroNameLines = ["Fabian", "Deragisch"];
 ---
 
 <BaseLayout>
   <IntroReveal />
+  <GalleryTransition />
   <SiteHeader />
   <AnchorNavigator />
 
   <main id="inhalt">
     <section class="hero section-shell" id="oben" aria-labelledby="hero-title" data-hero-stage>
-      <div class="hero-kinetic-field" aria-hidden="true">
-        <span class="hero-field-ring hero-field-ring-one"></span>
-        <span class="hero-field-ring hero-field-ring-two"></span>
-        <span class="hero-field-sweep"></span>
+      <div class="hero-photo-field" aria-hidden="true">
+        <figure class="hero-photo-slice hero-photo-slice-detail">
+          <Image src={heroDetail} alt="" widths={[640, 960, 1440]} sizes="36vw" loading="eager" quality={84} />
+        </figure>
+        <figure class="hero-photo-slice hero-photo-slice-flight">
+          <Image src={heroFlight} alt="" widths={[640, 960, 1440]} sizes="36vw" loading="eager" quality={84} />
+        </figure>
+        <figure class="hero-photo-slice hero-photo-slice-street">
+          <Image src={heroStreet} alt="" widths={[640, 960, 1440]} sizes="36vw" loading="eager" quality={84} />
+        </figure>
       </div>
 
-      <div class="hero-copy">
-        <div class="hero-opening-line" aria-hidden="true">
-          <span>Portfolio von</span>
-          <span>Wien</span>
-        </div>
-        <h1 class="hero-name" id="hero-title" data-hero-name aria-label="Fabian Deragisch">
+      <div class="hero-copy section-shell">
+        <h1
+          class="hero-name"
+          id="hero-title"
+          data-hero-name
+          aria-label="Fabian Deragisch"
+          style={`--hero-name-photo: url("${heroDetail.src}")`}
+        >
           {heroNameLines.map((line, lineIndex) => (
-            <span class="hero-name-line" data-text={line} aria-hidden="true">
-              {Array.from(line).map((letter, letterIndex) => (
-                <span
-                  class="hero-letter"
-                  data-hero-letter
-                  style={`--letter-index: ${letterIndex}; --line-index: ${lineIndex}`}
-                >{letter}</span>
-              ))}
+            <span class:list={["hero-name-line", `hero-name-line-${lineIndex + 1}`]} data-text={line} aria-hidden="true">
+              <span class="hero-name-base">
+                {Array.from(line).map((letter, letterIndex) => (
+                  <span
+                    class="hero-letter"
+                    data-hero-letter
+                    style={`--letter-index: ${letterIndex}; --line-index: ${lineIndex}`}
+                  >{letter}</span>
+                ))}
+              </span>
+              <span class="hero-name-photo" aria-hidden="true">{line}</span>
             </span>
           ))}
         </h1>
-        <div class="hero-lower-row">
-          <div>
-            <p class="hero-statement">{profile.statement}</p>
-            <div class="hero-actions">
-              <a class="primary-button" href="#beruf">Berufserfahrung <i class="ph ph-arrow-down-right" aria-hidden="true"></i></a>
-              <a class="secondary-button" href="#persoenlich">Persönlicher Teil</a>
-            </div>
-          </div>
+        <p class="hero-statement">Beruflicher Weg, persönliche Interessen und ein paar Dinge zum Ausprobieren.</p>
 
-          <div class="hero-current-role" aria-label="Aktuelle berufliche Rolle">
-            <span>Aktuell</span>
+        <div class="hero-identity-grid">
+          <div class="hero-identity hero-identity-work">
+            <span>Beruflich</span>
             <strong>{profile.role}</strong>
             <small>{profile.currentOrganization}</small>
           </div>
+          <div class="hero-identity hero-identity-personal">
+            <span>Abseits der Arbeit</span>
+            <strong>Bilder, Platten und eine Kanne Tee.</strong>
+            <small>Dinge, für die ich mir gerne Zeit nehme.</small>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a class="primary-button" href="#beruf">Berufserfahrung <i class="ph ph-arrow-down-right" aria-hidden="true"></i></a>
+          <a class="secondary-button" href="#persoenlich">Persönlicher Teil</a>
         </div>
       </div>
-
-      <a class="hero-scroll-loop" href="#beruf" aria-label="Zur Berufserfahrung scrollen">
-        <svg viewBox="0 0 120 120" aria-hidden="true">
-          <defs>
-            <path id="hero-scroll-path" d="M60,60 m-42,0 a42,42 0 1,1 84,0 a42,42 0 1,1 -84,0" />
-          </defs>
-          <text><textPath href="#hero-scroll-path">Weiter · scrollen · weiter · scrollen · </textPath></text>
-        </svg>
-        <i class="ph ph-arrow-down" aria-hidden="true"></i>
-      </a>
     </section>
 
     <Timeline />
@@ -182,7 +193,7 @@ const heroNameLines = ["Fabian", "Deragisch"];
             </div>
             <span class="cards-icon"><i class="ph ph-cards-three" aria-hidden="true"></i></span>
           </div>
-          <p class="cards-personal">Bei einer Runde Karten bin ich fast immer dabei – am liebsten Durak, Neunern oder Poker.</p>
+          <p class="cards-personal">Bei einer Runde Karten bin ich fast immer dabei. Am liebsten Durak, Neunern oder Poker.</p>
           <p class="card-game-copy" aria-live="polite" data-card-game-copy>Angreifen, verteidigen, Trumpf im Blick behalten. Verloren hat, wer am Ende noch Karten hält.</p>
           <div class="card-game-switch" role="group" aria-label="Kartenspiel auswählen">
             <button class="is-selected" type="button" data-card-game="durak" aria-pressed="true">Durak</button>
@@ -281,37 +292,20 @@ const heroNameLines = ["Fabian", "Deragisch"];
   }
 
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-  const heroStage = document.querySelector<HTMLElement>("[data-hero-stage]");
-  if (heroStage && finePointer.matches && !prefersReducedMotion()) {
-    let heroFrame = 0;
-    let heroX = 50;
-    let heroY = 45;
-    heroStage.addEventListener("pointermove", (event) => {
-      const bounds = heroStage.getBoundingClientRect();
-      heroX = ((event.clientX - bounds.left) / bounds.width) * 100;
-      heroY = ((event.clientY - bounds.top) / bounds.height) * 100;
-      if (heroFrame) return;
-      heroFrame = window.requestAnimationFrame(() => {
-        heroFrame = 0;
-        heroStage.style.setProperty("--hero-pointer-x", `${heroX}%`);
-        heroStage.style.setProperty("--hero-pointer-y", `${heroY}%`);
-      });
-    });
-    heroStage.addEventListener("pointerleave", () => {
-      heroStage.style.setProperty("--hero-pointer-x", "72%");
-      heroStage.style.setProperty("--hero-pointer-y", "42%");
-    });
-  }
-
   const heroName = document.querySelector<HTMLElement>("[data-hero-name]");
   if (heroName && finePointer.matches && !prefersReducedMotion()) {
     const letters = Array.from(heroName.querySelectorAll<HTMLElement>("[data-hero-letter]"));
     let letterCenters: Array<{ x: number; y: number }> = [];
     let nameFrame = 0;
+    let nameBounds = heroName.getBoundingClientRect();
     let pointerX = 0;
     let pointerY = 0;
+    let targetX = -180;
+    let currentX = -180;
+    let isInside = false;
 
     const measureLetters = () => {
+      nameBounds = heroName.getBoundingClientRect();
       letterCenters = letters.map((letter) => {
         const bounds = letter.getBoundingClientRect();
         return { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 };
@@ -319,35 +313,43 @@ const heroNameLines = ["Fabian", "Deragisch"];
     };
 
     const renderNameProximity = () => {
-      nameFrame = 0;
-      const radius = Math.max(135, heroName.getBoundingClientRect().width * 0.28);
+      currentX += (targetX - currentX) * 0.14;
+      heroName.style.setProperty("--hero-name-x", `${currentX}px`);
+      const radius = Math.max(120, nameBounds.width * 0.22);
       letters.forEach((letter, index) => {
         const center = letterCenters[index];
         if (!center) return;
         const distance = Math.hypot(pointerX - center.x, pointerY - center.y);
         const proximity = Math.max(0, 1 - distance / radius);
-        letter.style.setProperty("--letter-weight", `${Math.round(560 + proximity * 140)}`);
-        letter.style.setProperty("--letter-lift", `${(-proximity * 0.075).toFixed(3)}em`);
-        letter.style.setProperty("--letter-scale", `${(1 + proximity * 0.04).toFixed(3)}`);
-        letter.style.setProperty("--letter-accent", proximity.toFixed(3));
+        letter.style.setProperty("--letter-weight", `${Math.round(590 + proximity * 70)}`);
       });
+      if (isInside || Math.abs(targetX - currentX) > 0.5) nameFrame = window.requestAnimationFrame(renderNameProximity);
+      else nameFrame = 0;
     };
 
-    heroName.addEventListener("pointerenter", measureLetters);
+    heroName.addEventListener("pointerenter", (event) => {
+      measureLetters();
+      isInside = true;
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      targetX = pointerX - nameBounds.left;
+      currentX = targetX - 70;
+      heroName.classList.add("is-exposing");
+      if (!nameFrame) nameFrame = window.requestAnimationFrame(renderNameProximity);
+    });
     heroName.addEventListener("pointermove", (event) => {
       if (!letterCenters.length) measureLetters();
       pointerX = event.clientX;
       pointerY = event.clientY;
+      targetX = pointerX - nameBounds.left;
       if (!nameFrame) nameFrame = window.requestAnimationFrame(renderNameProximity);
     });
     heroName.addEventListener("pointerleave", () => {
-      if (nameFrame) window.cancelAnimationFrame(nameFrame);
-      nameFrame = 0;
+      isInside = false;
+      targetX = nameBounds.width + 180;
+      heroName.classList.remove("is-exposing");
       letters.forEach((letter) => {
         letter.style.removeProperty("--letter-weight");
-        letter.style.removeProperty("--letter-lift");
-        letter.style.removeProperty("--letter-scale");
-        letter.style.removeProperty("--letter-accent");
       });
     });
     window.addEventListener("resize", measureLetters, { passive: true });
