@@ -14,11 +14,15 @@ export type TimelineEntry = {
   }[];
   current?: boolean;
   icon: string;
+  logoKey?: string;
+  logoAlt?: string;
+  logoMonogram?: string;
 };
 
 export const profile = {
   name: "Fabian Deragisch",
   role: "Mitarbeiter im Marketing und E-Commerce",
+  currentOrganization: "DERTOUR Austria GmbH",
   statement:
     "Portfolio, Lebenslauf und ein kleiner Einblick in die Person dahinter.",
   focus:
@@ -66,41 +70,45 @@ export const work: TimelineEntry[] = [
   {
     period: "Aktuell",
     title: "Mitarbeiter im Marketing und E-Commerce",
+    organization: "DERTOUR Austria GmbH",
     description:
-      "SEO, Website, E-Mail-Marketing und CRM gehören zu meinem laufenden Tagesgeschäft.",
+      "Zwischen Website, SEO, Newsletter und CRM – mit Blick auf Zahlen und Gestaltung.",
     details: [
-      "E-Mail-Marketing und Mailings",
-      "SEO und Website-Content",
-      "Content-Pflege in Magnolia CMS",
-      "Arbeit mit Canva und Microsoft Dynamics",
+      "SEO-Maßnahmen und Website-Content",
+      "Monitoring mit Search Console und SISTRIX",
+      "KPI- und Performance-Reportings",
+      "Newsletter, CM-Mailings und CRM-Segmente",
     ],
     backTitle: "Was ich konkret mache",
     backIntro:
-      "Ich halte Inhalte, Kampagnen und Systeme im Alltag zusammen. Je nach Thema arbeite ich eigenständig oder gemeinsam mit einer Agentur.",
+      "Im Alltag wechselt es zwischen Website, Analyse, CRM und Gestaltung. Vieles entsteht im Austausch mit Kolleg:innen, einiges setze ich direkt selbst um.",
     backDetails: [
       {
         icon: "ph-magnifying-glass",
-        title: "SEO",
-        text: "Technische und redaktionelle Themen abstimmen, Optimierungen begleiten und die Website aktuell halten.",
+        title: "SEO und Website",
+        text: "SEO-Potenziale identifizieren und Maßnahmen umsetzen – vom Content bis zu ausgewählten technischen Themen. Website-Inhalte und Kampagnen pflege ich in Magnolia.",
       },
       {
         icon: "ph-chart-line-up",
-        title: "Analyse",
-        text: "KPIs beobachten, Entwicklungen einordnen und Performance-Reportings für die weitere Arbeit aufbereiten.",
+        title: "Monitoring und Reporting",
+        text: "Mit Google Search Console, SISTRIX und weiteren Tools beobachte ich Entwicklungen, erstelle regelmäßige KPI-Reports und präsentiere die Ergebnisse.",
       },
       {
         icon: "ph-envelope-simple",
-        title: "CRM und Mailings",
-        text: "Segmente in Microsoft Dynamics erstellen, Mailings versenden und die benötigten Medien selbst vorbereiten.",
+        title: "CRM und E-Mail",
+        text: "In Microsoft Dynamics baue ich Segmente sowie CM-Mailings und kümmere mich um das Newsletter-Marketing.",
       },
       {
         icon: "ph-paint-brush",
-        title: "Content und Gestaltung",
-        text: "Content in Magnolia pflegen und mit Canva CI-konforme Grafiken für Website und E-Mail erstellen.",
+        title: "Gestaltung und Austausch",
+        text: "Grafiken und weitere Medien erstelle ich selbst und stimme Kampagnen mit den beteiligten Kolleg:innen ab.",
       },
     ],
     current: true,
     icon: "ph-briefcase",
+    logoKey: "dertour-austria",
+    logoAlt: "Logo der DERTOUR Austria GmbH",
+    logoMonogram: "DT",
   },
   {
     period: "März 2022 - Februar 2024",
@@ -141,6 +149,9 @@ export const work: TimelineEntry[] = [
       },
     ],
     icon: "ph-megaphone",
+    logoKey: "landkreis-passau-gesundheit",
+    logoAlt: "Logo der Landkreis Passau Gesundheitseinrichtungen",
+    logoMonogram: "LGP",
   },
 ];
 
@@ -177,6 +188,9 @@ export const education: TimelineEntry[] = [
       },
     ],
     icon: "ph-graduation-cap",
+    logoKey: "universitaet-passau",
+    logoAlt: "Logo der Universität Passau",
+    logoMonogram: "UP",
   },
   {
     period: "Oktober 2019 - September 2020",
@@ -205,6 +219,9 @@ export const education: TimelineEntry[] = [
       },
     ],
     icon: "ph-books",
+    logoKey: "universitaet-passau",
+    logoAlt: "Logo der Universität Passau",
+    logoMonogram: "UP",
   },
   {
     period: "Juni 2019",
@@ -212,5 +229,8 @@ export const education: TimelineEntry[] = [
     organization: "Adalbert-Stifter-Gymnasium Passau",
     description: "Allgemeine Hochschulreife in Bayern.",
     icon: "ph-certificate",
+    logoKey: "asg-passau",
+    logoAlt: "Logo des Adalbert-Stifter-Gymnasiums Passau",
+    logoMonogram: "ASG",
   },
 ];

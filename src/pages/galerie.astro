@@ -1,51 +1,321 @@
 ---
+import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import shotOne from "../assets/fotografie/DSCF0716.jpg";
-import shotTwo from "../assets/fotografie/DSCF1991.jpg";
-import shotThree from "../assets/fotografie/DSCF2348.jpg";
+import { photographyCopy } from "../data/photography";
 
-const shots = [
-  { src: shotOne, number: "01", alt: "Fotografie von Fabian Deragisch" },
-  { src: shotTwo, number: "02", alt: "Fotografie von Fabian Deragisch" },
-  { src: shotThree, number: "03", alt: "Fotografie von Fabian Deragisch" },
+const photoModules = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/fotografie/*.{jpg,jpeg,png,webp,avif}",
+  { eager: true },
+);
+
+const humanizeFileName = (fileName: string) =>
+  fileName
+    .replace(/\.[^.]+$/, "")
+    .replace(/^new[-_]/i, "")
+    .replace(/^\d+[\s_-]*/, "")
+    .replace(/[\s_-]+/g, " ")
+    .replace(/^./, (character) => character.toUpperCase());
+
+const tablePositions = [
+  { x: 2, y: 9, rotation: -6 },
+  { x: 36, y: 2, rotation: 4 },
+  { x: 68, y: 15, rotation: 7 },
+  { x: 9, y: 54, rotation: 3 },
+  { x: 40, y: 45, rotation: -5 },
+  { x: 70, y: 56, rotation: -3 },
+  { x: 27, y: 69, rotation: 6 },
 ];
+
+const shots = Object.entries(photoModules)
+  .sort(([left], [right]) => left.localeCompare(right, "de", { numeric: true }))
+  .map(([path, module], index) => {
+    const fileName = path.split("/").at(-1) ?? `Foto ${index + 1}`;
+    const copy = photographyCopy[fileName];
+    const title = copy?.title ?? humanizeFileName(fileName);
+    const ratio = module.default.width / module.default.height;
+    const orientation = ratio < 0.86 ? "portrait" : ratio > 1.18 ? "landscape" : "square";
+    const position = tablePositions[index % tablePositions.length];
+
+    return {
+      src: module.default,
+      fileName,
+      title,
+      alt: copy?.alt ?? `${title}: Fotografie von Fabian Deragisch`,
+      note: copy?.note ?? "Fujifilm X-T30 III",
+      number: String(index + 1).padStart(2, "0"),
+      orientation,
+      isNew: /^new[-_]/i.test(fileName),
+      x: position.x,
+      y: position.y,
+      rotation: position.rotation,
+      width: orientation === "portrait" ? 22 : orientation === "square" ? 25 : 29,
+    };
+  });
 ---
 
 <BaseLayout
   title="Galerie | Fabian Deragisch"
-  description="Eine kleine Auswahl an Fotografien von Fabian Deragisch."
+  description="Favorite Shots und Fotografien von Fabian Deragisch."
 >
   <main class="gallery-page" id="inhalt">
     <header class="gallery-header section-shell">
       <a class="gallery-back" href="/#fotografie">
         <i class="ph ph-arrow-left" aria-hidden="true"></i> Zurück zur Website
       </a>
-      <div>
+      <div class="gallery-heading">
         <p>Fotografie</p>
         <h1>Favorite Shots.</h1>
-        <p class="gallery-intro">Eine kleine Auswahl. Die Galerie wächst mit den nächsten Bildern weiter.</p>
+        <p class="gallery-intro">Eine kleine Auswahl. Die Galerie wächst stetig weiter.</p>
       </div>
     </header>
 
-    <section class="gallery-grid section-shell" aria-label="Fotogalerie">
-      {shots.map((shot) => (
-        <figure class="gallery-shot">
-          <Image
-            src={shot.src}
-            alt={shot.alt}
-            widths={[720, 1080, 1600]}
-            sizes="(max-width: 48rem) calc(100vw - 2rem), 52vw"
-            loading="eager"
-          />
-          <figcaption><span>{shot.number}</span> Fujifilm X-T30 III</figcaption>
-        </figure>
-      ))}
+    <section class="gallery-table-section" aria-labelledby="gallery-table-title">
+      <div class="gallery-table-toolbar section-shell">
+        <p id="gallery-table-title"><i class="ph ph-hand-grabbing" aria-hidden="true"></i> Bilder greifen, nach vorne holen oder groß ansehen.</p>
+        <button type="button" data-gallery-reset>
+          Zurücklegen <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="gallery-table section-shell" data-gallery-table style={`--gallery-count: ${shots.length}`}>
+        {shots.map((shot, index) => (
+          <article
+            class:list={["gallery-print", `gallery-print-${shot.orientation}`]}
+            data-gallery-card
+            data-gallery-index={index}
+            style={`--card-x: ${shot.x}%; --card-y: ${shot.y}%; --card-rotation: ${shot.rotation}deg; --card-width: ${shot.width}%; --card-index: ${index};`}
+          >
+            <button
+              class="gallery-print-image"
+              type="button"
+              data-gallery-open
+              aria-label={`${shot.title} groß ansehen`}
+            >
+              <Image
+                src={shot.src}
+                alt={shot.alt}
+                widths={[540, 860, 1280, 1800]}
+                sizes="(max-width: 48rem) calc(100vw - 3rem), 30vw"
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+              <span class="gallery-inspect-icon" aria-hidden="true"><i class="ph ph-arrows-out"></i></span>
+              {shot.isNew && <span class="gallery-new-mark">Neu</span>}
+            </button>
+            <footer>
+              <span>{shot.number}</span>
+              <strong>{shot.title}</strong>
+              <small>{shot.note}</small>
+            </footer>
+          </article>
+        ))}
+      </div>
     </section>
 
     <footer class="gallery-footer section-shell">
       <a href="/">Fabian Deragisch</a>
       <span>Wien</span>
     </footer>
+
+    <dialog class="gallery-lightbox" data-gallery-dialog aria-label="Foto in Großansicht">
+      <div class="gallery-lightbox-shell">
+        <header>
+          <span data-gallery-counter>1 / {shots.length}</span>
+          <button type="button" data-gallery-close aria-label="Großansicht schließen">
+            <i class="ph ph-x" aria-hidden="true"></i>
+          </button>
+        </header>
+        <figure data-gallery-swipe-area>
+          <img data-gallery-dialog-image alt="" />
+          <figcaption>
+            <strong data-gallery-dialog-title></strong>
+            <span data-gallery-dialog-note></span>
+          </figcaption>
+        </figure>
+        <nav aria-label="Bilder in der Großansicht wechseln">
+          <button type="button" data-gallery-previous>
+            <i class="ph ph-arrow-left" aria-hidden="true"></i> Vorheriges
+          </button>
+          <button type="button" data-gallery-next>
+            Nächstes <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </button>
+        </nav>
+      </div>
+    </dialog>
   </main>
 </BaseLayout>
+
+<script>
+  import { prefersReducedMotion } from "../scripts/motion";
+
+  const table = document.querySelector<HTMLElement>("[data-gallery-table]");
+  const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-gallery-card]"));
+  const dialog = document.querySelector<HTMLDialogElement>("[data-gallery-dialog]");
+  const dialogImage = dialog?.querySelector<HTMLImageElement>("[data-gallery-dialog-image]");
+  const dialogTitle = dialog?.querySelector<HTMLElement>("[data-gallery-dialog-title]");
+  const dialogNote = dialog?.querySelector<HTMLElement>("[data-gallery-dialog-note]");
+  const dialogCounter = dialog?.querySelector<HTMLElement>("[data-gallery-counter]");
+  const closeButton = dialog?.querySelector<HTMLButtonElement>("[data-gallery-close]");
+  const mobileLayout = window.matchMedia("(max-width: 48rem)");
+  let activeIndex = 0;
+  let cardLayer = 20;
+  let lastTrigger: HTMLElement | null = null;
+
+  const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+  const updateDialog = (index: number) => {
+    if (!cards.length || !dialogImage) return;
+    activeIndex = (index + cards.length) % cards.length;
+    const card = cards[activeIndex];
+    const image = card.querySelector<HTMLImageElement>("img");
+    const title = card.querySelector<HTMLElement>("footer strong")?.textContent?.trim() ?? "Fotografie";
+    const note = card.querySelector<HTMLElement>("footer small")?.textContent?.trim() ?? "";
+    if (image) {
+      dialogImage.src = image.currentSrc || image.src;
+      dialogImage.alt = image.alt;
+    }
+    if (dialogTitle) dialogTitle.textContent = title;
+    if (dialogNote) dialogNote.textContent = note;
+    if (dialogCounter) dialogCounter.textContent = `${activeIndex + 1} / ${cards.length}`;
+  };
+
+  const openDialog = (index: number, trigger: HTMLElement) => {
+    if (!dialog) return;
+    lastTrigger = trigger;
+    updateDialog(index);
+    dialog.showModal();
+    document.body.classList.add("gallery-dialog-open");
+    requestAnimationFrame(() => dialog.classList.add("is-open"));
+  };
+
+  const closeDialog = () => {
+    if (!dialog?.open) return;
+    dialog.classList.remove("is-open");
+    document.body.classList.remove("gallery-dialog-open");
+    if (prefersReducedMotion()) dialog.close();
+    else window.setTimeout(() => dialog.open && dialog.close(), 220);
+  };
+
+  cards.forEach((card, index) => {
+    const openButton = card.querySelector<HTMLButtonElement>("[data-gallery-open]");
+    let pointerId: number | null = null;
+    let startX = 0;
+    let startY = 0;
+    let originX = 0;
+    let originY = 0;
+    let startRect: DOMRect | null = null;
+    let tableRect: DOMRect | null = null;
+    let moved = false;
+
+    const liftCard = () => {
+      cardLayer += 1;
+      card.style.zIndex = String(cardLayer);
+    };
+
+    openButton?.addEventListener("click", (event) => {
+      if (card.dataset.justDragged === "true") {
+        event.preventDefault();
+        return;
+      }
+      liftCard();
+      openDialog(index, openButton);
+    });
+
+    card.addEventListener("pointerdown", (event) => {
+      if (mobileLayout.matches || (event.pointerType === "mouse" && event.button !== 0)) return;
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      startY = event.clientY;
+      originX = Number(card.dataset.dragX ?? 0);
+      originY = Number(card.dataset.dragY ?? 0);
+      startRect = card.getBoundingClientRect();
+      tableRect = table?.getBoundingClientRect() ?? null;
+      moved = false;
+      liftCard();
+      card.classList.add("is-dragging");
+      card.setPointerCapture(event.pointerId);
+    });
+
+    card.addEventListener("pointermove", (event) => {
+      if (event.pointerId !== pointerId || !startRect || !tableRect) return;
+      const rawX = event.clientX - startX;
+      const rawY = event.clientY - startY;
+      moved ||= Math.hypot(rawX, rawY) > 5;
+      const x = clamp(originX + rawX, tableRect.left - startRect.left + originX, tableRect.right - startRect.right + originX);
+      const y = clamp(originY + rawY, tableRect.top - startRect.top + originY, tableRect.bottom - startRect.bottom + originY);
+      card.dataset.dragX = String(x);
+      card.dataset.dragY = String(y);
+      card.style.setProperty("--drag-x", `${x}px`);
+      card.style.setProperty("--drag-y", `${y}px`);
+    });
+
+    const finishDrag = (event: PointerEvent) => {
+      if (event.pointerId !== pointerId) return;
+      pointerId = null;
+      card.classList.remove("is-dragging");
+      if (card.hasPointerCapture(event.pointerId)) card.releasePointerCapture(event.pointerId);
+      if (moved) {
+        card.dataset.justDragged = "true";
+        window.setTimeout(() => delete card.dataset.justDragged, 40);
+      }
+    };
+
+    card.addEventListener("pointerup", finishDrag);
+    card.addEventListener("pointercancel", finishDrag);
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-gallery-reset]")?.addEventListener("click", () => {
+    cards.forEach((card, index) => {
+      card.dataset.dragX = "0";
+      card.dataset.dragY = "0";
+      card.style.setProperty("--drag-x", "0px");
+      card.style.setProperty("--drag-y", "0px");
+      card.style.zIndex = String(index + 1);
+    });
+    cardLayer = 20;
+  });
+
+  closeButton?.addEventListener("click", closeDialog);
+  dialog?.querySelector<HTMLButtonElement>("[data-gallery-previous]")?.addEventListener("click", () => updateDialog(activeIndex - 1));
+  dialog?.querySelector<HTMLButtonElement>("[data-gallery-next]")?.addEventListener("click", () => updateDialog(activeIndex + 1));
+
+  dialog?.addEventListener("click", (event) => {
+    if (event.target === dialog) closeDialog();
+  });
+  dialog?.addEventListener("close", () => {
+    dialog.classList.remove("is-open");
+    document.body.classList.remove("gallery-dialog-open");
+    lastTrigger?.focus({ preventScroll: true });
+  });
+  dialog?.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") updateDialog(activeIndex - 1);
+    if (event.key === "ArrowRight") updateDialog(activeIndex + 1);
+  });
+
+  const swipeArea = dialog?.querySelector<HTMLElement>("[data-gallery-swipe-area]");
+  let swipeStartX = 0;
+  swipeArea?.addEventListener("pointerdown", (event) => (swipeStartX = event.clientX));
+  swipeArea?.addEventListener("pointerup", (event) => {
+    const distance = event.clientX - swipeStartX;
+    if (Math.abs(distance) < 55) return;
+    updateDialog(activeIndex + (distance < 0 ? 1 : -1));
+  });
+
+  if (!prefersReducedMotion() && !mobileLayout.matches && table) {
+    requestAnimationFrame(() => {
+      const tableBounds = table.getBoundingClientRect();
+      cards.forEach((card, index) => {
+        const bounds = card.getBoundingClientRect();
+        const centerX = tableBounds.left + tableBounds.width / 2 - (bounds.left + bounds.width / 2);
+        const centerY = tableBounds.top + tableBounds.height / 2 - (bounds.top + bounds.height / 2);
+        card.animate(
+          [
+            { opacity: 0, transform: `translate3d(${centerX}px, ${centerY}px, 0) rotate(0deg) scale(.82)`, filter: "blur(8px)" },
+            { opacity: 1, transform: "translate3d(0, 0, 0) rotate(var(--card-rotation)) scale(1)", filter: "blur(0)" },
+          ],
+          { duration: 720, delay: 110 + index * 75, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" },
+        );
+      });
+    });
+  }
+</script>

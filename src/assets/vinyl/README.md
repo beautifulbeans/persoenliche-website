@@ -8,6 +8,8 @@ Die Website erkennt diese Dateinamen automatisch:
 - `blonde.jpg`
 - `igor.jpg`
 - `swimming.jpg`
+- `love-deluxe.jpg`
+- `lets-start-here.jpg`
 
 Empfehlung: mindestens 800 x 800 Pixel. Andere Bildformate (`.png`, `.webp`, `.avif`)
 werden ebenfalls erkannt, dann muss der Dateiname in `VinylPlayer.astro` entsprechend

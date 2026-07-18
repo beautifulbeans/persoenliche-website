@@ -1,5 +1,21 @@
 ---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
 import { education, work } from "../data/profile";
+
+const organizationLogoModules = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/logos/*.{svg,png,jpg,jpeg,webp,avif}",
+  { eager: true },
+);
+
+const organizationLogos = Object.fromEntries(
+  Object.entries(organizationLogoModules).map(([path, module]) => [
+    path.split("/").at(-1)?.replace(/\.[^.]+$/, ""),
+    module.default,
+  ]),
+) as Record<string, ImageMetadata>;
+
+const getOrganizationLogo = (key?: string) => (key ? organizationLogos[key] : undefined);
 ---
 
 <section class="journey section-shell" id="laufbahn" aria-labelledby="journey-title">
@@ -45,7 +61,17 @@ import { education, work } from "../data/profile";
                 <div class="journey-card-face journey-card-front" data-flip-front>
                   <div class="journey-card-top">
                     <span class="journey-date">{entry.period}</span>
-                    <span class="journey-card-icon" aria-hidden="true"><i class:list={["ph", entry.icon]}></i></span>
+                    {entry.logoKey ? (
+                      <span class="journey-card-icon journey-organization-logo" aria-hidden="true">
+                        {getOrganizationLogo(entry.logoKey) ? (
+                          <Image src={getOrganizationLogo(entry.logoKey)!} alt="" width={180} loading="lazy" />
+                        ) : (
+                          <strong>{entry.logoMonogram}</strong>
+                        )}
+                      </span>
+                    ) : (
+                      <span class="journey-card-icon" aria-hidden="true"><i class:list={["ph", entry.icon]}></i></span>
+                    )}
                   </div>
                   {entry.context && (
                     <p class="journey-context"><i class="ph ph-link-simple-horizontal" aria-hidden="true"></i>{entry.context}</p>
@@ -120,7 +146,17 @@ import { education, work } from "../data/profile";
                 <div class="journey-card-face journey-card-front" data-flip-front>
                   <div class="journey-card-top">
                     <span class="journey-date">{entry.period}</span>
-                    <span class="journey-card-icon" aria-hidden="true"><i class:list={["ph", entry.icon]}></i></span>
+                    {entry.logoKey ? (
+                      <span class="journey-card-icon journey-organization-logo" aria-hidden="true">
+                        {getOrganizationLogo(entry.logoKey) ? (
+                          <Image src={getOrganizationLogo(entry.logoKey)!} alt="" width={180} loading="lazy" />
+                        ) : (
+                          <strong>{entry.logoMonogram}</strong>
+                        )}
+                      </span>
+                    ) : (
+                      <span class="journey-card-icon" aria-hidden="true"><i class:list={["ph", entry.icon]}></i></span>
+                    )}
                   </div>
                   {entry.context && (
                     <p class="journey-context"><i class="ph ph-link-simple-horizontal" aria-hidden="true"></i>{entry.context}</p>

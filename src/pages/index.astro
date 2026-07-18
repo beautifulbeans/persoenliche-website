@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import AnchorNavigator from "../components/AnchorNavigator.astro";
 import BachelorThesis from "../components/BachelorThesis.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -10,7 +9,6 @@ import SiteHeader from "../components/SiteHeader.astro";
 import TeaRitual from "../components/TeaRitual.astro";
 import Timeline from "../components/Timeline.astro";
 import VinylPlayer from "../components/VinylPlayer.astro";
-import portrait from "../assets/portrait/fabian-deragisch.jpg";
 import { profile } from "../data/profile";
 
 const heroNameLines = ["Fabian", "Deragisch"];
@@ -22,8 +20,18 @@ const heroNameLines = ["Fabian", "Deragisch"];
   <AnchorNavigator />
 
   <main id="inhalt">
-    <section class="hero section-shell" id="oben" aria-labelledby="hero-title">
+    <section class="hero section-shell" id="oben" aria-labelledby="hero-title" data-hero-stage>
+      <div class="hero-kinetic-field" aria-hidden="true">
+        <span class="hero-field-ring hero-field-ring-one"></span>
+        <span class="hero-field-ring hero-field-ring-two"></span>
+        <span class="hero-field-sweep"></span>
+      </div>
+
       <div class="hero-copy">
+        <div class="hero-opening-line" aria-hidden="true">
+          <span>Portfolio von</span>
+          <span>Wien</span>
+        </div>
         <h1 class="hero-name" id="hero-title" data-hero-name aria-label="Fabian Deragisch">
           {heroNameLines.map((line, lineIndex) => (
             <span class="hero-name-line" data-text={line} aria-hidden="true">
@@ -37,55 +45,32 @@ const heroNameLines = ["Fabian", "Deragisch"];
             </span>
           ))}
         </h1>
-        <p class="hero-statement">{profile.statement}</p>
-        <div class="hero-actions">
-          <a class="primary-button" href="#beruf">Berufserfahrung <i class="ph ph-arrow-down-right" aria-hidden="true"></i></a>
-          <a class="secondary-button" href="#persoenlich">Persönlicher Teil</a>
-        </div>
-      </div>
-
-      <div class="hero-scene" aria-label="Porträt und aktuelle berufliche Rolle">
-        <div class="hero-portrait-frame">
-          <div class="hero-portrait-art" aria-hidden="true">
-            <span class="portrait-orbit portrait-orbit-one"></span>
-            <span class="portrait-orbit portrait-orbit-two"></span>
+        <div class="hero-lower-row">
+          <div>
+            <p class="hero-statement">{profile.statement}</p>
+            <div class="hero-actions">
+              <a class="primary-button" href="#beruf">Berufserfahrung <i class="ph ph-arrow-down-right" aria-hidden="true"></i></a>
+              <a class="secondary-button" href="#persoenlich">Persönlicher Teil</a>
+            </div>
           </div>
-          <figure class="hero-photo">
-            <Image
-              class="hero-portrait-image hero-portrait-image-color"
-              src={portrait}
-              alt="Porträt von Fabian Deragisch"
-              width={1200}
-              quality={84}
-              loading="eager"
-              fetchpriority="high"
-            />
-            <Image
-              class="hero-portrait-image hero-portrait-image-mono"
-              src={portrait}
-              alt=""
-              aria-hidden="true"
-              width={1200}
-              quality={84}
-              loading="eager"
-            />
-            <Image
-              class="hero-portrait-image hero-portrait-image-smear"
-              src={portrait}
-              alt=""
-              aria-hidden="true"
-              width={1200}
-              quality={84}
-              loading="eager"
-            />
-          </figure>
-        </div>
 
-        <div class="hero-role-index" aria-label="Aktuelle berufliche Rolle">
-          <span class="hero-role-label">Aktuell</span>
-          <strong>Marketing &amp; E-Commerce</strong>
+          <div class="hero-current-role" aria-label="Aktuelle berufliche Rolle">
+            <span>Aktuell</span>
+            <strong>{profile.role}</strong>
+            <small>{profile.currentOrganization}</small>
+          </div>
         </div>
       </div>
+
+      <a class="hero-scroll-loop" href="#beruf" aria-label="Zur Berufserfahrung scrollen">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <defs>
+            <path id="hero-scroll-path" d="M60,60 m-42,0 a42,42 0 1,1 84,0 a42,42 0 1,1 -84,0" />
+          </defs>
+          <text><textPath href="#hero-scroll-path">Weiter · scrollen · weiter · scrollen · </textPath></text>
+        </svg>
+        <i class="ph ph-arrow-down" aria-hidden="true"></i>
+      </a>
     </section>
 
     <Timeline />
@@ -295,48 +280,27 @@ const heroNameLines = ["Fabian", "Deragisch"];
     revealItems.forEach((item) => item.classList.add("is-visible"));
   }
 
-  const portraitFrame = document.querySelector<HTMLElement>(".hero-portrait-frame");
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-  if (portraitFrame && finePointer.matches && !prefersReducedMotion()) {
-    let portraitBounds: DOMRect | null = null;
-    let portraitFrameRequest = 0;
-    let portraitPointerX = 0;
-    let portraitPointerY = 0;
-
-    const renderPortrait = () => {
-      portraitFrameRequest = 0;
-      portraitBounds ??= portraitFrame.getBoundingClientRect();
-      const x = Math.max(0, Math.min(1, (portraitPointerX - portraitBounds.left) / portraitBounds.width));
-      const y = Math.max(0, Math.min(1, (portraitPointerY - portraitBounds.top) / portraitBounds.height));
-      portraitFrame.style.setProperty("--portrait-x", `${x * 100}%`);
-      portraitFrame.style.setProperty("--portrait-y", `${y * 100}%`);
-      portraitFrame.style.setProperty("--portrait-shift-x", `${(x - 0.5) * -1.1}rem`);
-      portraitFrame.style.setProperty("--portrait-shift-y", `${(y - 0.5) * -0.7}rem`);
-      portraitFrame.style.setProperty("--portrait-smear-x", `${(x - 0.5) * 1.75}rem`);
-    };
-
-    portraitFrame.addEventListener("pointerenter", () => {
-      portraitBounds = portraitFrame.getBoundingClientRect();
-      portraitFrame.classList.add("is-tracking");
+  const heroStage = document.querySelector<HTMLElement>("[data-hero-stage]");
+  if (heroStage && finePointer.matches && !prefersReducedMotion()) {
+    let heroFrame = 0;
+    let heroX = 50;
+    let heroY = 45;
+    heroStage.addEventListener("pointermove", (event) => {
+      const bounds = heroStage.getBoundingClientRect();
+      heroX = ((event.clientX - bounds.left) / bounds.width) * 100;
+      heroY = ((event.clientY - bounds.top) / bounds.height) * 100;
+      if (heroFrame) return;
+      heroFrame = window.requestAnimationFrame(() => {
+        heroFrame = 0;
+        heroStage.style.setProperty("--hero-pointer-x", `${heroX}%`);
+        heroStage.style.setProperty("--hero-pointer-y", `${heroY}%`);
+      });
     });
-    portraitFrame.addEventListener("pointermove", (event) => {
-      portraitFrame.classList.add("is-tracking");
-      portraitPointerX = event.clientX;
-      portraitPointerY = event.clientY;
-      if (!portraitFrameRequest) portraitFrameRequest = window.requestAnimationFrame(renderPortrait);
+    heroStage.addEventListener("pointerleave", () => {
+      heroStage.style.setProperty("--hero-pointer-x", "72%");
+      heroStage.style.setProperty("--hero-pointer-y", "42%");
     });
-    portraitFrame.addEventListener("pointerleave", () => {
-      portraitBounds = null;
-      portraitFrame.classList.remove("is-tracking");
-      portraitFrame.style.setProperty("--portrait-x", "50%");
-      portraitFrame.style.setProperty("--portrait-y", "42%");
-      portraitFrame.style.setProperty("--portrait-shift-x", "0rem");
-      portraitFrame.style.setProperty("--portrait-shift-y", "0rem");
-      portraitFrame.style.setProperty("--portrait-smear-x", "0rem");
-    });
-    const invalidatePortraitBounds = () => (portraitBounds = null);
-    window.addEventListener("resize", invalidatePortraitBounds, { passive: true });
-    window.addEventListener("scroll", invalidatePortraitBounds, { passive: true });
   }
 
   const heroName = document.querySelector<HTMLElement>("[data-hero-name]");

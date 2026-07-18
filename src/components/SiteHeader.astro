@@ -1,11 +1,32 @@
 ---
+import { Image } from "astro:assets";
+import portrait from "../assets/portrait/fabian-deragisch.jpg";
 import { profile } from "../data/profile";
 ---
 
 <header class="site-header" data-site-header>
   <div class="header-identity">
     <a class="wordmark" href="#oben" aria-label="Zurück zum Anfang">
-      <span aria-hidden="true">FD</span>
+      <span class="wordmark-avatar">
+        <Image
+          class="wordmark-avatar-image wordmark-avatar-color"
+          src={portrait}
+          alt=""
+          aria-hidden="true"
+          width={160}
+          quality={82}
+          loading="eager"
+        />
+        <Image
+          class="wordmark-avatar-image wordmark-avatar-mono"
+          src={portrait}
+          alt=""
+          aria-hidden="true"
+          width={160}
+          quality={82}
+          loading="eager"
+        />
+      </span>
       <span class="wordmark-name">Fabian Deragisch</span>
     </a>
 

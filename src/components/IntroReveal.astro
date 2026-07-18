@@ -1,29 +1,19 @@
----
-import { Image } from "astro:assets";
-import portrait from "../assets/portrait/fabian-deragisch.jpg";
----
-
 <div class="intro-reveal" data-intro-reveal aria-hidden="true">
-  <div class="intro-shutter intro-shutter-top"></div>
+  <span class="intro-curtain intro-curtain-left"></span>
+  <span class="intro-curtain intro-curtain-right"></span>
 
-  <div class="intro-focus-band">
-    <Image
-      class="intro-focus-image"
-      src={portrait}
-      alt=""
-      width={1200}
-      quality={84}
-      loading="eager"
-    />
-    <span class="intro-focus-scan"></span>
+  <div class="intro-kinetic-stage">
+    <span class="intro-orbit"><i></i></span>
+    <div class="intro-monogram" aria-hidden="true">
+      <span class="intro-letter intro-letter-f">F</span>
+      <span class="intro-letter intro-letter-d">D</span>
+    </div>
+    <span class="intro-signal"></span>
+    <div class="intro-caption">
+      <span>Fabian Deragisch</span>
+      <span>Portfolio · Wien</span>
+    </div>
   </div>
-
-  <div class="intro-focus-name">
-    <span>Fabian</span>
-    <span>Deragisch</span>
-  </div>
-
-  <div class="intro-shutter intro-shutter-bottom"></div>
 </div>
 
 <script is:inline>
@@ -35,8 +25,8 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     let alreadySeen = false;
 
     try {
-      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v7") === "true";
-      sessionStorage.setItem("fabian-intro-seen-v7", "true");
+      alreadySeen = sessionStorage.getItem("fabian-intro-seen-v8") === "true";
+      sessionStorage.setItem("fabian-intro-seen-v8", "true");
     } catch {
       alreadySeen = false;
     }
@@ -54,9 +44,9 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
       intro.classList.add("is-leaving");
       document.body.classList.add("intro-complete");
       document.body.classList.remove("intro-active");
-    }, 1450);
+    }, 1600);
 
-    window.setTimeout(() => intro.remove(), 2350);
+    window.setTimeout(() => intro.remove(), 2520);
   })();
 </script>
 
