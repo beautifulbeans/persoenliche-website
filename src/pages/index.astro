@@ -14,14 +14,6 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
 import { profile } from "../data/profile";
 
 const heroNameLines = ["Fabian", "Deragisch"];
-const portraitPixels = Array.from({ length: 80 }, (_, index) => ({
-  index,
-  order: (index * 29) % 80,
-}));
-const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
-  index,
-  order: (index * 11) % 24,
-}));
 ---
 
 <BaseLayout>
@@ -77,12 +69,16 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
               quality={84}
               loading="eager"
             />
+            <Image
+              class="hero-portrait-image hero-portrait-image-smear"
+              src={portrait}
+              alt=""
+              aria-hidden="true"
+              width={1200}
+              quality={84}
+              loading="eager"
+            />
           </figure>
-          <span class="portrait-pixel-grid" aria-hidden="true">
-            {portraitPixels.map((pixel) => (
-              <i style={`--pixel-index: ${pixel.index}; --pixel-order: ${pixel.order}`}></i>
-            ))}
-          </span>
         </div>
 
         <div class="hero-role-index" aria-label="Aktuelle berufliche Rolle">
@@ -101,10 +97,9 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
         <div class="chapter-transition-panel chapter-transition-professional" aria-hidden="true"></div>
         <div class="chapter-transition-panel chapter-transition-personal" aria-hidden="true"></div>
 
-        <div class="chapter-pixel-field" aria-hidden="true">
-          {chapterPixels.map((pixel) => (
-            <i style={`--chapter-index: ${pixel.index}; --chapter-order: ${pixel.order}`}></i>
-          ))}
+        <div class="chapter-tides" aria-hidden="true">
+          <span class="chapter-tide chapter-tide-bridge"></span>
+          <span class="chapter-tide chapter-tide-personal"></span>
         </div>
 
         <div class="chapter-orbits" aria-hidden="true">
@@ -202,7 +197,7 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
             </div>
             <span class="cards-icon"><i class="ph ph-cards-three" aria-hidden="true"></i></span>
           </div>
-          <p class="cards-personal">Kartenspiele gehören für mich zu einem guten Abend mit Freunden.</p>
+          <p class="cards-personal">Bei einer Runde Karten bin ich fast immer dabei – am liebsten Durak, Neunern oder Poker.</p>
           <p class="card-game-copy" aria-live="polite" data-card-game-copy>Angreifen, verteidigen, Trumpf im Blick behalten. Verloren hat, wer am Ende noch Karten hält.</p>
           <div class="card-game-switch" role="group" aria-label="Kartenspiel auswählen">
             <button class="is-selected" type="button" data-card-game="durak" aria-pressed="true">Durak</button>
@@ -257,6 +252,15 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
           <p>Die Forschung meines Opas soll später als kompakter Stammbaum erkundbar werden. Namen und Daten kommen erst dazu, wenn alles ausgewählt und geprüft ist.</p>
         </div>
       </details>
+
+      <section class="minigame-teaser section-shell" aria-labelledby="minigame-title" data-reveal="up">
+        <span class="minigame-orbit" aria-hidden="true"><i class="ph ph-game-controller"></i></span>
+        <div>
+          <h3 id="minigame-title">Ein kleines Minigame.</h3>
+          <p>Hier entsteht später etwas zum Ausprobieren.</p>
+        </div>
+        <span class="minigame-status">Coming <em>(Soon)</em></span>
+      </section>
     </section>
   </main>
 
@@ -295,36 +299,31 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   if (portraitFrame && finePointer.matches && !prefersReducedMotion()) {
     let portraitBounds: DOMRect | null = null;
-    let pixelTimer = 0;
+    let portraitFrameRequest = 0;
+    let portraitPointerX = 0;
+    let portraitPointerY = 0;
 
-    portraitFrame.addEventListener("pointerenter", () => {
-      portraitBounds = portraitFrame.getBoundingClientRect();
-      portraitFrame.classList.add("is-tracking");
-      portraitFrame.classList.remove("is-pixelating");
-      window.clearTimeout(pixelTimer);
-      window.requestAnimationFrame(() => {
-        portraitFrame.classList.add("is-pixelating");
-        pixelTimer = window.setTimeout(() => portraitFrame.classList.remove("is-pixelating"), 860);
-      });
-    });
-    portraitFrame.addEventListener("pointermove", (event) => {
-      const wasTracking = portraitFrame.classList.contains("is-tracking");
-      portraitFrame.classList.add("is-tracking");
-      if (!wasTracking) {
-        portraitFrame.classList.remove("is-pixelating");
-        window.clearTimeout(pixelTimer);
-        window.requestAnimationFrame(() => {
-          portraitFrame.classList.add("is-pixelating");
-          pixelTimer = window.setTimeout(() => portraitFrame.classList.remove("is-pixelating"), 860);
-        });
-      }
+    const renderPortrait = () => {
+      portraitFrameRequest = 0;
       portraitBounds ??= portraitFrame.getBoundingClientRect();
-      const x = (event.clientX - portraitBounds.left) / portraitBounds.width;
-      const y = (event.clientY - portraitBounds.top) / portraitBounds.height;
+      const x = Math.max(0, Math.min(1, (portraitPointerX - portraitBounds.left) / portraitBounds.width));
+      const y = Math.max(0, Math.min(1, (portraitPointerY - portraitBounds.top) / portraitBounds.height));
       portraitFrame.style.setProperty("--portrait-x", `${x * 100}%`);
       portraitFrame.style.setProperty("--portrait-y", `${y * 100}%`);
       portraitFrame.style.setProperty("--portrait-shift-x", `${(x - 0.5) * -1.1}rem`);
       portraitFrame.style.setProperty("--portrait-shift-y", `${(y - 0.5) * -0.7}rem`);
+      portraitFrame.style.setProperty("--portrait-smear-x", `${(x - 0.5) * 1.75}rem`);
+    };
+
+    portraitFrame.addEventListener("pointerenter", () => {
+      portraitBounds = portraitFrame.getBoundingClientRect();
+      portraitFrame.classList.add("is-tracking");
+    });
+    portraitFrame.addEventListener("pointermove", (event) => {
+      portraitFrame.classList.add("is-tracking");
+      portraitPointerX = event.clientX;
+      portraitPointerY = event.clientY;
+      if (!portraitFrameRequest) portraitFrameRequest = window.requestAnimationFrame(renderPortrait);
     });
     portraitFrame.addEventListener("pointerleave", () => {
       portraitBounds = null;
@@ -333,8 +332,11 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
       portraitFrame.style.setProperty("--portrait-y", "42%");
       portraitFrame.style.setProperty("--portrait-shift-x", "0rem");
       portraitFrame.style.setProperty("--portrait-shift-y", "0rem");
+      portraitFrame.style.setProperty("--portrait-smear-x", "0rem");
     });
-    window.addEventListener("resize", () => (portraitBounds = null), { passive: true });
+    const invalidatePortraitBounds = () => (portraitBounds = null);
+    window.addEventListener("resize", invalidatePortraitBounds, { passive: true });
+    window.addEventListener("scroll", invalidatePortraitBounds, { passive: true });
   }
 
   const heroName = document.querySelector<HTMLElement>("[data-hero-name]");
@@ -389,18 +391,21 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
 
   const chapterTransition = document.querySelector<HTMLElement>("[data-chapter-transition]");
   if (chapterTransition) {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const chapterStage = chapterTransition.querySelector<HTMLElement>(".chapter-transition-stage");
     const transitionHeader = document.querySelector<HTMLElement>("[data-site-header]");
 
     const setChapterState = (opened: boolean) => {
       chapterStage?.classList.toggle("is-personal-open", opened);
       transitionHeader?.setAttribute("data-section-mode", opened ? "personal" : "professional");
+      if (opened && transitionHeader) {
+        transitionHeader.querySelectorAll<HTMLAnchorElement>('nav a[href^="#"]').forEach((link) => {
+          if (link.hash === "#persoenlich") link.setAttribute("aria-current", "location");
+          else link.removeAttribute("aria-current");
+        });
+      }
     };
 
-    if (reduceMotion.matches || !("IntersectionObserver" in window)) {
-      setChapterState(true);
-    } else {
+    if ("IntersectionObserver" in window) {
       const chapterObserver = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) setChapterState(true);
@@ -409,6 +414,8 @@ const chapterPixels = Array.from({ length: 24 }, (_, index) => ({
         { rootMargin: "-18% 0px -22%", threshold: 0.18 },
       );
       chapterObserver.observe(chapterTransition);
+    } else {
+      setChapterState(false);
     }
   }
 

@@ -1,0 +1,51 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import shotOne from "../assets/fotografie/DSCF0716.jpg";
+import shotTwo from "../assets/fotografie/DSCF1991.jpg";
+import shotThree from "../assets/fotografie/DSCF2348.jpg";
+
+const shots = [
+  { src: shotOne, number: "01", alt: "Fotografie von Fabian Deragisch" },
+  { src: shotTwo, number: "02", alt: "Fotografie von Fabian Deragisch" },
+  { src: shotThree, number: "03", alt: "Fotografie von Fabian Deragisch" },
+];
+---
+
+<BaseLayout
+  title="Galerie | Fabian Deragisch"
+  description="Eine kleine Auswahl an Fotografien von Fabian Deragisch."
+>
+  <main class="gallery-page" id="inhalt">
+    <header class="gallery-header section-shell">
+      <a class="gallery-back" href="/#fotografie">
+        <i class="ph ph-arrow-left" aria-hidden="true"></i> Zurück zur Website
+      </a>
+      <div>
+        <p>Fotografie</p>
+        <h1>Favorite Shots.</h1>
+        <p class="gallery-intro">Eine kleine Auswahl. Die Galerie wächst mit den nächsten Bildern weiter.</p>
+      </div>
+    </header>
+
+    <section class="gallery-grid section-shell" aria-label="Fotogalerie">
+      {shots.map((shot) => (
+        <figure class="gallery-shot">
+          <Image
+            src={shot.src}
+            alt={shot.alt}
+            widths={[720, 1080, 1600]}
+            sizes="(max-width: 48rem) calc(100vw - 2rem), 52vw"
+            loading="eager"
+          />
+          <figcaption><span>{shot.number}</span> Fujifilm X-T30 III</figcaption>
+        </figure>
+      ))}
+    </section>
+
+    <footer class="gallery-footer section-shell">
+      <a href="/">Fabian Deragisch</a>
+      <span>Wien</span>
+    </footer>
+  </main>
+</BaseLayout>

@@ -7,51 +7,6 @@ import { education, work } from "../data/profile";
     <h2 id="journey-title">Beruf und Studium.</h2>
   </header>
 
-  <div class="journey-map" data-reveal="up">
-    <div class="journey-map-scroll" tabindex="0" role="region" aria-label="Zeitlicher Überblick über Beruf und Studium">
-      <div class="journey-map-canvas">
-        <div class="journey-map-years" aria-hidden="true">
-          <span style="--year-position: 0%">2019</span>
-          <span style="--year-position: 14.3%">2020</span>
-          <span style="--year-position: 42.8%">2022</span>
-          <span style="--year-position: 71.4%">2024</span>
-          <span style="--year-position: 100%">Heute</span>
-        </div>
-
-        <div class="journey-map-axis" aria-hidden="true">
-          {Array.from({ length: 8 }).map((_, index) => <i style={`--axis-position: ${(index / 7) * 100}%`}></i>)}
-        </div>
-
-        <div class="journey-map-lane journey-map-lane-education">
-          <span class="journey-map-lane-name"><i class="ph ph-graduation-cap" aria-hidden="true"></i>Studium</span>
-          <span class="journey-map-event journey-map-event-abitur" aria-label="Abitur 2019"><i></i><em>Abitur</em></span>
-          <a class="journey-map-bar journey-map-bar-business" href="#ausbildung" aria-label="Business Administration and Economics, 2019 bis 2020">
-            <small>2019 - 2020</small>
-            <strong>BWL &amp; VWL</strong>
-          </a>
-          <a class="journey-map-bar journey-map-bar-bachelor" href="#ausbildung">
-            <small>2020 - 2024</small>
-            <strong>Medien und Kommunikation</strong>
-          </a>
-        </div>
-
-        <div class="journey-map-lane journey-map-lane-work">
-          <span class="journey-map-lane-name"><i class="ph ph-briefcase" aria-hidden="true"></i>Beruf</span>
-          <a class="journey-map-bar journey-map-bar-working-student" href="#beruf">
-            <small>2022 - 2024</small>
-            <strong>Werkstudent Marketing</strong>
-          </a>
-          <a class="journey-map-bar journey-map-bar-current" href="#beruf">
-            <small>seit 2024</small>
-            <strong>Marketing und E-Commerce</strong>
-          </a>
-        </div>
-
-        <p class="journey-map-overlap"><i class="ph ph-intersect-three" aria-hidden="true"></i>Studium und Marketingpraxis liefen zwei Jahre parallel.</p>
-      </div>
-    </div>
-  </div>
-
   <div class="journey-layout">
     <aside class="journey-companion" data-journey-companion data-mode="work">
       <i class="ph ph-arrow-up-right companion-watermark" aria-hidden="true"></i>
@@ -73,7 +28,7 @@ import { education, work } from "../data/profile";
           </div>
         </header>
 
-        <div class="journey-cards">
+        <div class="journey-cards" data-timeline-group>
           {work.map((entry) => (
             <article
               class:list={["journey-card", entry.current && "is-current", entry.backDetails && "has-flip"]}
@@ -83,6 +38,7 @@ import { education, work } from "../data/profile";
               data-story-period={entry.period}
               data-story-title={entry.title}
               data-story-icon={entry.icon}
+              data-timeline-point
               data-reveal="up"
             >
               <div class="journey-card-inner">
@@ -147,7 +103,7 @@ import { education, work } from "../data/profile";
           </div>
         </header>
 
-        <div class="journey-cards journey-cards-education">
+        <div class="journey-cards journey-cards-education" data-timeline-group>
           {education.map((entry) => (
             <article
               class:list={["journey-card", "journey-card-education", entry.backDetails && "has-flip"]}
@@ -157,6 +113,7 @@ import { education, work } from "../data/profile";
               data-story-period={entry.period}
               data-story-title={entry.title}
               data-story-icon={entry.icon}
+              data-timeline-point
               data-reveal="up"
             >
               <div class="journey-card-inner">
@@ -289,6 +246,40 @@ import { education, work } from "../data/profile";
     });
     if (front) cardResizeObserver.observe(front);
     if (back) cardResizeObserver.observe(back);
+  });
+
+  document.querySelectorAll<HTMLElement>("[data-timeline-group]").forEach((group) => {
+    const points = Array.from(group.querySelectorAll<HTMLElement>("[data-timeline-point]"));
+    if (!points.length) return;
+
+    const activatePoint = (activeIndex: number) => {
+      const progress = points.length === 1 ? 1 : activeIndex / (points.length - 1);
+      group.style.setProperty("--timeline-progress", String(Math.max(0, Math.min(1, progress))));
+      points.forEach((point, index) => {
+        point.classList.toggle("is-reached", index <= activeIndex);
+        point.classList.toggle("is-timeline-current", index === activeIndex);
+      });
+    };
+
+    if (!("IntersectionObserver" in window)) {
+      activatePoint(points.length - 1);
+      return;
+    }
+
+    const pointObserver = new IntersectionObserver(
+      (entries) => {
+        const entering = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top);
+        const target = entering.at(-1)?.target as HTMLElement | undefined;
+        if (!target) return;
+        const index = points.indexOf(target);
+        if (index >= 0) activatePoint(index);
+      },
+      { rootMargin: "-42% 0px -48%", threshold: 0 },
+    );
+
+    points.forEach((point) => pointObserver.observe(point));
   });
 
 </script>

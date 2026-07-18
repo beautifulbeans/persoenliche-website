@@ -1,0 +1,1166 @@
+/*
+ * Aktuelle, verbindliche Gestaltungsstufe.
+ * Focus-Slit statt Folio, kompakter Hero, eine echte Scroll-Timeline und
+ * eigenständige persönliche Interaktionen mit gemeinsamem Bewegungsrhythmus.
+ */
+
+/* Intro — ein fotografischer Fokus öffnet die Seite. */
+body.intro-active {
+  overflow: hidden;
+}
+
+.intro-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  background: var(--professional-page);
+  color: var(--on-brand);
+  opacity: 1;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.intro-shutter {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  height: calc(50% + 1px);
+  background: var(--brand-strong);
+  transition: transform 820ms var(--ease-cut);
+  will-change: transform;
+}
+
+.intro-shutter-top {
+  top: 0;
+  transform-origin: center top;
+}
+
+.intro-shutter-bottom {
+  bottom: 0;
+  background: var(--brand);
+  transform-origin: center bottom;
+}
+
+.intro-focus-band {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  clip-path: inset(49.8% 0);
+  transition: clip-path 660ms var(--ease-spring-soft);
+}
+
+.intro-focus-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 36%;
+  filter: saturate(0.72) contrast(1.08);
+  transform: translate3d(0, 1.5%, 0) scale(1.1);
+  transition: transform 840ms var(--ease-spring-soft), filter 620ms ease;
+}
+
+.intro-focus-scan {
+  position: absolute;
+  top: 50%;
+  left: -18%;
+  width: 18%;
+  height: 2px;
+  background: var(--on-brand);
+  opacity: 0;
+  transform: translate3d(0, -50%, 0);
+}
+
+.intro-focus-name {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  width: min(calc(100% - 2rem), 69rem);
+  font-family: var(--font-display);
+  font-size: clamp(3.8rem, 9vw, 6rem);
+  font-variation-settings: "wght" 650;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 0.78;
+  text-shadow: 0 1px 0 rgb(25 31 22 / 0.1);
+}
+
+.intro-focus-name span {
+  display: block;
+  width: fit-content;
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.intro-focus-name span:first-child {
+  transform: translate3d(-2.2rem, 0, 0) scaleX(0.95);
+}
+
+.intro-focus-name span:last-child {
+  justify-self: end;
+  transform: translate3d(2.2rem, 0, 0) scaleX(0.95);
+}
+
+.intro-reveal.is-running .intro-focus-band {
+  clip-path: inset(30% 0);
+}
+
+.intro-reveal.is-running .intro-focus-image {
+  filter: saturate(0.88) contrast(1.03);
+  transform: translate3d(0, 0, 0) scale(1.02);
+}
+
+.intro-reveal.is-running .intro-focus-scan {
+  animation: intro-focus-scan 720ms 180ms var(--ease-cut) both;
+}
+
+.intro-reveal.is-running .intro-focus-name span {
+  animation: intro-name-focus 690ms var(--ease-spring-soft) forwards;
+}
+
+.intro-reveal.is-running .intro-focus-name span:last-child {
+  animation-delay: 90ms;
+}
+
+.intro-reveal.is-leaving {
+  background: transparent;
+  opacity: 0;
+  transition: background-color 0ms 150ms, opacity 160ms 700ms ease;
+}
+
+.intro-reveal.is-leaving .intro-shutter-top {
+  transform: translate3d(0, -104%, 0);
+}
+
+.intro-reveal.is-leaving .intro-shutter-bottom {
+  transform: translate3d(0, 104%, 0);
+}
+
+.intro-reveal.is-leaving .intro-focus-band {
+  clip-path: inset(49.8% 0);
+  opacity: 0;
+  transition: clip-path 520ms var(--ease-cut), opacity 180ms 320ms ease;
+}
+
+.intro-reveal.is-leaving .intro-focus-name {
+  opacity: 0;
+  filter: blur(6px);
+  transform: scaleX(1.025);
+  transition: opacity 200ms ease, filter 280ms ease, transform 420ms var(--ease-cut);
+}
+
+@keyframes intro-name-focus {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0) scaleX(1);
+  }
+}
+
+@keyframes intro-focus-scan {
+  0% { opacity: 0; transform: translate3d(0, -50%, 0); }
+  18% { opacity: 0.8; }
+  100% { opacity: 0; transform: translate3d(760%, -50%, 0); }
+}
+
+/* Hero — kompakte, asymmetrische erste Ansicht. */
+.hero.section-shell {
+  min-height: min(52rem, 88svh);
+  padding-top: 6.8rem;
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  grid-template-columns: minmax(0, 1.12fr) minmax(18rem, 0.72fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  background-image: none;
+}
+
+.hero-copy {
+  align-self: center;
+}
+
+.hero h1.hero-name {
+  width: fit-content;
+  max-width: 100%;
+  font-size: clamp(4.8rem, 7.8vw, 6rem);
+  font-variation-settings: "wght" 590;
+  font-weight: 590;
+  letter-spacing: -0.04em;
+  line-height: 0.82;
+}
+
+.hero h1.hero-name > .hero-name-line {
+  padding: 0 0 0.07em !important;
+}
+
+.hero h1.hero-name > .hero-name-line:last-child {
+  margin-top: 0 !important;
+  padding-bottom: 0.12em !important;
+}
+
+.hero-statement {
+  max-width: 31rem;
+  margin-top: clamp(1.4rem, 3vw, 2.2rem);
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+  line-height: 1.45;
+}
+
+.hero-actions {
+  margin-top: 1.55rem;
+}
+
+.hero-scene {
+  position: relative;
+  display: block;
+  width: min(100%, 27rem);
+  height: min(64svh, 36rem);
+  min-height: 0;
+  justify-self: end;
+}
+
+.hero-portrait-frame {
+  --portrait-smear-x: 0rem;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--line-strong) 72%, transparent);
+  border-radius: 46% 46% 1rem 1rem;
+  background: #202722;
+  box-shadow: 0 0.45rem 0 rgb(73 84 58 / 0.1);
+  transform: none !important;
+  transition: border-radius 620ms var(--ease-spring-soft), box-shadow 380ms ease;
+}
+
+.hero-portrait-frame.is-tracking {
+  border-radius: 1.25rem 42% 1.25rem 42%;
+  box-shadow: 0 1.2rem 3rem rgb(51 61 43 / 0.15);
+}
+
+.hero-portrait-art {
+  display: none;
+}
+
+.hero-portrait-image {
+  transform: translate3d(var(--portrait-shift-x), var(--portrait-shift-y), 0) scale(1.035);
+}
+
+.hero-portrait-image-mono {
+  z-index: 2;
+  clip-path: circle(0 at var(--portrait-x) var(--portrait-y));
+  filter: grayscale(1) contrast(1.08) brightness(1.04);
+}
+
+.hero-portrait-frame.is-tracking .hero-portrait-image-mono {
+  clip-path: circle(31% at var(--portrait-x) var(--portrait-y));
+}
+
+.hero-portrait-image-smear {
+  z-index: 3;
+  opacity: 0;
+  filter: grayscale(1) contrast(1.15);
+  -webkit-mask-image: repeating-linear-gradient(to bottom, transparent 0 9%, #000 9% 14%, transparent 14% 23%);
+  mask-image: repeating-linear-gradient(to bottom, transparent 0 9%, #000 9% 14%, transparent 14% 23%);
+  transform: translate3d(var(--portrait-smear-x), var(--portrait-shift-y), 0) scale(1.045);
+  transition: opacity 180ms ease, transform 260ms var(--ease-spring-soft);
+}
+
+.hero-portrait-frame.is-tracking .hero-portrait-image-smear {
+  opacity: 0.46;
+}
+
+.hero-role-index {
+  position: absolute;
+  right: -0.7rem;
+  bottom: 1.35rem;
+  z-index: 6;
+  width: min(20rem, 92%);
+  margin: 0;
+  padding: 0.8rem 0.95rem;
+  border-block: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+
+/* Laufbahn — kein zweiter Überblick, sondern Fortschritt direkt an den Stationen. */
+.journey-layout {
+  margin-top: clamp(2.8rem, 5vw, 4.5rem);
+}
+
+.journey-cards {
+  --timeline-x: 0.62rem;
+  --timeline-progress: 0;
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.journey-cards::before,
+.journey-cards::after {
+  position: absolute;
+  top: 1.55rem;
+  bottom: 1.55rem;
+  left: var(--timeline-x);
+  width: 2px;
+  border-radius: 999px;
+  content: "";
+  transform-origin: center top;
+}
+
+.journey-cards::before {
+  background: color-mix(in srgb, var(--line-strong) 42%, transparent);
+}
+
+.journey-cards::after {
+  background: var(--accent);
+  animation: none !important;
+  transform: scaleY(var(--timeline-progress));
+  transition: transform 680ms var(--ease-spring-soft);
+}
+
+.journey-cards-education::after {
+  background: var(--study);
+}
+
+.journey-card,
+.journey-card.is-active {
+  transform: none;
+}
+
+.journey-card::before {
+  top: 1.28rem;
+  left: calc(var(--timeline-x) - 2.5rem);
+  z-index: 4;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 0 0 0 var(--accent-soft);
+  transform: translateX(-50%) scale(0.82);
+  transition: background-color 240ms ease, border-color 240ms ease, box-shadow 420ms ease, transform 420ms var(--ease-spring-soft);
+}
+
+.journey-card.is-reached::before {
+  border-color: var(--accent);
+  background: var(--accent);
+  transform: translateX(-50%) scale(1);
+}
+
+.journey-card-education.is-reached::before {
+  border-color: var(--study);
+  background: var(--study);
+}
+
+.journey-card.is-timeline-current::before {
+  box-shadow: 0 0 0 0.35rem color-mix(in srgb, var(--accent-soft) 78%, transparent);
+  transform: translateX(-50%) scale(1.14);
+}
+
+.journey-card-education.is-timeline-current::before {
+  box-shadow: 0 0 0 0.35rem color-mix(in srgb, var(--study-soft) 82%, transparent);
+}
+
+/* Bachelorarbeit — Thema auf dem Cover verdichten statt den Titel zu wiederholen. */
+.thesis-cover-copy h3 span {
+  display: block;
+  color: var(--study-strong);
+  font-variation-settings: "wght" 590;
+  transition: color 220ms ease, font-variation-settings 360ms var(--ease-spring-soft), transform 420ms var(--ease-spring-soft);
+}
+
+.thesis-copy h2 {
+  transition: font-variation-settings 420ms var(--ease-spring-soft), letter-spacing 420ms var(--ease-spring-soft);
+}
+
+.thesis-cover-mark,
+.thesis-cover-link {
+  transition: transform 520ms var(--ease-spring-soft), background-color 240ms ease, color 240ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .thesis-layout:has(.thesis-card:hover) .thesis-copy h2 {
+    font-variation-settings: "wght" 640;
+    letter-spacing: -0.028em;
+  }
+
+  .thesis-card:hover:not(.is-flipped) .thesis-cover-copy h3 span {
+    color: var(--accent-strong);
+    font-variation-settings: "wght" 680;
+    transform: translate3d(0.12em, 0, 0);
+  }
+
+  .thesis-card:hover:not(.is-flipped) .thesis-cover-mark:first-child {
+    transform: translate3d(0.4rem, 0.15rem, 0) rotate(7deg);
+  }
+
+  .thesis-card:hover:not(.is-flipped) .thesis-cover-mark:last-child {
+    transform: translate3d(-0.4rem, -0.12rem, 0) rotate(-7deg);
+  }
+
+  .thesis-card:hover:not(.is-flipped) .thesis-cover-link {
+    transform: scale(1.12) rotate(90deg);
+  }
+}
+
+/* Kapitelwechsel — zwei helle Horizonte steigen autonom auf. */
+.chapter-transition {
+  position: relative;
+  min-height: 88svh;
+  overflow: clip;
+  background: var(--study-canvas);
+}
+
+.chapter-transition-stage {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 88svh;
+  min-height: 38rem;
+  overflow: clip;
+  place-items: center;
+  background: var(--study-canvas);
+  isolation: isolate;
+}
+
+.chapter-transition-professional {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--study-canvas);
+}
+
+.chapter-transition-personal,
+.chapter-pixel-field,
+.chapter-transition-aperture,
+.chapter-transition-cue {
+  display: none;
+}
+
+.chapter-tides {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.chapter-tide {
+  position: absolute;
+  inset: -14% -16% -20%;
+  border-radius: 50% 50% 0 0 / 14% 14% 0 0;
+  transform: translate3d(0, 112%, 0);
+  transition: transform 980ms var(--ease-spring-soft);
+  will-change: transform;
+}
+
+.chapter-tide-bridge {
+  background: var(--chapter-bridge);
+}
+
+.chapter-tide-personal {
+  background: var(--personal-page);
+  transition-delay: 120ms;
+  transition-duration: 1080ms;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-tide {
+  transform: translate3d(0, 0, 0);
+}
+
+.chapter-orbits {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.chapter-orbits span {
+  position: absolute;
+  display: block;
+  width: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--personal-accent-strong);
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  opacity: 0;
+  transform: translate3d(0, 3rem, 0) rotate(-16deg);
+  transition: opacity 340ms ease, transform 720ms var(--ease-spring-soft);
+}
+
+.chapter-orbits span:nth-child(1) {
+  top: 20%;
+  left: 12%;
+}
+
+.chapter-orbits span:nth-child(2) {
+  top: 24%;
+  right: 11%;
+  transform: translate3d(0, 3rem, 0) rotate(18deg);
+}
+
+.chapter-orbits span:nth-child(3) {
+  right: 17%;
+  bottom: 14%;
+  transform: translate3d(0, 3rem, 0) rotate(10deg);
+}
+
+.chapter-transition-stage.is-personal-open .chapter-orbits span {
+  opacity: 0.58;
+  transform: translate3d(0, 0, 0) rotate(0);
+  transition-delay: 640ms;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-orbits span:nth-child(2) {
+  transition-delay: 720ms;
+}
+
+.chapter-transition-stage.is-personal-open .chapter-orbits span:nth-child(3) {
+  transition-delay: 790ms;
+}
+
+.chapter-transition-center {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  width: min(calc(100% - 2rem), 62rem);
+  justify-items: center;
+  color: var(--personal-ink);
+  opacity: 1;
+  text-align: center;
+  transform: none;
+}
+
+.chapter-transition-center h2 {
+  max-width: 10ch;
+  margin: 0 auto;
+  overflow: hidden;
+  font-size: clamp(3.8rem, 8vw, 6rem);
+  letter-spacing: -0.04em;
+  line-height: 0.86;
+}
+
+.chapter-transition-center h2 span {
+  display: block;
+  opacity: 0;
+  filter: blur(7px);
+  transform: translate3d(-1em, 0.35em, 0) skewX(-5deg);
+  transition: opacity 420ms 390ms ease, filter 520ms 390ms ease, transform 760ms 330ms var(--ease-spring-soft);
+}
+
+.chapter-transition-center h2 span:last-child {
+  transform: translate3d(1em, 0.35em, 0) skewX(5deg);
+  transition-delay: 470ms, 470ms, 410ms;
+}
+
+.chapter-transition-center > .chapter-transition-copy {
+  max-width: 34rem;
+  margin-top: 1.25rem;
+  color: var(--personal-muted);
+  font: 520 clamp(1rem, 1.8vw, 1.2rem) / 1.45 var(--font-sans);
+  opacity: 0;
+  transform: translate3d(0, 1rem, 0);
+  transition: opacity 420ms 720ms ease, transform 620ms 680ms var(--ease-spring-soft);
+}
+
+.chapter-transition-stage.is-personal-open .chapter-transition-center h2 span,
+.chapter-transition-stage.is-personal-open .chapter-transition-center > .chapter-transition-copy {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0, 0, 0) skewX(0);
+}
+
+/* Tee — kompakter Aufbau und ein Strahl, dessen Ursprung mit der Tülle rotiert. */
+.tea-ritual {
+  min-height: 34rem;
+}
+
+.tea-visual {
+  min-height: 0;
+}
+
+.teapot {
+  width: min(100%, 18rem);
+}
+
+.teapot-vessel {
+  animation: tea-idle 4.8s ease-in-out infinite;
+  transform-origin: 65% 67%;
+}
+
+.tea-pour-origin {
+  position: absolute;
+  top: 46%;
+  right: 6%;
+  z-index: 6;
+  display: block;
+  width: 1px;
+  height: 28%;
+  pointer-events: none;
+}
+
+.tea-pour-stream {
+  position: absolute;
+  inset: 0 auto auto 0;
+  display: block;
+  width: 0.3rem;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--tea-liquid-color);
+  box-shadow: 0 0 0.4rem color-mix(in srgb, var(--tea-liquid-light) 55%, transparent);
+  opacity: 0;
+  transform: translateX(-50%) rotate(-12deg) scaleY(0.08);
+  transform-origin: center top;
+}
+
+.teapot.is-brewing .teapot-vessel {
+  animation: tea-vessel-pour-aligned 1650ms var(--ease-in-out);
+}
+
+.teapot.is-brewing .tea-pour-stream {
+  animation: tea-stream-aligned 1120ms 260ms var(--ease-out) both;
+}
+
+.tea-cup {
+  right: 3%;
+  bottom: 11%;
+}
+
+@keyframes tea-idle {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -0.18rem, 0) rotate(0.7deg); }
+}
+
+@keyframes tea-vessel-pour-aligned {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  18% { transform: translate3d(0.08rem, -0.18rem, 0) rotate(2deg); }
+  38%, 67% { transform: translate3d(0.55rem, -0.48rem, 0) rotate(12deg); }
+  84% { transform: translate3d(0.08rem, 0.05rem, 0) rotate(-1deg); }
+}
+
+@keyframes tea-stream-aligned {
+  0% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scaleY(0.08); }
+  14%, 78% { opacity: 0.92; transform: translateX(-50%) rotate(-12deg) scaleY(1); }
+  100% { opacity: 0; transform: translateX(-50%) rotate(-12deg) scaleY(0.18); }
+}
+
+/* Vinyl — ein kleiner neutraler Stupser statt einer erklärten Figur. */
+.vinyl-intro p + p {
+  margin-top: 0;
+}
+
+.vinyl-nudge {
+  position: absolute;
+  right: -0.8rem;
+  bottom: 0.55rem;
+  z-index: 8;
+  display: block;
+  width: 3.6rem;
+  height: 0.9rem;
+  border: 1px solid rgb(92 72 57 / 0.28);
+  border-radius: 999px 0.35rem 0.35rem 999px;
+  background: #c9b49d;
+  box-shadow: 0 0.3rem 0.45rem rgb(54 45 37 / 0.12);
+  opacity: 0;
+  transform: translate3d(125%, 0, 0) rotate(-18deg);
+  transform-origin: right center;
+  pointer-events: none;
+}
+
+.vinyl-nudge::before {
+  position: absolute;
+  top: 50%;
+  left: -0.18rem;
+  width: 0.78rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #80655a;
+  content: "";
+  transform: translateY(-50%);
+}
+
+.vinyl-nudge i {
+  position: absolute;
+  top: 50%;
+  right: 0.55rem;
+  width: 1rem;
+  height: 1px;
+  background: rgb(92 72 57 / 0.42);
+}
+
+.turntable.is-rescuing .vinyl-nudge {
+  animation: vinyl-nudge-tonearm 1.7s var(--ease-in-out) both;
+}
+
+@keyframes vinyl-nudge-tonearm {
+  0% { opacity: 0; transform: translate3d(125%, 0, 0) rotate(-18deg); }
+  16% { opacity: 1; }
+  43% { opacity: 1; transform: translate3d(-0.7rem, -6rem, 0) rotate(-58deg); }
+  50% { opacity: 1; transform: translate3d(-0.95rem, -6.15rem, 0) rotate(-62deg) scaleX(0.96); }
+  60% { opacity: 1; transform: translate3d(-0.7rem, -6rem, 0) rotate(-58deg); }
+  100% { opacity: 0; transform: translate3d(125%, 0, 0) rotate(-18deg); }
+}
+
+/* Galerie-Link, Minigame-Platzhalter und eigene Galerie-Seite. */
+.camera-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem 1rem;
+}
+
+.camera-gallery-link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.55rem;
+  padding-inline: 1rem;
+  border: 1px solid var(--tone-camera);
+  border-radius: 999px;
+  background: var(--tone-camera);
+  color: var(--personal-on-accent);
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition: transform 180ms var(--ease-spring-soft), background-color 180ms ease;
+}
+
+.minigame-teaser {
+  display: grid;
+  margin-top: clamp(1.2rem, 3vw, 2rem);
+  padding-block: clamp(1.25rem, 3vw, 2rem);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  border-block: 1px solid var(--personal-line);
+}
+
+.minigame-orbit {
+  display: grid;
+  width: 3rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--personal-line-strong);
+  border-radius: 50%;
+  color: var(--personal-accent-strong);
+  font-size: 1.35rem;
+}
+
+.minigame-teaser h3 {
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+}
+
+.minigame-teaser p {
+  margin-top: 0.3rem;
+  color: var(--personal-muted);
+  font-size: 0.88rem;
+}
+
+.minigame-status {
+  color: var(--personal-accent-strong);
+  font-size: 0.82rem;
+  font-weight: 670;
+  white-space: nowrap;
+}
+
+.minigame-status em {
+  font-family: var(--font-display);
+  font-size: 1.15em;
+  font-style: normal;
+}
+
+.gallery-page {
+  min-height: 100svh;
+  padding: clamp(1rem, 3vw, 2rem) 0 3rem;
+  background: var(--professional-page);
+}
+
+.gallery-header {
+  display: grid;
+  min-height: min(36rem, 70svh);
+  align-content: space-between;
+  padding-block: 0.5rem clamp(3rem, 8vw, 6rem);
+}
+
+.gallery-back {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.6rem;
+  padding-inline: 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.gallery-header > div > p:first-child {
+  color: var(--accent-strong);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.gallery-header h1 {
+  max-width: 9ch;
+  margin-top: 0.7rem;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 10vw, 6rem);
+  font-variation-settings: "wght" 600;
+  letter-spacing: -0.04em;
+  line-height: 0.84;
+}
+
+.gallery-intro {
+  max-width: 38rem;
+  margin-top: 1.5rem;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+.gallery-shot {
+  grid-column: span 7;
+}
+
+.gallery-shot:nth-child(even) {
+  grid-column: 6 / span 7;
+}
+
+.gallery-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.4rem;
+}
+
+.gallery-shot figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.gallery-shot figcaption span {
+  color: var(--accent-strong);
+  font-weight: 680;
+}
+
+.gallery-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: clamp(4rem, 10vw, 8rem);
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .camera-gallery-link:hover,
+  .gallery-back:hover {
+    transform: translate3d(0, -0.15rem, 0);
+  }
+
+  .minigame-teaser:hover .minigame-orbit {
+    animation: minigame-orbit 760ms var(--ease-spring-soft);
+  }
+}
+
+@keyframes minigame-orbit {
+  50% { transform: rotate(14deg) scale(1.08); }
+}
+
+@media (max-width: 48rem) {
+  .intro-focus-name {
+    width: calc(100% - 2rem);
+    font-size: clamp(3.45rem, 18vw, 5.2rem);
+    line-height: 0.8;
+  }
+
+  .intro-reveal.is-running .intro-focus-band {
+    clip-path: inset(34% 0);
+  }
+
+  .hero.section-shell {
+    display: grid;
+    min-height: 0;
+    margin-inline: 1rem;
+    padding-top: 6.2rem;
+    padding-bottom: 3.5rem;
+    grid-template-columns: minmax(0, 1fr) minmax(8.6rem, 0.72fr);
+    grid-template-rows: auto auto auto;
+    gap: 1.15rem 0.8rem;
+    align-items: start;
+  }
+
+  .hero-copy {
+    display: contents;
+  }
+
+  .hero h1.hero-name {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    font-size: clamp(3.55rem, 17vw, 5.35rem);
+    letter-spacing: -0.04em;
+    line-height: 0.8;
+  }
+
+  .hero-statement {
+    grid-row: 2;
+    grid-column: 1;
+    margin-top: 0;
+    font-size: clamp(0.95rem, 4.2vw, 1.08rem);
+    line-height: 1.42;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-row: 3;
+    grid-column: 1;
+    margin-top: 0;
+    gap: 0.55rem;
+  }
+
+  .hero-actions a {
+    min-height: 2.8rem;
+    padding-inline: 0.85rem;
+    font-size: 0.74rem;
+  }
+
+  .hero-scene {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    grid-row: 2 / 4;
+    grid-column: 2;
+    align-self: start;
+  }
+
+  .hero-portrait-frame {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 3 / 4;
+    border-radius: 48% 48% 0.75rem 0.75rem;
+  }
+
+  .hero-role-index {
+    right: 0;
+    bottom: 0.55rem;
+    display: block;
+    width: 100%;
+    padding: 0.48rem 0.55rem;
+  }
+
+  .hero-role-index .hero-role-label {
+    display: none;
+  }
+
+  .hero-role-index strong {
+    display: block;
+    font-size: 0.62rem;
+    line-height: 1.25;
+  }
+
+  .journey-layout {
+    margin-top: 2.5rem;
+  }
+
+  .journey-cards {
+    padding-left: 2rem;
+  }
+
+  .journey-card::before {
+    left: calc(var(--timeline-x) - 2rem);
+  }
+
+  .chapter-transition,
+  .chapter-transition-stage {
+    min-height: 78svh;
+    height: 78svh;
+  }
+
+  .chapter-transition-stage {
+    min-height: 34rem;
+  }
+
+  .chapter-transition-center h2 {
+    font-size: clamp(3.5rem, 16vw, 5.25rem);
+  }
+
+  .chapter-orbits span:nth-child(1) {
+    top: 15%;
+    left: 7%;
+  }
+
+  .chapter-orbits span:nth-child(2) {
+    top: 18%;
+    right: 6%;
+  }
+
+  .chapter-orbits span:nth-child(3) {
+    right: 9%;
+    bottom: 11%;
+  }
+
+  .tea-ritual {
+    position: relative;
+    display: block;
+    min-height: 0;
+    padding: 1.2rem;
+  }
+
+  .tea-copy h3 {
+    margin-top: 1.3rem;
+    font-size: clamp(2.5rem, 11vw, 3.7rem);
+  }
+
+  .tea-copy > .tea-intro {
+    width: calc(100% - 9.7rem);
+    min-height: 7.8rem;
+  }
+
+  .tea-visual {
+    position: absolute;
+    top: 4.7rem;
+    right: 1rem;
+    z-index: 3;
+    width: 8.9rem;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .teapot {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 8.9rem;
+    pointer-events: auto;
+  }
+
+  .tea-profile-heading {
+    margin-top: 0.6rem;
+  }
+
+  .tea-fact-switch {
+    width: 100%;
+  }
+
+  .vinyl-nudge {
+    right: -0.55rem;
+    width: 3.1rem;
+  }
+
+  .minigame-teaser {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .minigame-status {
+    grid-column: 2;
+  }
+
+  .gallery-header {
+    min-height: 30rem;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-shot,
+  .gallery-shot:nth-child(even) {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 23rem) {
+  .hero.section-shell {
+    margin-inline: 0.8rem;
+    grid-template-columns: minmax(0, 1fr) minmax(7.6rem, 0.66fr);
+  }
+
+  .hero h1.hero-name {
+    font-size: 16.4vw;
+  }
+
+  .hero-actions a {
+    white-space: normal;
+  }
+
+  .tea-ritual {
+    padding-inline: 1rem;
+  }
+
+  .tea-visual {
+    right: 0.75rem;
+    width: 7.8rem;
+  }
+
+  .tea-copy > .tea-intro {
+    width: calc(100% - 8.4rem);
+    min-height: 7.2rem;
+  }
+
+  .tea-fact-switch {
+    gap: 0.32rem;
+  }
+
+  .tea-fact-switch button {
+    min-height: 2.35rem;
+    padding-inline: 0.48rem;
+    font-size: 0.62rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-reveal {
+    display: none;
+  }
+
+  .hero-portrait-image-smear {
+    display: none;
+  }
+
+  .journey-cards::after {
+    transition: none;
+  }
+
+  .chapter-tide,
+  .chapter-orbits span,
+  .chapter-transition-center h2 span,
+  .chapter-transition-center > .chapter-transition-copy {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+
+  .chapter-tide {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .teapot-vessel,
+  .teapot.is-brewing .teapot-vessel,
+  .teapot.is-brewing .tea-pour-stream,
+  .turntable.is-rescuing .vinyl-nudge {
+    animation: none;
+  }
+
+  .tea-pour-stream,
+  .vinyl-nudge {
+    display: none;
+  }
+}
