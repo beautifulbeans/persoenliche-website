@@ -15,15 +15,24 @@
   color: var(--gallery-ink);
 }
 
+body.gallery-entry-active {
+  overflow: hidden;
+}
+
 .gallery-entry {
   position: fixed;
   inset: 0;
-  z-index: 120;
+  z-index: 1200;
+  display: none;
   width: 100vw;
   height: 100dvh;
   overflow: hidden;
   pointer-events: none;
-  background: #172125;
+  background: transparent;
+}
+
+html[data-gallery-arrival="camera"] .gallery-entry {
+  display: block;
 }
 
 .gallery-entry-blade,
@@ -37,7 +46,7 @@
   height: 51%;
   background: #172125;
   will-change: transform;
-  transition: transform 780ms cubic-bezier(0.76, 0, 0.18, 1);
+  transition: transform 680ms 90ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .gallery-entry-blade-top {
@@ -66,7 +75,35 @@
 }
 
 .gallery-entry.is-leaving .gallery-entry-flash {
-  animation: gallery-camera-flash 620ms ease-out both;
+  animation: gallery-camera-flash 520ms ease-out both;
+}
+
+.gallery-entry-focus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: min(18rem, 52vw);
+  aspect-ratio: 3 / 2;
+  opacity: 0.72;
+  transform: translate3d(-50%, -50%, 0) scale(0.84);
+}
+
+.gallery-entry-focus i {
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  border-color: #fff;
+  border-style: solid;
+}
+
+.gallery-entry-focus i:nth-child(1) { top: 0; left: 0; border-width: 2px 0 0 2px; }
+.gallery-entry-focus i:nth-child(2) { top: 0; right: 0; border-width: 2px 2px 0 0; }
+.gallery-entry-focus i:nth-child(3) { right: 0; bottom: 0; border-width: 0 2px 2px 0; }
+.gallery-entry-focus i:nth-child(4) { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+
+.gallery-entry.is-leaving .gallery-entry-focus {
+  animation: gallery-focus-expand 620ms 40ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes gallery-camera-flash {
@@ -74,6 +111,12 @@
   10% { opacity: 0.92; }
   26% { opacity: 0.16; }
   100% { opacity: 0; }
+}
+
+@keyframes gallery-focus-expand {
+  0% { opacity: 0.72; transform: translate3d(-50%, -50%, 0) scale(0.84); }
+  42% { opacity: 0.5; }
+  100% { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(1.55); }
 }
 
 .gallery-header.section-shell {

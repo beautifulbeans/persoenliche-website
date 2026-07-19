@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://fabianderagisch.com/sitemap-index.xml

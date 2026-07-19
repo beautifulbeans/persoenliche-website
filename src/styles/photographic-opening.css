@@ -23,16 +23,8 @@ body.gallery-transition-active {
 }
 
 .opening-stage::before {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    linear-gradient(90deg, transparent 49.94%, rgb(104 116 87 / 0.11) 50%, transparent 50.06%),
-    linear-gradient(0deg, transparent 49.94%, rgb(104 116 87 / 0.08) 50%, transparent 50.06%);
-  background-size: min(8vw, 7.5rem) min(8vw, 7.5rem);
-  content: "";
-  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.34), transparent 78%);
-  pointer-events: none;
+  display: none;
+  content: none;
 }
 
 .opening-stage::after {
@@ -215,15 +207,27 @@ body.gallery-transition-active {
   color: #34402f;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .opening-name:hover .opening-name-echo {
+    opacity: 0.52;
+    transform: translate3d(-0.28rem, -0.12rem, 0);
+  }
+
+  .opening-name:hover .opening-letter {
+    color: #34402f;
+    font-variation-settings: "wght" var(--opening-letter-weight, 610);
+  }
+}
+
 .opening-info {
   position: relative;
-  align-self: end;
-  margin-bottom: clamp(3.5rem, 8svh, 7rem);
+  align-self: center;
+  margin-top: clamp(4rem, 15svh, 9rem);
   animation: opening-info-enter 860ms 520ms var(--ease-out) both;
 }
 
 .opening-statement {
-  max-width: 28rem;
+  max-width: 30rem;
   color: #343b30;
   font-family: var(--font-display);
   font-size: clamp(1.65rem, 2.7vw, 2.45rem);
@@ -232,63 +236,6 @@ body.gallery-transition-active {
   font-weight: 525;
   letter-spacing: -0.025em;
   line-height: 1.08;
-}
-
-.opening-identities {
-  display: grid;
-  margin-top: clamp(1.7rem, 4svh, 2.7rem);
-  border-top: 1px solid #8c967f;
-}
-
-.opening-identity {
-  display: grid;
-  padding: 0.85rem 0 0.95rem;
-  border-bottom: 1px solid #b8bdae;
-  gap: 0.14rem;
-}
-
-.opening-identity > span {
-  color: #647057;
-  font: 680 0.61rem / 1.25 var(--font-sans);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.opening-identity strong {
-  color: #2a3027;
-  font-family: var(--font-sans);
-  font-size: 0.92rem;
-  font-weight: 680;
-  line-height: 1.35;
-}
-
-.opening-identity small {
-  color: #60685a;
-  font-family: var(--font-sans);
-  font-size: 0.71rem;
-  line-height: 1.42;
-}
-
-.opening-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  margin-top: 1.35rem;
-}
-
-.opening-actions .primary-button,
-.opening-actions .secondary-button {
-  min-height: 3rem;
-  padding-inline: 1.1rem;
-  font-size: 0.76rem;
-}
-
-.opening-actions .primary-button {
-  background: #5c684e;
-}
-
-.opening-actions .secondary-button {
-  background: rgb(248 248 242 / 0.64);
 }
 
 .opening-scroll {
@@ -376,10 +323,6 @@ body.gallery-transition-active {
       #f1f2eb;
   }
 
-  .opening-stage::before {
-    background-size: 4rem 4rem;
-  }
-
   .opening-shell.section-shell {
     display: flex;
     width: 100%;
@@ -409,39 +352,12 @@ body.gallery-transition-active {
 
   .opening-info {
     display: grid;
-    margin: auto 0 0;
+    margin: auto 0 clamp(2.2rem, 8svh, 4rem);
   }
 
   .opening-statement {
     max-width: 25rem;
     font-size: clamp(1.32rem, 6vw, 1.7rem);
-  }
-
-  .opening-identities {
-    margin-top: 1rem;
-  }
-
-  .opening-identity {
-    padding-block: 0.62rem 0.68rem;
-  }
-
-  .opening-identity strong {
-    font-size: 0.82rem;
-  }
-
-  .opening-identity small {
-    font-size: 0.65rem;
-  }
-
-  .opening-actions {
-    margin-top: 0.85rem;
-  }
-
-  .opening-actions .primary-button,
-  .opening-actions .secondary-button {
-    min-height: 2.8rem;
-    padding-inline: 0.92rem;
-    font-size: 0.7rem;
   }
 
   .opening-scroll {
@@ -472,13 +388,6 @@ body.gallery-transition-active {
     font-size: 1.2rem;
   }
 
-  .opening-identities {
-    margin-top: 0.78rem;
-  }
-
-  .opening-identity-personal small {
-    display: none;
-  }
 }
 
 @media (max-width: 48rem) and (max-height: 42rem) {
@@ -501,7 +410,7 @@ body.gallery-transition-active {
   }
 
   .opening-info {
-    margin: clamp(1.35rem, 5svh, 2rem) 0 0;
+    margin: auto 0 1.25rem;
   }
 
   .opening-statement {
@@ -509,29 +418,6 @@ body.gallery-transition-active {
     line-height: 1.04;
   }
 
-  .opening-identities {
-    margin-top: 0.55rem;
-  }
-
-  .opening-identity {
-    padding-block: 0.45rem 0.5rem;
-  }
-
-  .opening-identity small {
-    display: none;
-  }
-
-  .opening-actions {
-    flex-wrap: nowrap;
-    margin-top: 0.6rem;
-  }
-
-  .opening-actions .primary-button,
-  .opening-actions .secondary-button {
-    min-height: 2.55rem;
-    padding-inline: 0.72rem;
-    font-size: 0.64rem;
-  }
 }
 
 /* Camera-like page change into the photo gallery. */

@@ -58,11 +58,36 @@ const shots = Object.entries(photoModules)
   title="Galerie | Fabian Deragisch"
   description="Favorite Shots und Fotografien von Fabian Deragisch."
 >
+  <script is:inline>
+    (() => {
+      let cameraArrival = false;
+      try {
+        const rawToken = sessionStorage.getItem("fabian-gallery-arrival");
+        sessionStorage.removeItem("fabian-gallery-arrival");
+        if (rawToken) {
+          const token = JSON.parse(rawToken);
+          cameraArrival = token?.kind === "camera"
+            && Number.isFinite(token?.createdAt)
+            && Date.now() - token.createdAt < 6000;
+        }
+      } catch {
+        cameraArrival = false;
+      }
+
+      if (cameraArrival && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.dataset.galleryArrival = "camera";
+      }
+    })();
+  </script>
+
   <main class="gallery-page" id="inhalt" data-gallery-page>
     <div class="gallery-entry" data-gallery-entry aria-hidden="true">
       <span class="gallery-entry-blade gallery-entry-blade-top"></span>
       <span class="gallery-entry-blade gallery-entry-blade-bottom"></span>
       <span class="gallery-entry-flash"></span>
+      <span class="gallery-entry-focus">
+        <i></i><i></i><i></i><i></i>
+      </span>
     </div>
 
     <header class="gallery-header section-shell">
@@ -208,7 +233,6 @@ const shots = Object.entries(photoModules)
 <script>
   import { prefersReducedMotion } from "../scripts/motion";
 
-  const page = document.querySelector<HTMLElement>("[data-gallery-page]");
   const entry = document.querySelector<HTMLElement>("[data-gallery-entry]");
   const stage = document.querySelector<HTMLElement>("[data-gallery-stage]");
   const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-gallery-card]"));
@@ -556,33 +580,71 @@ const shots = Object.entries(photoModules)
     swipePointer = null;
   });
 
+  const cameraArrival = document.documentElement.dataset.galleryArrival === "camera";
+  let stageEntranceStarted = false;
+
+  const clearArrivalState = () => {
+    delete document.documentElement.dataset.galleryArrival;
+    document.body.classList.remove("gallery-entry-active");
+  };
+
+  const revealStage = () => {
+    if (stageEntranceStarted) return;
+    stageEntranceStarted = true;
+
+    if (!reduceMotion && stage && cards.length && "IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        ([entryRecord]) => {
+          if (!entryRecord.isIntersecting) return;
+          stage.classList.add("has-entered");
+          observer.disconnect();
+        },
+        { threshold: 0.24 },
+      );
+      observer.observe(stage);
+    } else {
+      stage?.classList.add("has-entered");
+    }
+  };
+
   const runEntrance = () => {
-    if (!entry || reduceMotion) {
+    if (!entry || reduceMotion || !cameraArrival) {
       entry?.remove();
+      clearArrivalState();
+      revealStage();
       return;
     }
+
+    document.body.classList.add("gallery-entry-active");
+    let finished = false;
+    let revealTimer = 0;
+    let fallbackTimer = 0;
+
+    const finishEntrance = () => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(revealTimer);
+      window.clearTimeout(fallbackTimer);
+      entry.remove();
+      clearArrivalState();
+      revealStage();
+    };
+
+    const topBlade = entry.querySelector<HTMLElement>(".gallery-entry-blade-top");
+    topBlade?.addEventListener("transitionend", (event) => {
+      if (event.propertyName === "transform") finishEntrance();
+    }, { once: true });
+
     requestAnimationFrame(() => {
-      page?.classList.add("is-ready");
-      entry.classList.add("is-leaving");
-      window.setTimeout(() => entry.remove(), 920);
+      requestAnimationFrame(() => {
+        entry.classList.add("is-leaving");
+        revealTimer = window.setTimeout(revealStage, 260);
+        fallbackTimer = window.setTimeout(finishEntrance, 1150);
+      });
     });
   };
 
   deckLayout.addEventListener("change", () => renderSelection(false));
   renderSelection(false);
   runEntrance();
-
-  if (!reduceMotion && stage && cards.length) {
-    const observer = new IntersectionObserver(
-      ([entryRecord]) => {
-        if (!entryRecord.isIntersecting) return;
-        stage.classList.add("has-entered");
-        observer.disconnect();
-      },
-      { threshold: 0.24 },
-    );
-    observer.observe(stage);
-  } else {
-    stage?.classList.add("has-entered");
-  }
 </script>

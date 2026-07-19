@@ -35,7 +35,8 @@
     let ripples: Ripple[] = [];
     let pixelRatio = 1;
     let frame = 0;
-    let visible = true;
+    let inViewport = true;
+    let pageVisible = !document.hidden;
     let pointerActive = false;
     let pointerX = bounds.width * 0.54;
     let pointerY = bounds.height * 0.43;
@@ -44,12 +45,24 @@
     let entranceStart = performance.now();
     let entranceComplete = reducedMotion;
 
+    const canRender = () => inViewport && pageVisible;
+
+    const stopFrame = () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = 0;
+    };
+
     const measureName = () => {
       nameBounds = name?.getBoundingClientRect();
       letterCenters = letters.map((letter) => {
         const rect = letter.getBoundingClientRect();
         return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
       });
+    };
+
+    const syncGeometry = () => {
+      bounds = stage.getBoundingClientRect();
+      measureName();
     };
 
     const rebuild = () => {
@@ -102,7 +115,7 @@
     };
 
     const draw = (staticOnly = false, timestamp = performance.now()) => {
-      if (!visible && !staticOnly) {
+      if (!canRender() && !staticOnly) {
         frame = 0;
         return;
       }
@@ -192,7 +205,7 @@
     };
 
     const requestDraw = () => {
-      if (!frame && visible && !reducedMotion) {
+      if (!frame && canRender() && !reducedMotion) {
         frame = window.requestAnimationFrame((nextTimestamp) => draw(false, nextTimestamp));
       }
     };
@@ -243,6 +256,7 @@
 
     if (!reducedMotion && finePointer.matches) {
       stage.addEventListener("pointerenter", (event) => {
+        syncGeometry();
         pointerActive = true;
         setPointer(event);
       });
@@ -258,6 +272,7 @@
     if (!reducedMotion) {
       stage.addEventListener("pointerdown", (event) => {
         if ((event.target as Element).closest("a, button")) return;
+        syncGeometry();
         const x = event.clientX - bounds.left;
         const y = event.clientY - bounds.top;
         ripples.push({ x, y, radius: 8, life: 1 });
@@ -283,23 +298,41 @@
 
     if ("IntersectionObserver" in window) {
       const observer = new IntersectionObserver(([entry]) => {
-        visible = entry.isIntersecting;
-        if (visible) requestDraw();
-        else if (frame) {
-          window.cancelAnimationFrame(frame);
-          frame = 0;
-        }
+        inViewport = entry.isIntersecting;
+        if (canRender()) {
+          syncGeometry();
+          requestDraw();
+        } else stopFrame();
       }, { threshold: 0.01 });
       observer.observe(stage);
     }
 
     document.addEventListener("visibilitychange", () => {
-      visible = !document.hidden;
-      if (visible) requestDraw();
-      else if (frame) {
-        window.cancelAnimationFrame(frame);
-        frame = 0;
-      }
+      pageVisible = !document.hidden;
+      if (canRender()) {
+        syncGeometry();
+        requestDraw();
+      } else stopFrame();
+    });
+
+    window.addEventListener("pageshow", (event) => {
+      if (!event.persisted) return;
+      stopFrame();
+      pageVisible = !document.hidden;
+      const stageBounds = stage.getBoundingClientRect();
+      inViewport = stageBounds.bottom > 0 && stageBounds.top < window.innerHeight;
+      pointerActive = false;
+      entranceComplete = true;
+      stage.classList.remove("is-pointer-active");
+      resetName();
+      rebuild();
+      requestDraw();
+    });
+
+    window.addEventListener("pagehide", () => {
+      pageVisible = false;
+      pointerActive = false;
+      stopFrame();
     });
 
     rebuild();

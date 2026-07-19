@@ -27,49 +27,31 @@ const heroNameLines = ["Fabian", "Deragisch"];
       <div class="opening-shell section-shell">
         <div class="opening-heading">
           <p class="opening-eyebrow"><span>Portfolio</span><span>Wien</span></p>
-        <h1
-          class="opening-name"
-          id="hero-title"
-          data-opening-name
-          aria-label="Fabian Deragisch"
-        >
-          {heroNameLines.map((line, lineIndex) => (
-            <span class:list={["opening-name-line", `opening-name-line-${lineIndex + 1}`]} aria-hidden="true">
-              <span class="opening-name-base">
-                {Array.from(line).map((letter, letterIndex) => (
-                  <span
-                    class="opening-letter"
-                    data-opening-letter
-                    style={`--letter-index: ${letterIndex}; --line-index: ${lineIndex}`}
-                  >{letter}</span>
-                ))}
+          <h1
+            class="opening-name"
+            id="hero-title"
+            data-opening-name
+            aria-label="Fabian Deragisch"
+          >
+            {heroNameLines.map((line, lineIndex) => (
+              <span class:list={["opening-name-line", `opening-name-line-${lineIndex + 1}`]} aria-hidden="true">
+                <span class="opening-name-base">
+                  {Array.from(line).map((letter, letterIndex) => (
+                    <span
+                      class="opening-letter"
+                      data-opening-letter
+                      style={`--letter-index: ${letterIndex}; --line-index: ${lineIndex}`}
+                    >{letter}</span>
+                  ))}
+                </span>
+                <span class="opening-name-echo" data-opening-name-echo aria-hidden="true">{line}</span>
               </span>
-              <span class="opening-name-echo" data-opening-name-echo aria-hidden="true">{line}</span>
-            </span>
-          ))}
-        </h1>
+            ))}
+          </h1>
         </div>
 
         <div class="opening-info">
           <p class="opening-statement">{profile.statement}</p>
-
-          <div class="opening-identities">
-            <div class="opening-identity opening-identity-work">
-              <span>Beruflich</span>
-              <strong>{profile.role}</strong>
-              <small>{profile.currentOrganization}</small>
-            </div>
-            <div class="opening-identity opening-identity-personal">
-              <span>Abseits der Arbeit</span>
-              <strong>Bilder, Platten und eine Kanne Tee.</strong>
-              <small>Dinge, für die ich mir gerne Zeit nehme.</small>
-            </div>
-          </div>
-
-          <div class="opening-actions">
-            <a class="primary-button" href="#beruf">Berufserfahrung <i class="ph ph-arrow-down-right" aria-hidden="true"></i></a>
-            <a class="secondary-button" href="#persoenlich">Persönlicher Teil</a>
-          </div>
         </div>
 
         <a class="opening-scroll" href="#beruf" aria-label="Weiter zur Berufserfahrung">

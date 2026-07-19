@@ -13,6 +13,14 @@
     if (!(transition instanceof HTMLElement)) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const resetTransition = () => {
+      transition.classList.remove("is-capturing");
+      document.body.classList.remove("gallery-transition-active");
+    };
+
+    window.addEventListener("pagehide", resetTransition);
+    window.addEventListener("pageshow", resetTransition);
+
     document.addEventListener("click", (event) => {
       if (!(event instanceof MouseEvent) || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       if (!(event.target instanceof Element)) return;
@@ -20,9 +28,13 @@
       const link = event.target.closest('a[href="/galerie/"], a[href="/galerie"]');
       if (!(link instanceof HTMLAnchorElement) || reducedMotion.matches) return;
       event.preventDefault();
+      resetTransition();
 
       try {
-        sessionStorage.setItem("fabian-gallery-arrival", "camera");
+        sessionStorage.setItem("fabian-gallery-arrival", JSON.stringify({
+          kind: "camera",
+          createdAt: Date.now(),
+        }));
       } catch {
         /* Navigation still works when storage is unavailable. */
       }
