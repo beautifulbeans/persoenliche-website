@@ -32,8 +32,13 @@ const importedPhotos = Object.entries(photoModules)
     };
   });
 
-const shots = importedPhotos.length
-  ? importedPhotos
+const homepagePhotoOrder = ["Zufall.jpg", "Sun Downer.jpg", "Griechenland #1.jpg"];
+const homepagePhotos = homepagePhotoOrder
+  .map((fileName) => importedPhotos.find((photo) => photo.fileName === fileName))
+  .filter((photo): photo is NonNullable<typeof photo> => Boolean(photo));
+
+const shots = homepagePhotos.length
+  ? homepagePhotos.slice(0, 3)
   : photographyPlaceholders.map((placeholder, index) => ({
       src: null,
       alt: "",
@@ -41,6 +46,9 @@ const shots = importedPhotos.length
       note: placeholder.note,
       fileName: `DSCF${String(index + 1).padStart(4, "0")}.JPG`,
     }));
+const frameNames = [...shots.map((shot) => shot.fileName), "GALERIE"];
+const frameCount = shots.length + 1;
+const galleryPhotoCount = importedPhotos.length;
 ---
 
 <article class="play-card camera-card" id="fotografie" data-reveal="up">
@@ -48,7 +56,7 @@ const shots = importedPhotos.length
     class="camera-viewer"
     data-camera-viewer
     data-simulation="provia"
-    data-frame-names={JSON.stringify(shots.map((shot) => shot.fileName))}
+    data-frame-names={JSON.stringify(frameNames)}
   >
     <div class="camera-display">
       <div class="camera-frames">
@@ -81,6 +89,24 @@ const shots = importedPhotos.length
           ),
         )}
 
+        <a
+          class="camera-shot camera-gallery-slide"
+          href="/galerie/"
+          aria-label={`Alle ${galleryPhotoCount} Fotos in der Fotogalerie ansehen`}
+        >
+          <span class="camera-gallery-slide-orbit" aria-hidden="true">
+            <i class="ph ph-images"></i>
+          </span>
+          <span class="camera-gallery-slide-copy">
+            <small>Die Auswahl geht weiter</small>
+            <strong>Alle Fotos ansehen</strong>
+            <span>
+              {galleryPhotoCount} Fotos in der Galerie
+              <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+            </span>
+          </span>
+        </a>
+
         <span class="focus-frame" aria-hidden="true"></span>
         <span class="camera-flash" aria-hidden="true" data-camera-flash></span>
         <span class="camera-curtain camera-curtain-top" aria-hidden="true" data-camera-curtain-top></span>
@@ -97,7 +123,7 @@ const shots = importedPhotos.length
           <button type="button" data-camera-previous aria-label="Vorheriges Foto">
             <i class="ph ph-caret-left" aria-hidden="true"></i>
           </button>
-          <span aria-live="polite" data-camera-counter>1 / {shots.length}</span>
+          <span aria-live="polite" data-camera-counter>1 / {frameCount}</span>
           <button type="button" data-camera-next aria-label="Nächstes Foto">
             <i class="ph ph-caret-right" aria-hidden="true"></i>
           </button>
@@ -253,7 +279,7 @@ const shots = importedPhotos.length
     let dragStartX = 0;
     let dragStartedAt = 0;
     frameArea?.addEventListener("pointerdown", (event) => {
-      if (dragPointer !== null) return;
+      if (dragPointer !== null || (event.target as Element).closest("a, button")) return;
       dragPointer = event.pointerId;
       dragStartX = event.clientX;
       dragStartedAt = performance.now();
