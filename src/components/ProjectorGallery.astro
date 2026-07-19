@@ -1,0 +1,676 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+export type ProjectorShot = {
+  src: ImageMetadata;
+  fileName: string;
+  title: string;
+  alt: string;
+  orientation: "landscape" | "portrait" | "square";
+  isNew?: boolean;
+};
+
+interface Props {
+  shots: ProjectorShot[];
+}
+
+const { shots } = Astro.props;
+const total = shots.length;
+const formatNumber = (value: number) => String(value).padStart(2, "0");
+const mainWidths = (source: ImageMetadata) =>
+  [...new Set([480, 768, 1100, 1400, 1800, source.width].filter((width) => width <= source.width))]
+    .sort((left, right) => left - right);
+---
+
+<main
+  class="projector-gallery"
+  id="inhalt"
+  data-projector-gallery
+  data-phase="idle"
+  data-orientation={shots[0]?.orientation ?? "landscape"}
+>
+  <div class="gallery-entry" data-gallery-entry aria-hidden="true">
+    <span class="gallery-entry-blade gallery-entry-blade-top"></span>
+    <span class="gallery-entry-blade gallery-entry-blade-bottom"></span>
+    <span class="gallery-entry-flash"></span>
+    <span class="gallery-entry-focus"><i></i><i></i><i></i><i></i></span>
+  </div>
+
+  <header class="projector-toolbar">
+    <a class="projector-back" href="/#fotografie" aria-label="Galerie verlassen und zur Website zurückkehren">
+      <i class="ph ph-arrow-left" aria-hidden="true"></i>
+      <span>Zurück</span>
+    </a>
+    <h1 class="sr-only">Favorite Shots – Fotogalerie von Fabian Deragisch</h1>
+    <p class="projector-title" aria-hidden="true">Favorite Shots</p>
+    <output class="projector-counter" data-projector-counter aria-live="polite" aria-atomic="true">
+      {total ? `${formatNumber(1)} / ${formatNumber(total)}` : "00 / 00"}
+    </output>
+  </header>
+
+  {total ? (
+    <>
+      <section
+        class="projector-stage"
+        data-projector-stage
+        role="region"
+        tabindex="0"
+        aria-label="Interaktive Fotogalerie. Mit Pfeiltasten, Wischen oder Mausrad navigieren."
+        aria-busy="false"
+      >
+        <div class="projection-room" aria-hidden="true">
+          <span class="projection-ambient-light"></span>
+          <span class="projection-beam"></span>
+        </div>
+
+        <figure class="projection-frame" data-projection-frame>
+          <div class="projection-media" data-projection-media>
+            <div class="projected-image-slot" data-projected-image-slot>
+              <Image
+                class="projected-image"
+                src={shots[0].src}
+                alt={shots[0].alt}
+                widths={mainWidths(shots[0].src)}
+                sizes="(max-width: 48rem) calc(100vw - 1.5rem), min(90vw, 1400px)"
+                quality={90}
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+                style={`--source-width: ${shots[0].src.width}px; --source-height: ${shots[0].src.height}px;`}
+              />
+            </div>
+
+            <div class="projection-transition" data-projection-transition aria-hidden="true" hidden>
+              <div class="projection-transition-copy" data-projection-transition-copy></div>
+              <span class="projection-blackout"></span>
+              <span class="projection-flash"></span>
+              <span class="projection-focus-pulse"></span>
+            </div>
+          </div>
+          <figcaption class="sr-only" data-projector-caption>{shots[0].title}</figcaption>
+        </figure>
+
+        <button class="projector-control projector-control-previous" type="button" data-projector-previous aria-label="Vorheriges Bild">
+          <i class="ph ph-arrow-left" aria-hidden="true"></i>
+        </button>
+        <button class="projector-control projector-control-next" type="button" data-projector-next aria-label="Nächstes Bild">
+          <i class="ph ph-arrow-right" aria-hidden="true"></i>
+        </button>
+      </section>
+
+      <nav class="slide-magazine" aria-label="Dia-Magazin">
+        <div class="slide-magazine-viewport" data-magazine-viewport>
+          <ol class="slide-magazine-track" data-magazine-track>
+            {shots.map((shot, index) => (
+              <li>
+                <button
+                  class:list={["slide-thumbnail", index === 0 && "is-active", shot.isNew && "is-new"]}
+                  type="button"
+                  data-slide-index={index}
+                  data-slide-orientation={shot.orientation}
+                  aria-label={`Bild ${index + 1} von ${total} anzeigen`}
+                  aria-current={index === 0 ? "true" : undefined}
+                  tabindex={index === 0 ? "0" : "-1"}
+                >
+                  <span class="slide-frame">
+                    <Image
+                      src={shot.src}
+                      alt=""
+                      width={180}
+                      quality={72}
+                      loading={index < 4 ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                    {shot.isNew && <span class="slide-new-marker" aria-label="Neu"></span>}
+                  </span>
+                  <span class="slide-index" aria-hidden="true">{formatNumber(index + 1)}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </nav>
+
+      <p class="sr-only" data-projector-announcer aria-live="polite"></p>
+
+      <div class="projector-image-templates" aria-hidden="true">
+        {shots.map((shot, index) => (
+          <template
+            data-projector-template
+            data-projector-index={index}
+            data-projector-title={shot.title}
+            data-projector-orientation={shot.orientation}
+          >
+            <Image
+              class="projected-image"
+              src={shot.src}
+              alt={shot.alt}
+              widths={mainWidths(shot.src)}
+              sizes="(max-width: 48rem) calc(100vw - 1.5rem), min(90vw, 1400px)"
+              quality={90}
+              loading="eager"
+              decoding="async"
+              style={`--source-width: ${shot.src.width}px; --source-height: ${shot.src.height}px;`}
+            />
+          </template>
+        ))}
+      </div>
+    </>
+  ) : (
+    <section class="projector-empty" aria-labelledby="projector-empty-title">
+      <i class="ph ph-projector-screen-chart" aria-hidden="true"></i>
+      <h1 id="projector-empty-title">Noch kein Dia eingelegt.</h1>
+      <p>Neue Bilder erscheinen automatisch, sobald sie im Fotoordner liegen.</p>
+    </section>
+  )}
+</main>
+
+<script>
+  const gallery = document.querySelector<HTMLElement>("[data-projector-gallery]");
+
+  if (gallery) {
+    const stage = gallery.querySelector<HTMLElement>("[data-projector-stage]");
+    const imageSlot = gallery.querySelector<HTMLElement>("[data-projected-image-slot]");
+    const transitionLayer = gallery.querySelector<HTMLElement>("[data-projection-transition]");
+    const transitionCopy = gallery.querySelector<HTMLElement>("[data-projection-transition-copy]");
+    const counter = gallery.querySelector<HTMLOutputElement>("[data-projector-counter]");
+    const caption = gallery.querySelector<HTMLElement>("[data-projector-caption]");
+    const announcer = gallery.querySelector<HTMLElement>("[data-projector-announcer]");
+    const previousButton = gallery.querySelector<HTMLButtonElement>("[data-projector-previous]");
+    const nextButton = gallery.querySelector<HTMLButtonElement>("[data-projector-next]");
+    const magazine = gallery.querySelector<HTMLElement>("[data-magazine-viewport]");
+    const thumbnails = Array.from(gallery.querySelectorAll<HTMLButtonElement>("[data-slide-index]"));
+    const templates = Array.from(gallery.querySelectorAll<HTMLTemplateElement>("[data-projector-template]"));
+    const arrival = gallery.querySelector<HTMLElement>("[data-gallery-entry]");
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const WHEEL_THRESHOLD = 60;
+    const WHEEL_COOLDOWN = 460;
+    const WHEEL_IDLE_RESET = 170;
+    const SWITCH_OUT_DURATION = 150;
+    const SWITCH_IN_DURATION = 350;
+    const PROJECTOR_INTRO_DURATION = 1180;
+
+    let reduceMotion = reducedMotionQuery.matches;
+    let activeIndex = 0;
+    let requestedIndex = 0;
+    let phase: "idle" | "preloading" | "leaving" | "entering" | "suspended" = "idle";
+    let transitionVersion = 0;
+    let transitionPumpRunning = false;
+    let wheelAccumulator = 0;
+    let wheelLockedUntil = 0;
+    let wheelGestureLocked = false;
+    let wheelResetTimer = 0;
+    let curveFrame = 0;
+    let programmaticScrollUntil = 0;
+    let magazineScrollTimer = 0;
+    let magazinePointer: number | null = null;
+    let magazineStartX = 0;
+    let magazineStartY = 0;
+    let magazineStartScroll = 0;
+    let magazineDragged = false;
+    let suppressThumbnailClick = false;
+    let stagePointer: number | null = null;
+    let stageStartX = 0;
+    let stageStartY = 0;
+    let stageStartTime = 0;
+    const preloadCache = new Map<number, Promise<void>>();
+    const waitCancels = new Set<() => void>();
+
+    const normalizeIndex = (index: number) => {
+      if (!templates.length) return 0;
+      return (index + templates.length) % templates.length;
+    };
+
+    const wait = (duration: number) => new Promise<void>((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timer);
+        waitCancels.delete(cancel);
+        resolve();
+      };
+      const timer = window.setTimeout(finish, duration);
+      const cancel = () => finish();
+      waitCancels.add(cancel);
+    });
+
+    const cancelWaits = () => {
+      waitCancels.forEach((cancel) => cancel());
+      waitCancels.clear();
+    };
+
+    const templateFor = (index: number) => templates[normalizeIndex(index)];
+
+    const cloneProjectedImage = (index: number, decorative = false) => {
+      const template = templateFor(index);
+      const source = template?.content.querySelector<HTMLImageElement>("img");
+      if (!source) return null;
+      const clone = source.cloneNode(true) as HTMLImageElement;
+      clone.loading = "eager";
+      clone.decoding = "async";
+      if (decorative) {
+        clone.alt = "";
+        clone.setAttribute("aria-hidden", "true");
+      }
+      return clone;
+    };
+
+    const preloadImage = (index: number) => {
+      const normalized = normalizeIndex(index);
+      const cached = preloadCache.get(normalized);
+      if (cached) return cached;
+
+      const promise = new Promise<void>((resolve) => {
+        const source = templateFor(normalized)?.content.querySelector<HTMLImageElement>("img");
+        if (!source) {
+          resolve();
+          return;
+        }
+
+        const preload = new window.Image();
+        preload.decoding = "async";
+        preload.sizes = source.sizes;
+        preload.srcset = source.srcset;
+        preload.onload = () => {
+          preload.decode().catch(() => undefined).finally(resolve);
+        };
+        preload.onerror = () => resolve();
+        preload.src = source.src;
+
+        if (preload.complete) {
+          preload.decode().catch(() => undefined).finally(resolve);
+        }
+      });
+
+      preloadCache.set(normalized, promise);
+      return promise;
+    };
+
+    const prewarmNeighbours = (index: number) => {
+      void preloadImage(index - 1);
+      void preloadImage(index + 1);
+    };
+
+    const formatCounter = (index: number) =>
+      `${String(index + 1).padStart(2, "0")} / ${String(templates.length).padStart(2, "0")}`;
+
+    const setPhase = (nextPhase: typeof phase) => {
+      phase = nextPhase;
+      gallery.dataset.phase = nextPhase;
+      stage?.setAttribute("aria-busy", nextPhase === "idle" ? "false" : "true");
+    };
+
+    const updateMagazineCurve = () => {
+      curveFrame = 0;
+      if (!magazine) return;
+      const viewportBounds = magazine.getBoundingClientRect();
+      const center = viewportBounds.left + viewportBounds.width / 2;
+      const unit = Math.max(72, Math.min(116, viewportBounds.width * 0.19));
+
+      thumbnails.forEach((thumbnail) => {
+        const bounds = thumbnail.getBoundingClientRect();
+        const distance = Math.max(-3.2, Math.min(3.2, (bounds.left + bounds.width / 2 - center) / unit));
+        const absoluteDistance = Math.abs(distance);
+        thumbnail.style.setProperty("--slide-arc-y", `${Math.min(22, absoluteDistance * absoluteDistance * 3.2)}px`);
+        thumbnail.style.setProperty("--slide-rotation", `${distance * 3.1}deg`);
+        thumbnail.style.setProperty("--slide-scale", `${Math.max(0.84, 1 - absoluteDistance * 0.045)}`);
+        thumbnail.style.setProperty("--slide-opacity", `${Math.max(0.48, 1 - absoluteDistance * 0.16)}`);
+      });
+    };
+
+    const requestMagazineCurve = () => {
+      if (curveFrame) return;
+      curveFrame = window.requestAnimationFrame(updateMagazineCurve);
+    };
+
+    const centerThumbnail = (index: number, smooth = true) => {
+      const thumbnail = thumbnails[normalizeIndex(index)];
+      if (!thumbnail || !magazine) return;
+      programmaticScrollUntil = performance.now() + (smooth ? 520 : 80);
+      thumbnail.scrollIntoView({
+        behavior: smooth && !reduceMotion ? "smooth" : "auto",
+        block: "nearest",
+        inline: "center",
+      });
+      window.setTimeout(requestMagazineCurve, smooth && !reduceMotion ? 520 : 0);
+    };
+
+    const updateSelection = (index: number, announce = true) => {
+      const normalized = normalizeIndex(index);
+      const template = templateFor(normalized);
+      const title = template?.dataset.projectorTitle ?? `Foto ${normalized + 1}`;
+      const orientation = template?.dataset.projectorOrientation ?? "landscape";
+      activeIndex = normalized;
+      gallery.dataset.orientation = orientation;
+
+      if (counter) counter.value = formatCounter(normalized);
+      if (caption) caption.textContent = title;
+      thumbnails.forEach((thumbnail, thumbnailIndex) => {
+        const active = thumbnailIndex === normalized;
+        thumbnail.classList.toggle("is-active", active);
+        if (active) thumbnail.setAttribute("aria-current", "true");
+        else thumbnail.removeAttribute("aria-current");
+        thumbnail.tabIndex = active ? 0 : -1;
+      });
+
+      if (announce && announcer) announcer.textContent = `Bild ${normalized + 1} von ${templates.length}: ${title}`;
+      centerThumbnail(normalized);
+      prewarmNeighbours(normalized);
+    };
+
+    const replaceMainImage = (index: number) => {
+      const image = cloneProjectedImage(index);
+      if (!image || !imageSlot) return;
+      imageSlot.replaceChildren(image);
+      updateSelection(index);
+    };
+
+    const resetProjectionEffects = () => {
+      transitionCopy?.replaceChildren();
+      if (transitionLayer) transitionLayer.hidden = true;
+      gallery.classList.remove("is-projector-starting", "is-projector-quick");
+      gallery.removeAttribute("data-direction");
+      setPhase("idle");
+    };
+
+    const performTransition = async (targetIndex: number) => {
+      const normalized = normalizeIndex(targetIndex);
+      if (normalized === activeIndex || !imageSlot || !transitionLayer || !transitionCopy) return;
+      const run = ++transitionVersion;
+      setPhase("preloading");
+      await preloadImage(normalized);
+      if (run !== transitionVersion) return;
+      if (normalized !== requestedIndex) {
+        if (requestedIndex === activeIndex) resetProjectionEffects();
+        return;
+      }
+
+      if (reduceMotion) {
+        replaceMainImage(normalized);
+        resetProjectionEffects();
+        return;
+      }
+
+      const direction = normalized === normalizeIndex(activeIndex + 1) ? "next" : normalized === normalizeIndex(activeIndex - 1) ? "previous" : normalized > activeIndex ? "next" : "previous";
+      gallery.dataset.direction = direction;
+      transitionCopy.replaceChildren(cloneProjectedImage(activeIndex, true) ?? document.createTextNode(""));
+      transitionLayer.hidden = false;
+      setPhase("leaving");
+      await wait(SWITCH_OUT_DURATION);
+      if (run !== transitionVersion) return;
+
+      replaceMainImage(normalized);
+      transitionCopy.replaceChildren(cloneProjectedImage(normalized, true) ?? document.createTextNode(""));
+      setPhase("entering");
+      await wait(SWITCH_IN_DURATION);
+      if (run !== transitionVersion) return;
+      resetProjectionEffects();
+    };
+
+    const pumpTransitions = async () => {
+      if (transitionPumpRunning) return;
+      transitionPumpRunning = true;
+      try {
+        while (requestedIndex !== activeIndex && phase !== "suspended") {
+          const target = requestedIndex;
+          await performTransition(target);
+        }
+      } finally {
+        transitionPumpRunning = false;
+      }
+    };
+
+    const requestIndex = (index: number) => {
+      requestedIndex = normalizeIndex(index);
+      if (reduceMotion && phase !== "suspended") {
+        replaceMainImage(requestedIndex);
+        resetProjectionEffects();
+        return;
+      }
+      void pumpTransitions();
+    };
+
+    const requestRelative = (direction: -1 | 1) => requestIndex(requestedIndex + direction);
+
+    const closestThumbnailIndex = () => {
+      if (!magazine || !thumbnails.length) return activeIndex;
+      const bounds = magazine.getBoundingClientRect();
+      const center = bounds.left + bounds.width / 2;
+      return thumbnails.reduce((closest, thumbnail, index) => {
+        const thumbBounds = thumbnail.getBoundingClientRect();
+        const distance = Math.abs(thumbBounds.left + thumbBounds.width / 2 - center);
+        return distance < closest.distance ? { index, distance } : closest;
+      }, { index: activeIndex, distance: Number.POSITIVE_INFINITY }).index;
+    };
+
+    const settleMagazine = () => {
+      if (!magazine || performance.now() < programmaticScrollUntil || magazinePointer !== null) return;
+      const closest = closestThumbnailIndex();
+      if (closest === activeIndex) centerThumbnail(activeIndex);
+      else requestIndex(closest);
+    };
+
+    previousButton?.addEventListener("click", () => requestRelative(-1));
+    nextButton?.addEventListener("click", () => requestRelative(1));
+
+    thumbnails.forEach((thumbnail) => {
+      thumbnail.addEventListener("click", () => {
+        if (suppressThumbnailClick) return;
+        window.clearTimeout(magazineScrollTimer);
+        programmaticScrollUntil = performance.now() + 700;
+        requestIndex(Number(thumbnail.dataset.slideIndex ?? 0));
+      });
+    });
+
+    gallery.addEventListener("keydown", (event) => {
+      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        requestRelative(-1);
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        requestRelative(1);
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        requestIndex(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        requestIndex(templates.length - 1);
+      }
+    });
+
+    stage?.addEventListener("wheel", (event) => {
+      if (event.ctrlKey || templates.length < 2) return;
+      event.preventDefault();
+      const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1;
+      const delta = (Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY) * unit;
+      window.clearTimeout(wheelResetTimer);
+      wheelResetTimer = window.setTimeout(() => {
+        wheelAccumulator = 0;
+        wheelGestureLocked = false;
+      }, WHEEL_IDLE_RESET);
+
+      if (wheelGestureLocked || performance.now() < wheelLockedUntil || phase !== "idle") return;
+      wheelAccumulator += delta;
+      if (Math.abs(wheelAccumulator) < WHEEL_THRESHOLD) return;
+      const direction = wheelAccumulator > 0 ? 1 : -1;
+      wheelAccumulator = 0;
+      wheelGestureLocked = true;
+      wheelLockedUntil = performance.now() + WHEEL_COOLDOWN;
+      requestRelative(direction);
+    }, { passive: false });
+
+    stage?.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0 || (event.target as Element).closest("button, a")) return;
+      stagePointer = event.pointerId;
+      stageStartX = event.clientX;
+      stageStartY = event.clientY;
+      stageStartTime = performance.now();
+      stage.setPointerCapture(event.pointerId);
+    });
+
+    stage?.addEventListener("pointerup", (event) => {
+      if (event.pointerId !== stagePointer) return;
+      const deltaX = event.clientX - stageStartX;
+      const deltaY = event.clientY - stageStartY;
+      const duration = Math.max(1, performance.now() - stageStartTime);
+      const horizontalIntent = Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
+      const decisive = Math.abs(deltaX) >= 48 || Math.abs(deltaX / duration) > 0.48;
+      stagePointer = null;
+      if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+      if (horizontalIntent && decisive) requestRelative(deltaX < 0 ? 1 : -1);
+    });
+
+    stage?.addEventListener("pointercancel", (event) => {
+      if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+      stagePointer = null;
+    });
+
+    magazine?.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return;
+      magazinePointer = event.pointerId;
+      magazineStartX = event.clientX;
+      magazineStartY = event.clientY;
+      magazineStartScroll = magazine.scrollLeft;
+      magazineDragged = false;
+    });
+
+    magazine?.addEventListener("pointermove", (event) => {
+      if (event.pointerId !== magazinePointer) return;
+      const deltaX = event.clientX - magazineStartX;
+      const deltaY = event.clientY - magazineStartY;
+      if (!magazineDragged) {
+        if (Math.abs(deltaX) < 7) return;
+        if (Math.abs(deltaY) > Math.abs(deltaX) * 1.2) return;
+        magazineDragged = true;
+        magazine.classList.add("is-dragging");
+        magazine.setPointerCapture(event.pointerId);
+      }
+      event.preventDefault();
+      magazine.scrollLeft = magazineStartScroll - deltaX;
+    });
+
+    const finishMagazinePointer = (event: PointerEvent) => {
+      if (!magazine || event.pointerId !== magazinePointer) return;
+      if (magazine.hasPointerCapture(event.pointerId)) magazine.releasePointerCapture(event.pointerId);
+      magazinePointer = null;
+      magazine.classList.remove("is-dragging");
+      if (magazineDragged) {
+        suppressThumbnailClick = true;
+        window.setTimeout(() => {
+          suppressThumbnailClick = false;
+        }, 0);
+        requestIndex(closestThumbnailIndex());
+      }
+      magazineDragged = false;
+    };
+
+    magazine?.addEventListener("pointerup", finishMagazinePointer);
+    magazine?.addEventListener("pointercancel", finishMagazinePointer);
+    magazine?.addEventListener("scroll", () => {
+      requestMagazineCurve();
+      window.clearTimeout(magazineScrollTimer);
+      magazineScrollTimer = window.setTimeout(settleMagazine, 140);
+    }, { passive: true });
+
+    const openGalleryEntry = () => {
+      if (!arrival || document.documentElement.dataset.galleryArrival !== "camera" || reduceMotion) {
+        arrival?.remove();
+        delete document.documentElement.dataset.galleryArrival;
+        document.body.classList.remove("gallery-entry-active");
+        return;
+      }
+      document.body.classList.add("gallery-entry-active");
+      requestAnimationFrame(() => requestAnimationFrame(() => arrival.classList.add("is-leaving")));
+      window.setTimeout(() => {
+        arrival.remove();
+        delete document.documentElement.dataset.galleryArrival;
+        document.body.classList.remove("gallery-entry-active");
+      }, 900);
+    };
+
+    const startProjector = async () => {
+      const introMode = document.documentElement.dataset.projectorIntro;
+      if (reduceMotion || !transitionLayer || !transitionCopy || introMode === "none") {
+        delete document.documentElement.dataset.projectorIntro;
+        resetProjectionEffects();
+        prewarmNeighbours(activeIndex);
+        return;
+      }
+
+      if (introMode === "quick") {
+        gallery.classList.add("is-projector-quick");
+        await wait(260);
+        gallery.classList.remove("is-projector-quick");
+        delete document.documentElement.dataset.projectorIntro;
+        prewarmNeighbours(activeIndex);
+        return;
+      }
+
+      const run = ++transitionVersion;
+      transitionCopy.replaceChildren(cloneProjectedImage(activeIndex, true) ?? document.createTextNode(""));
+      transitionLayer.hidden = false;
+      gallery.classList.add("is-projector-starting");
+      setPhase("entering");
+      await wait(PROJECTOR_INTRO_DURATION);
+      if (run !== transitionVersion) return;
+      resetProjectionEffects();
+      delete document.documentElement.dataset.projectorIntro;
+      prewarmNeighbours(activeIndex);
+    };
+
+    const suspend = () => {
+      transitionVersion += 1;
+      cancelWaits();
+      transitionPumpRunning = false;
+      requestedIndex = activeIndex;
+      phase = "suspended";
+      gallery.dataset.phase = "suspended";
+      transitionCopy?.replaceChildren();
+      if (transitionLayer) transitionLayer.hidden = true;
+      gallery.classList.remove("is-projector-starting", "is-projector-quick");
+      arrival?.classList.remove("is-leaving");
+      document.body.classList.remove("gallery-entry-active");
+    };
+
+    window.addEventListener("pagehide", suspend);
+    window.addEventListener("pageshow", (event) => {
+      if (!event.persisted) return;
+      requestedIndex = activeIndex;
+      transitionPumpRunning = false;
+      resetProjectionEffects();
+      arrival?.remove();
+      delete document.documentElement.dataset.galleryArrival;
+      delete document.documentElement.dataset.projectorIntro;
+      centerThumbnail(activeIndex, false);
+    });
+
+    reducedMotionQuery.addEventListener("change", (event) => {
+      reduceMotion = event.matches;
+      if (!reduceMotion) return;
+      transitionVersion += 1;
+      cancelWaits();
+      if (requestedIndex !== activeIndex) replaceMainImage(requestedIndex);
+      resetProjectionEffects();
+    });
+
+    if ("ResizeObserver" in window && magazine) {
+      const resizeObserver = new ResizeObserver(() => requestMagazineCurve());
+      resizeObserver.observe(magazine);
+    } else {
+      window.addEventListener("resize", requestMagazineCurve, { passive: true });
+    }
+
+    updateSelection(0, false);
+    centerThumbnail(0, false);
+    requestMagazineCurve();
+    openGalleryEntry();
+    window.setTimeout(() => void startProjector(), document.documentElement.dataset.galleryArrival === "camera" ? 170 : 0);
+  }
+</script>

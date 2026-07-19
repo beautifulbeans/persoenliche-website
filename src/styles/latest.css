@@ -2331,3 +2331,112 @@ body.gallery-dialog-open {
     transform: none;
   }
 }
+
+/* The photography card is intentionally denser on small screens: the gallery
+   entry stays visible without shrinking any interactive target below 44px. */
+@media (max-width: 48rem) {
+  #fotografie .camera-viewer {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.55rem;
+    grid-template-areas:
+      "display display"
+      "looks shutter";
+    grid-template-columns: minmax(0, 1fr) 3rem;
+    align-items: end;
+  }
+
+  #fotografie .camera-display {
+    grid-area: display;
+    padding: 0.35rem;
+  }
+
+  #fotografie .camera-screen-bottom {
+    min-height: 2.6rem;
+    gap: 0.4rem;
+    padding-top: 0.2rem;
+  }
+
+  #fotografie .camera-screen-bottom .camera-gallery-nav button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  #fotografie .simulation-controls {
+    min-width: 0;
+    margin-top: 0;
+    grid-area: looks;
+  }
+
+  #fotografie .simulation-controls > span {
+    margin-bottom: 0.4rem;
+  }
+
+  #fotografie .camera-hardware {
+    width: auto;
+    min-height: 2.75rem;
+    padding-top: 0;
+    grid-area: shutter;
+    align-self: end;
+  }
+
+  #fotografie .camera-viewer-shutter {
+    height: 2.75rem;
+  }
+
+  #fotografie .camera-viewer-shutter,
+  #fotografie .camera-shutter-disc {
+    min-height: 2.75rem;
+  }
+
+  #fotografie .camera-shutter-disc {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  #fotografie .camera-copy {
+    padding: 0.5rem 1rem 1rem;
+  }
+
+  #fotografie .camera-copy .play-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  #fotografie .camera-copy .play-card-heading h3 {
+    font-size: clamp(2rem, 10vw, 2.55rem);
+  }
+
+  #fotografie .camera-personal {
+    margin-top: 0.25rem;
+    font-size: 0.76rem;
+    line-height: 1.45;
+  }
+
+  #fotografie .camera-actions {
+    order: 2;
+    align-items: stretch;
+    margin-top: 0.7rem;
+    padding-top: 0;
+  }
+
+  #fotografie .camera-gallery-link {
+    width: 100%;
+    min-height: 3rem;
+    justify-content: center;
+  }
+
+  #fotografie .camera-actions .fact-source {
+    align-self: flex-start;
+  }
+
+  #fotografie .camera-fact-panel {
+    order: 3;
+    margin-top: 1.1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  #fotografie .camera-fact-switch {
+    order: 4;
+  }
+}
