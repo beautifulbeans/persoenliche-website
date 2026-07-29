@@ -239,6 +239,12 @@ const galleryPhotoCount = importedPhotos.length;
       const nextFrame = frames[nextIndex];
       if (previousFrame === nextFrame) return;
       const transitionRun = ++frameTransition;
+      const isGalleryFrame = nextFrame.matches(".camera-gallery-slide");
+
+      viewer?.classList.toggle("is-gallery-frame", isGalleryFrame);
+      if (isGalleryFrame) {
+        focusFrame?.getAnimations().forEach((animation) => animation.cancel());
+      }
 
       frames.forEach((frame) => {
         frame.getAnimations().forEach((animation) => animation.cancel());
