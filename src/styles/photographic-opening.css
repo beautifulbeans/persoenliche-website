@@ -446,7 +446,7 @@ body.gallery-transition-active {
 }
 
 .gallery-page-transition.is-capturing .gallery-transition-flash {
-  animation: gallery-page-camera-flash 210ms ease-out both;
+  animation: gallery-page-camera-flash 170ms ease-out both;
 }
 
 .gallery-transition-shutter {
@@ -456,7 +456,7 @@ body.gallery-transition-active {
   width: 100%;
   height: 51%;
   background: #171b18;
-  transition: transform 480ms 210ms cubic-bezier(0.76, 0, 0.24, 1);
+  transition: transform 300ms 100ms cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 .gallery-transition-shutter-top { top: 0; transform: translate3d(0, -101%, 0); }
@@ -475,7 +475,7 @@ body.gallery-transition-active {
 }
 
 .gallery-page-transition.is-capturing .gallery-transition-focus {
-  animation: gallery-focus-collapse 520ms 40ms var(--ease-out) both;
+  animation: gallery-focus-collapse 360ms 20ms var(--ease-out) both;
 }
 
 .gallery-transition-focus i {

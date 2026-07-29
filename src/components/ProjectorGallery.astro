@@ -188,8 +188,8 @@ const mainWidths = (source: ImageMetadata) =>
     const WHEEL_THRESHOLD = 60;
     const WHEEL_COOLDOWN = 460;
     const WHEEL_IDLE_RESET = 170;
-    const SWITCH_OUT_DURATION = 150;
-    const SWITCH_IN_DURATION = 350;
+    const SWITCH_OUT_DURATION = 180;
+    const SWITCH_IN_DURATION = 300;
     const PROJECTOR_INTRO_DURATION = 1180;
 
     let reduceMotion = reducedMotionQuery.matches;
@@ -314,7 +314,7 @@ const mainWidths = (source: ImageMetadata) =>
         const bounds = thumbnail.getBoundingClientRect();
         const distance = Math.max(-3.2, Math.min(3.2, (bounds.left + bounds.width / 2 - center) / unit));
         const absoluteDistance = Math.abs(distance);
-        thumbnail.style.setProperty("--slide-arc-y", `${Math.min(22, absoluteDistance * absoluteDistance * 3.2)}px`);
+        thumbnail.style.setProperty("--slide-arc-y", `${Math.min(12, absoluteDistance * absoluteDistance * 2)}px`);
         thumbnail.style.setProperty("--slide-rotation", `${distance * 3.1}deg`);
         thumbnail.style.setProperty("--slide-scale", `${Math.max(0.84, 1 - absoluteDistance * 0.045)}`);
         thumbnail.style.setProperty("--slide-opacity", `${Math.max(0.48, 1 - absoluteDistance * 0.16)}`);

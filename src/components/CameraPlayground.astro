@@ -98,11 +98,12 @@ const galleryPhotoCount = importedPhotos.length;
             <i class="ph ph-images"></i>
           </span>
           <span class="camera-gallery-slide-copy">
-            <small>Die Auswahl geht weiter</small>
-            <strong>Alle Fotos ansehen</strong>
-            <span>
-              {galleryPhotoCount} Fotos in der Galerie
-              <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+            <small>Letztes Bild · Fotogalerie</small>
+            <strong>Galerie öffnen</strong>
+            <span class="camera-gallery-slide-action">
+              <i class="ph ph-images" aria-hidden="true"></i>
+              Alle {galleryPhotoCount} Fotos
+              <i class="ph ph-arrow-right" aria-hidden="true"></i>
             </span>
           </span>
         </a>
@@ -132,19 +133,21 @@ const galleryPhotoCount = importedPhotos.length;
       </div>
     </div>
 
-    <div class="simulation-controls camera-simulation-dock">
-      <span>Look</span>
-      <div role="group" aria-label="Filmsimulation auswählen">
-        <button class="is-selected" type="button" data-film-simulation="provia" aria-pressed="true">Provia</button>
-        <button type="button" data-film-simulation="classic" aria-pressed="false">Classic Chrome</button>
-        <button type="button" data-film-simulation="acros" aria-pressed="false">Acros</button>
+    <div class="camera-control-deck">
+      <div class="simulation-controls camera-simulation-dock">
+        <span>Filmsimulation</span>
+        <div role="group" aria-label="Filmsimulation auswählen">
+          <button class="is-selected" type="button" data-film-simulation="provia" aria-pressed="true">Provia</button>
+          <button type="button" data-film-simulation="classic" aria-pressed="false">Classic</button>
+          <button type="button" data-film-simulation="acros" aria-pressed="false">Acros</button>
+        </div>
       </div>
-    </div>
 
-    <div class="camera-hardware">
-      <button class="camera-shutter camera-viewer-shutter" type="button" data-camera-shutter aria-label="Foto auslösen">
-        <span class="camera-shutter-disc" aria-hidden="true"><i class="ph ph-camera"></i></span>
-      </button>
+      <div class="camera-hardware">
+        <button class="camera-shutter camera-viewer-shutter" type="button" data-camera-shutter aria-label="Foto auslösen">
+          <span class="camera-shutter-disc" aria-hidden="true"><i class="ph ph-camera"></i></span>
+        </button>
+      </div>
     </div>
     <p class="sr-only" aria-live="polite" data-camera-capture-status></p>
   </div>

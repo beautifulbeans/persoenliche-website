@@ -252,13 +252,13 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
   /* The uploaded logos use different canvas sizes. These presentation tokens keep
      the marks visually balanced without modifying the source files. */
   .journey .journey-card-icon.journey-organization-logo {
-    --organization-logo-scale: 0.9;
+    --organization-logo-scale: 0.94;
     --organization-logo-shift-x: 0;
     --organization-logo-shift-y: 0;
     position: relative;
     overflow: visible;
-    width: clamp(6.25rem, 8.25vw, 7.5rem);
-    height: 3.65rem;
+    width: clamp(7.5rem, 9.6vw, 9.25rem);
+    height: 4.25rem;
     padding: 0;
     border: 0;
     border-radius: 0;
@@ -280,19 +280,19 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
   }
 
   .journey .journey-organization-logo[data-logo-key="dertour-austria"] {
-    --organization-logo-scale: 0.9;
+    --organization-logo-scale: 0.96;
   }
 
   .journey .journey-organization-logo[data-logo-key="landkreis-passau-gesundheit"] {
-    --organization-logo-scale: 0.82;
+    --organization-logo-scale: 0.88;
   }
 
   .journey .journey-organization-logo[data-logo-key="universitaet-passau"] {
-    --organization-logo-scale: 0.94;
+    --organization-logo-scale: 0.98;
   }
 
   .journey .journey-organization-logo[data-logo-key="asg-passau"] {
-    --organization-logo-scale: 0.82;
+    --organization-logo-scale: 0.88;
   }
 
   .journey .journey-organization-logo.is-fallback {
@@ -311,20 +311,24 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
 
   @media (max-width: 48rem) {
     .journey .journey-card-icon.journey-organization-logo {
-      width: 4.55rem;
-      height: 2.75rem;
+      width: 5.7rem;
+      height: 3.25rem;
     }
 
     .journey .journey-organization-logo[data-logo-key="dertour-austria"] {
-      --organization-logo-scale: 0.88;
+      --organization-logo-scale: 0.96;
     }
 
     .journey .journey-organization-logo[data-logo-key="landkreis-passau-gesundheit"] {
-      --organization-logo-scale: 0.78;
+      --organization-logo-scale: 0.88;
     }
 
     .journey .journey-organization-logo[data-logo-key="universitaet-passau"] {
-      --organization-logo-scale: 0.9;
+      --organization-logo-scale: 0.97;
+    }
+
+    .journey .journey-organization-logo[data-logo-key="asg-passau"] {
+      --organization-logo-scale: 0.87;
     }
   }
 
