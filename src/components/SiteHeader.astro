@@ -1,7 +1,6 @@
 ---
 import { Image } from "astro:assets";
 import portrait from "../assets/portrait/fabian-deragisch.jpg";
-import { profile } from "../data/profile";
 ---
 
 <header class="site-header" data-site-header>
@@ -30,23 +29,23 @@ import { profile } from "../data/profile";
       <span class="wordmark-name">Fabian Deragisch</span>
     </a>
 
-    <button
-      class="header-note"
-      type="button"
-      data-header-note
-      data-notes={JSON.stringify(profile.statusNotes)}
-      aria-label="Persönliche Statusnotiz wechseln"
-      title="Notiz wechseln"
+    <div
+      class="header-note header-note-static"
+      aria-label="Status: Wahrscheinlich am Tee zubereiten"
     >
       <span class="header-note-mark" aria-hidden="true">
-        <i class:list={["ph", profile.statusNotes[0].icon]} data-header-note-icon></i>
+        <span class="header-teapot">
+          <i class="header-teapot-lid"></i>
+          <i class="header-teapot-body"></i>
+          <i class="header-teapot-spout"></i>
+          <i class="header-teapot-handle"></i>
+        </span>
+        <span class="header-tea-steam"><i></i><i></i></span>
       </span>
-      <span class="header-note-copy" aria-live="polite">
-        <small data-header-note-label>{profile.statusNotes[0].label}</small>
-        <strong data-header-note-text>{profile.statusNotes[0].text}</strong>
+      <span class="header-note-copy">
+        <strong>Wahrscheinlich am Tee zubereiten</strong>
       </span>
-      <span class="header-note-cycle" aria-hidden="true"><i class="ph ph-arrow-bend-down-right"></i></span>
-    </button>
+    </div>
   </div>
 
   <nav aria-label="Hauptnavigation">
@@ -78,31 +77,6 @@ import { profile } from "../data/profile";
 </header>
 
 <script>
-  import { animateContentSwap } from "../scripts/motion";
-
-  document.querySelectorAll<HTMLButtonElement>("[data-header-note]").forEach((button) => {
-    const notes = JSON.parse(button.dataset.notes ?? "[]") as Array<{ icon: string; label: string; text: string }>;
-    const icon = button.querySelector<HTMLElement>("[data-header-note-icon]");
-    const labels = button.querySelectorAll<HTMLElement>("[data-header-note-label]");
-    const text = button.querySelector<HTMLElement>("[data-header-note-text]");
-    let noteIndex = 0;
-
-    button.addEventListener("click", () => {
-      if (!notes.length) return;
-      noteIndex = (noteIndex + 1) % notes.length;
-      const note = notes[noteIndex];
-      animateContentSwap(
-        [button.querySelector<HTMLElement>(".header-note-mark"), button.querySelector<HTMLElement>(".header-note-copy")],
-        () => {
-          if (icon) icon.className = `ph ${note.icon}`;
-          labels.forEach((label) => (label.textContent = note.label));
-          if (text) text.textContent = note.text;
-        },
-        { duration: 190, offset: 3, stagger: 0 },
-      );
-    });
-  });
-
   const siteHeader = document.querySelector<HTMLElement>("[data-site-header]");
   const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-site-header] nav a[href^='#']"));
   const observedSections = sectionLinks

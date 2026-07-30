@@ -32,7 +32,7 @@ const importedPhotos = Object.entries(photoModules)
     };
   });
 
-const homepagePhotoOrder = ["Zufall.jpg", "Sun Downer.jpg", "Griechenland #1.jpg"];
+const homepagePhotoOrder = ["1_mercados_madeira.png", "Sun Downer.jpg", "Zufall.jpg"];
 const homepagePhotos = homepagePhotoOrder
   .map((fileName) => importedPhotos.find((photo) => photo.fileName === fileName))
   .filter((photo): photo is NonNullable<typeof photo> => Boolean(photo));
@@ -159,6 +159,15 @@ const galleryPhotoCount = importedPhotos.length;
     </div>
     <p class="camera-personal">Eine kleine Auswahl meiner Fotos. Mehr davon liegt in der Galerie, und die wächst weiter.</p>
 
+    <div class="camera-actions">
+      <a class="camera-gallery-link" href="/galerie/">
+        Galerie ansehen <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+      </a>
+      <a class="fact-source" href="https://www.fujifilm-x.com/global/products/cameras/x-t30-iii/" target="_blank" rel="noreferrer">
+        Kamera: Fujifilm <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+      </a>
+    </div>
+
     <div class="camera-fact-panel">
       <p class="fact-kicker" data-camera-kicker>Meine Kamera</p>
       <h4 data-camera-fact-title>Kompakt und bewusst analog bedienbar</h4>
@@ -169,15 +178,6 @@ const galleryPhotoCount = importedPhotos.length;
       <button class="is-selected" type="button" data-camera-fact="model" aria-pressed="true">X-T30 III</button>
       <button type="button" data-camera-fact="mirrorless" aria-pressed="false">Spiegellos</button>
       <button type="button" data-camera-fact="simulation" aria-pressed="false">Filmsimulation</button>
-    </div>
-
-    <div class="camera-actions">
-      <a class="camera-gallery-link" href="/galerie/">
-        Galerie ansehen <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
-      </a>
-      <a class="fact-source" href="https://www.fujifilm-x.com/global/products/cameras/x-t30-iii/" target="_blank" rel="noreferrer">
-        Kamera: Fujifilm <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
-      </a>
     </div>
   </div>
 </article>

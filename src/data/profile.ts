@@ -58,17 +58,11 @@ export const profile = {
       },
     ],
   },
-  statusNotes: [
-    { icon: "ph-hammer", label: "Gerade", text: "Website wächst" },
-    { icon: "ph-vinyl-record", label: "Aufgelegt", text: "Blonde" },
-    { icon: "ph-leaf", label: "Heute in der Kanne", text: "Sencha" },
-    { icon: "ph-camera", label: "Fotografiert", text: "Licht in Wien" },
-  ],
 };
 
 export const work: TimelineEntry[] = [
   {
-    period: "Aktuell",
+    period: "August 2024 - heute",
     title: "Mitarbeiter im Marketing und E-Commerce",
     organization: "DERTOUR Austria GmbH",
     description:

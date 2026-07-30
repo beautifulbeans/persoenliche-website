@@ -35,6 +35,19 @@ const albums = [
     ],
   },
   {
+    key: "radiohead",
+    coverFile: "in-rainbows.jpeg",
+    title: "In Rainbows",
+    artist: "Radiohead",
+    year: "2007",
+    monogram: "IR",
+    tracks: [
+      { position: "04", title: "Weird Fishes/Arpeggi" },
+      { position: "09", title: "Jigsaw Falling into Place" },
+      { position: "07", title: "Reckoner" },
+    ],
+  },
+  {
     key: "frank-ocean",
     coverFile: "blonde.jpg",
     title: "Blonde",
@@ -75,7 +88,7 @@ const albums = [
   },
   {
     key: "sade",
-    coverFile: "love-deluxe.jpg",
+    coverFile: "love-deluxe.png",
     title: "Love Deluxe",
     artist: "Sade",
     year: "1992",
@@ -88,7 +101,7 @@ const albums = [
   },
   {
     key: "lil-yachty",
-    coverFile: "lets-start-here.jpg",
+    coverFile: "let's_start_here.jpg",
     title: "Let’s Start Here.",
     artist: "Lil Yachty",
     year: "2023",
@@ -126,7 +139,7 @@ const albums = [
         <span class="sr-only">Plattenspieler starten oder stoppen</span>
       </button>
       <span class="turntable-arm" aria-hidden="true"><span></span></span>
-      <span class="vinyl-nudge" aria-hidden="true"><i></i></span>
+      <span class="vinyl-nudge" aria-hidden="true"></span>
     </div>
 
     <div class="album-copy-stack" aria-live="polite">
@@ -147,24 +160,38 @@ const albums = [
     </div>
   </div>
 
-  <div class="album-library" role="group" aria-label="Album auswählen">
-    {albums.map((album, index) => (
-      <button class:list={["album-choice", index === 0 && "is-selected"]} type="button" data-album={album.key} data-album-monogram={album.monogram} aria-pressed={index === 0}>
-        <span class="album-choice-cover">
-          {album.cover ? (
-            <Image src={album.cover} alt={`Cover von ${album.title} von ${album.artist}`} widths={[180, 320]} sizes="(max-width: 40rem) 7.5rem, 8.5rem" loading="lazy" />
-          ) : (
-            <span class="album-choice-fallback" aria-label={`${album.title} - Cover kann lokal ergänzt werden`}>
-              <strong>{album.monogram}</strong>
-            </span>
-          )}
-        </span>
-        <span class="album-choice-copy">
-          <strong>{album.title}</strong>
-          <small>{album.artist}</small>
-        </span>
-      </button>
-    ))}
+  <div class="album-library-shell">
+    <div class="album-library-heading">
+      <span>Platten auswählen</span>
+      <div class="album-library-controls" aria-label="Durch die Platten blättern">
+        <button type="button" data-album-scroll="previous" aria-label="Vorherige Platten anzeigen" disabled>
+          <i class="ph ph-arrow-left" aria-hidden="true"></i>
+        </button>
+        <button type="button" data-album-scroll="next" aria-label="Weitere Platten anzeigen">
+          <i class="ph ph-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="album-library" role="group" aria-label="Album auswählen" data-album-library>
+      {albums.map((album, index) => (
+        <button class:list={["album-choice", index === 0 && "is-selected"]} type="button" data-album={album.key} data-album-monogram={album.monogram} aria-pressed={index === 0}>
+          <span class="album-choice-cover">
+            {album.cover ? (
+              <Image src={album.cover} alt={`Cover von ${album.title} von ${album.artist}`} widths={[180, 320]} sizes="(max-width: 40rem) 7.5rem, 8.5rem" loading="lazy" />
+            ) : (
+              <span class="album-choice-fallback" aria-label={`${album.title} - Cover kann lokal ergänzt werden`}>
+                <strong>{album.monogram}</strong>
+              </span>
+            )}
+          </span>
+          <span class="album-choice-copy">
+            <strong>{album.title}</strong>
+            <small>{album.artist}</small>
+          </span>
+        </button>
+      ))}
+    </div>
   </div>
 </article>
 
@@ -177,6 +204,9 @@ const albums = [
     const vinylMonogram = soundCard.querySelector<HTMLElement>("[data-vinyl-monogram]");
     const albumButtons = Array.from(soundCard.querySelectorAll<HTMLButtonElement>("[data-album]"));
     const panels = Array.from(soundCard.querySelectorAll<HTMLElement>("[data-album-detail]"));
+    const albumLibrary = soundCard.querySelector<HTMLElement>("[data-album-library]");
+    const previousAlbums = soundCard.querySelector<HTMLButtonElement>('[data-album-scroll="previous"]');
+    const nextAlbums = soundCard.querySelector<HTMLButtonElement>('[data-album-scroll="next"]');
     let rescueTimer = 0;
     let rescueRestartTimer = 0;
     let rescueFinishTimer = 0;
@@ -198,10 +228,10 @@ const albums = [
       rescueTimer = window.setTimeout(() => {
         if (vinylButton?.getAttribute("aria-pressed") === "true") return;
         turntable?.classList.add("is-rescuing");
-        rescueRestartTimer = window.setTimeout(() => setPlaying(true), prefersReducedMotion() ? 0 : 790);
+        rescueRestartTimer = window.setTimeout(() => setPlaying(true), prefersReducedMotion() ? 0 : 610);
         rescueFinishTimer = window.setTimeout(() => {
           turntable?.classList.remove("is-rescuing");
-        }, prefersReducedMotion() ? 100 : 1700);
+        }, prefersReducedMotion() ? 100 : 1250);
       }, 5000);
     };
 
@@ -211,6 +241,27 @@ const albums = [
       setPlaying(!playing);
       if (playing) scheduleRescue();
     });
+
+    const updateLibraryControls = () => {
+      if (!albumLibrary) return;
+      const maxScroll = Math.max(0, albumLibrary.scrollWidth - albumLibrary.clientWidth);
+      previousAlbums?.toggleAttribute("disabled", albumLibrary.scrollLeft <= 2);
+      nextAlbums?.toggleAttribute("disabled", albumLibrary.scrollLeft >= maxScroll - 2);
+    };
+
+    const scrollAlbums = (direction: -1 | 1) => {
+      if (!albumLibrary) return;
+      albumLibrary.scrollBy({
+        left: direction * Math.max(220, albumLibrary.clientWidth * 0.72),
+        behavior: prefersReducedMotion() ? "auto" : "smooth",
+      });
+    };
+
+    previousAlbums?.addEventListener("click", () => scrollAlbums(-1));
+    nextAlbums?.addEventListener("click", () => scrollAlbums(1));
+    albumLibrary?.addEventListener("scroll", updateLibraryControls, { passive: true });
+    new ResizeObserver(updateLibraryControls).observe(albumLibrary ?? soundCard);
+    updateLibraryControls();
 
     albumButtons.forEach((button) => {
       button.addEventListener("click", () => {
@@ -238,6 +289,11 @@ const albums = [
         if (currentRun !== albumRun) return;
         clearRescue();
         setPlaying(true);
+        button.scrollIntoView({
+          behavior: prefersReducedMotion() ? "auto" : "smooth",
+          block: "nearest",
+          inline: "center",
+        });
       });
     });
   });

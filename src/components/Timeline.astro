@@ -42,13 +42,24 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
 
   <div class="journey-layout">
     <aside class="journey-companion" data-journey-companion data-mode="work">
-      <i class="ph ph-arrow-up-right companion-watermark" aria-hidden="true"></i>
-      <div class="companion-icon" aria-hidden="true">
-        <i class="ph ph-briefcase" data-companion-icon></i>
+      <div class="companion-art" aria-hidden="true">
+        <div class="companion-wave-layer companion-wave-layer-primary">
+          <div class="companion-wave-motion">
+            {Array.from({ length: 7 }, (_, index) => <span style={`--wave-index: ${index}`}></span>)}
+          </div>
+        </div>
+        <div class="companion-wave-layer companion-wave-layer-echo">
+          <div class="companion-wave-motion">
+            {Array.from({ length: 5 }, (_, index) => <span style={`--wave-index: ${index}`}></span>)}
+          </div>
+        </div>
       </div>
-      <p class="companion-kind" data-companion-kind>Beruf</p>
-      <p class="companion-period" data-companion-period>{work[0].period}</p>
+      <div class="companion-meta">
+        <p class="companion-kind" data-companion-kind>Beruf</p>
+        <p class="companion-period" data-companion-period>{work[0].period}</p>
+      </div>
       <h3 data-companion-title>{work[0].title}</h3>
+      <p class="companion-organization" data-companion-organization>{work[0].organization}</p>
     </aside>
 
     <div class="journey-stories">
@@ -73,7 +84,7 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
               data-story-kind="Beruf"
               data-story-period={entry.period}
               data-story-title={entry.title}
-              data-story-icon={entry.icon}
+              data-story-organization={entry.organization}
               data-timeline-point
               data-reveal="up"
             >
@@ -173,7 +184,7 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
               data-story-kind="Studium"
               data-story-period={entry.period}
               data-story-title={entry.title}
-              data-story-icon={entry.icon}
+              data-story-organization={entry.organization}
               data-timeline-point
               data-reveal="up"
             >

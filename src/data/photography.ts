@@ -9,11 +9,21 @@ export type PhotographyCopy = {
  * Ohne Eintrag erzeugt die Galerie einen lesbaren Titel aus dem Dateinamen.
  */
 export const photographyCopy: Record<string, PhotographyCopy> = {
-  // "01-wien-abendlicht.jpg": {
-  //   alt: "Abendlicht zwischen Häuserfassaden in Wien",
-  //   title: "Wien im Abendlicht",
-  //   note: "Fujifilm X-T30 III",
-  // },
+  "1_mercados_madeira.png": {
+    alt: "Blick von oben in den Innenhof des Mercado dos Lavradores in Funchal, eingerahmt von roten Bougainvilleen",
+    title: "Mercados Madeira",
+    note: "Funchal, Madeira",
+  },
+  "Sun Downer.jpg": {
+    alt: "Warm beleuchtete Flugzeugfenster während des Sonnenuntergangs",
+    title: "Sundowner",
+    note: "Irgendwo über den Wolken",
+  },
+  "Zufall.jpg": {
+    alt: "Unscharfe Schwarz-Weiß-Nahaufnahme eines Gesichts mit zwei runden Lichtpunkten",
+    title: "Zufall",
+    note: "Schwarzweiß",
+  },
 };
 
 export const photographyPlaceholders = [

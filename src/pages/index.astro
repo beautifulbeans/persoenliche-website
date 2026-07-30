@@ -284,7 +284,7 @@ const heroNameLines = ["Fabian", "Deragisch"];
   const companionKind = companion?.querySelector<HTMLElement>("[data-companion-kind]");
   const companionPeriod = companion?.querySelector<HTMLElement>("[data-companion-period]");
   const companionTitle = companion?.querySelector<HTMLElement>("[data-companion-title]");
-  const companionIcon = companion?.querySelector<HTMLElement>("[data-companion-icon]");
+  const companionOrganization = companion?.querySelector<HTMLElement>("[data-companion-organization]");
 
   if ("IntersectionObserver" in window && companion) {
     const storyObserver = new IntersectionObserver(
@@ -294,12 +294,12 @@ const heroNameLines = ["Fabian", "Deragisch"];
           storyCards.forEach((card) => card.classList.toggle("is-active", card === entry.target));
           const card = entry.target as HTMLElement;
           animateContentSwap(
-            [companionKind, companionPeriod, companionTitle, companionIcon],
+            [companionKind, companionPeriod, companionTitle, companionOrganization],
             () => {
               if (companionKind) companionKind.textContent = card.dataset.storyKind ?? "Laufbahn";
               if (companionPeriod) companionPeriod.textContent = card.dataset.storyPeriod ?? "";
               if (companionTitle) companionTitle.textContent = card.dataset.storyTitle ?? "";
-              if (companionIcon) companionIcon.className = `ph ${card.dataset.storyIcon ?? "ph-briefcase"}`;
+              if (companionOrganization) companionOrganization.textContent = card.dataset.storyOrganization ?? "";
               companion.dataset.mode = card.dataset.storyKind === "Studium" ? "study" : "work";
             },
             { duration: 180, offset: 3, stagger: 0 },

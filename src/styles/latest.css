@@ -1920,12 +1920,13 @@ body {
   68% { transform: scale(1.012) rotate(0.45deg); }
 }
 
-/* Vinyl: nur ein unaufdringlicher Halbkreis gibt dem Tonarm einen Stups. */
+/* Vinyl: ein kleiner, randbündiger Impuls stößt den Tonarm wieder an. */
 .vinyl-nudge {
-  right: -0.35rem;
-  bottom: 1.35rem;
-  width: 1.45rem;
-  height: 0.82rem;
+  top: 0.72rem;
+  right: -0.05rem;
+  bottom: auto;
+  width: 1.08rem;
+  height: 0.64rem;
   overflow: hidden;
   border: 1px solid rgb(92 72 57 / 0.22);
   border-right: 0;
@@ -1933,7 +1934,7 @@ body {
   background: #c4ad92;
   box-shadow: none;
   opacity: 0;
-  transform: translate3d(110%, 0.2rem, 0) rotate(-8deg);
+  transform: translate3d(104%, 0, 0);
 }
 
 .vinyl-nudge::before,
@@ -1942,39 +1943,16 @@ body {
 }
 
 .turntable.is-rescuing .vinyl-nudge {
-  animation: vinyl-nudge-subtle 1.7s var(--ease-in-out) both;
+  animation: vinyl-nudge-subtle 1.25s var(--ease-in-out) both;
 }
 
 @keyframes vinyl-nudge-subtle {
-  0% { opacity: 0; transform: translate3d(110%, 0.2rem, 0) rotate(-8deg); }
-  18% { opacity: 0.82; }
-  43% { opacity: 0.82; transform: translate3d(-0.7rem, -1.75rem, 0) rotate(-28deg); }
-  49% { opacity: 0.9; transform: translate3d(-0.92rem, -1.93rem, 0) rotate(-32deg) scaleX(0.9); }
-  62% { opacity: 0.78; transform: translate3d(-0.66rem, -1.7rem, 0) rotate(-26deg); }
-  100% { opacity: 0; transform: translate3d(115%, 0.2rem, 0) rotate(-8deg); }
-}
-
-.album-library {
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  align-items: start;
-}
-
-.album-choice {
-  grid-template-rows: auto 3.15rem;
-}
-
-.album-choice-copy {
-  min-height: 3.15rem;
-  grid-template-rows: 1.95rem 1rem;
-  align-content: start;
-}
-
-.album-choice-copy strong {
-  min-height: 1.95rem;
-}
-
-.album-choice-copy small {
-  max-height: none;
+  0% { opacity: 0; transform: translate3d(104%, 0, 0); }
+  18% { opacity: 0.76; }
+  43% { opacity: 0.82; transform: translate3d(24%, 0.02rem, 0); }
+  50% { opacity: 0.9; transform: translate3d(12%, 0.02rem, 0) scaleX(0.92); }
+  62% { opacity: 0.75; transform: translate3d(28%, 0, 0); }
+  100% { opacity: 0; transform: translate3d(108%, 0, 0); }
 }
 
 .album-choice.is-selected,
@@ -2715,5 +2693,704 @@ body.gallery-dialog-open {
   .album-choice.is-selected,
   .album-choice[aria-pressed="true"] {
     transform: none;
+  }
+}
+
+/* Status — eine feste, stille Notiz mit einer kleinen dampfenden Kanne. */
+.header-note-static {
+  grid-template-columns: auto minmax(0, 1fr);
+  cursor: default;
+}
+
+.header-note-static .header-note-mark {
+  position: relative;
+  overflow: visible;
+}
+
+.header-teapot {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 1.15rem;
+  height: 0.88rem;
+  transform-origin: 42% 82%;
+  animation: header-teapot-idle 5.8s var(--ease-spring-soft) infinite;
+}
+
+.header-teapot i {
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+}
+
+.header-teapot-body {
+  left: 0.2rem;
+  bottom: 0.05rem;
+  width: 0.7rem;
+  height: 0.53rem;
+  border: 1.35px solid currentColor;
+  border-radius: 45% 45% 38% 38%;
+}
+
+.header-teapot-lid {
+  top: 0.12rem;
+  left: 0.35rem;
+  width: 0.42rem;
+  height: 0.16rem;
+  border-top: 1.35px solid currentColor;
+  border-radius: 50% 50% 0 0;
+}
+
+.header-teapot-lid::before {
+  position: absolute;
+  top: -0.16rem;
+  left: 50%;
+  width: 0.12rem;
+  height: 0.12rem;
+  border: 1.2px solid currentColor;
+  border-radius: 50%;
+  content: "";
+  transform: translateX(-50%);
+}
+
+.header-teapot-spout {
+  top: 0.38rem;
+  left: -0.02rem;
+  width: 0.38rem;
+  height: 0.28rem;
+  border-top: 1.35px solid currentColor;
+  border-left: 1.35px solid currentColor;
+  transform: skewY(-25deg) rotate(-9deg);
+}
+
+.header-teapot-handle {
+  top: 0.34rem;
+  right: 0.01rem;
+  width: 0.34rem;
+  height: 0.42rem;
+  border: 1.35px solid currentColor;
+  border-left: 0;
+  border-radius: 0 60% 60% 0;
+}
+
+.header-tea-steam {
+  position: absolute;
+  top: -0.28rem;
+  left: 0.48rem;
+  width: 0.55rem;
+  height: 0.75rem;
+  pointer-events: none;
+}
+
+.header-tea-steam i {
+  position: absolute;
+  bottom: 0;
+  left: 0.08rem;
+  width: 0.18rem;
+  height: 0.52rem;
+  border-left: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0;
+  animation: header-tea-steam 2.4s ease-out infinite;
+}
+
+.header-tea-steam i:last-child {
+  left: 0.34rem;
+  height: 0.42rem;
+  animation-delay: 1.15s;
+}
+
+.header-note-static .header-note-copy strong {
+  font-size: clamp(0.68rem, 0.9vw, 0.8rem);
+}
+
+@keyframes header-teapot-idle {
+  0%, 44%, 100% { transform: rotate(0deg); }
+  48% { transform: rotate(-5deg); }
+  54% { transform: rotate(3deg); }
+  59% { transform: rotate(0deg); }
+}
+
+@keyframes header-tea-steam {
+  0% { opacity: 0; transform: translate3d(0, 0.15rem, 0) scaleY(0.65); }
+  28% { opacity: 0.52; }
+  100% { opacity: 0; transform: translate3d(0.08rem, -0.38rem, 0) scaleY(1.08); }
+}
+
+/* Laufbahn — abstrakte Linienfelder statt dekorativer Blindtexte. */
+.journey-companion {
+  display: flex;
+  isolation: isolate;
+  min-height: 27rem;
+  padding: clamp(1.35rem, 2.6vw, 1.8rem);
+  flex-direction: column;
+  border: 1px solid color-mix(in srgb, var(--on-accent) 18%, transparent);
+}
+
+.companion-meta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--on-accent) 28%, transparent);
+}
+
+.companion-kind,
+.companion-period {
+  margin-top: 0;
+  color: color-mix(in srgb, var(--on-accent) 82%, transparent);
+  font: 560 0.67rem/1.25 var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.companion-period {
+  max-width: 11rem;
+  text-align: right;
+  opacity: 1;
+}
+
+.companion-art {
+  position: absolute;
+  inset: 4.35rem -1.4rem 7rem 0.7rem;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.companion-wave-layer,
+.companion-wave-motion {
+  position: absolute;
+  inset: 0;
+}
+
+.companion-wave-layer {
+  transition:
+    opacity 520ms ease,
+    transform 720ms var(--ease-out);
+  will-change: transform;
+}
+
+.companion-wave-motion {
+  animation: companion-wave-drift 15s ease-in-out infinite;
+  will-change: transform;
+}
+
+.companion-wave-layer span {
+  position: absolute;
+  top: calc(-6% + (var(--wave-index) * 10%));
+  left: calc(-9% + (var(--wave-index) * 2.3%));
+  width: calc(116% - (var(--wave-index) * 6%));
+  height: calc(46% + (var(--wave-index) * 5.5%));
+  border: 1px solid color-mix(in srgb, var(--on-accent) 58%, transparent);
+  border-radius: 50%;
+  opacity: calc(0.72 - (var(--wave-index) * 0.055));
+  transform: rotate(calc(-8deg + (var(--wave-index) * 1.25deg)));
+}
+
+.companion-wave-layer-echo {
+  inset: 2% -14% -8% 40%;
+  opacity: 0.42;
+  transform: rotate(64deg) scale(0.9);
+}
+
+.companion-wave-layer-echo .companion-wave-motion {
+  animation-name: companion-wave-drift-reverse;
+  animation-duration: 19s;
+}
+
+.journey-companion[data-mode="study"] .companion-wave-layer-primary {
+  transform: rotate(-4deg) translate3d(0.35rem, 0, 0);
+}
+
+.journey-companion[data-mode="study"] .companion-wave-layer-echo {
+  opacity: 0.58;
+  transform: rotate(72deg) scale(0.94);
+}
+
+@keyframes companion-wave-drift {
+  0%,
+  100% {
+    transform: translate3d(-0.45rem, 0.12rem, 0) rotate(-1.2deg);
+  }
+
+  50% {
+    transform: translate3d(0.55rem, -0.32rem, 0) rotate(1.1deg);
+  }
+}
+
+@keyframes companion-wave-drift-reverse {
+  0%,
+  100% {
+    transform: translate3d(0.3rem, -0.22rem, 0) rotate(0.8deg);
+  }
+
+  50% {
+    transform: translate3d(-0.5rem, 0.36rem, 0) rotate(-1deg);
+  }
+}
+
+.journey-companion h3 {
+  z-index: 2;
+  max-width: 17ch;
+  margin-top: auto;
+  padding-top: 10rem;
+  font-size: clamp(1.7rem, 2.65vw, 2.45rem);
+  text-shadow: 0 1px 1px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+.companion-organization {
+  position: relative;
+  z-index: 2;
+  max-width: 28ch;
+  margin-top: 0.85rem;
+  color: color-mix(in srgb, var(--on-accent) 76%, transparent);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+/* Bachelorarbeit — freie Linie und präzises System treffen sich in der Mitte. */
+.thesis-card-front {
+  position: absolute;
+  overflow: hidden;
+  background: var(--study);
+}
+
+.thesis-card-front > :not(.thesis-artwork) {
+  position: relative;
+  z-index: 2;
+}
+
+.thesis-card-front::after {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 56%;
+  background: color-mix(in srgb, var(--study-strong) 91%, #28322c);
+  content: "";
+}
+
+.thesis-cover-top {
+  justify-content: space-between;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--on-accent) 52%, transparent);
+  color: var(--on-accent);
+  font: 620 0.62rem/1 var(--font-sans);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.thesis-artwork {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--study) 82%, #d7cfb4);
+  pointer-events: none;
+}
+
+.thesis-organic-field,
+.thesis-system-field,
+.thesis-organic-motion,
+.thesis-system-motion {
+  position: absolute;
+  inset: 0;
+}
+
+.thesis-organic-field,
+.thesis-system-field {
+  transition:
+    clip-path 680ms var(--ease-out),
+    opacity 520ms ease,
+    transform 680ms var(--ease-out);
+  will-change: clip-path, transform;
+}
+
+.thesis-organic-field {
+  inset: -5% 33% 39% -22%;
+  transform: rotate(-7deg);
+}
+
+.thesis-organic-motion {
+  animation: thesis-organic-drift 14s ease-in-out infinite;
+}
+
+.thesis-organic-motion span {
+  position: absolute;
+  top: calc(-8% + (var(--art-line) * 11%));
+  left: calc(-4% + (var(--art-line) * 2%));
+  width: calc(112% - (var(--art-line) * 5%));
+  height: calc(48% + (var(--art-line) * 5%));
+  border: 1.2px solid color-mix(in srgb, var(--on-accent) 72%, transparent);
+  border-radius: 50%;
+  opacity: calc(0.76 - (var(--art-line) * 0.065));
+  transform: rotate(calc(-4deg + (var(--art-line) * 1.3deg)));
+}
+
+.thesis-system-field {
+  inset: -13% -13% 40% 29%;
+  clip-path: inset(0 0 0 43%);
+  opacity: 0.78;
+  transform: rotate(18deg);
+}
+
+.thesis-system-motion {
+  animation: thesis-system-drift 17s ease-in-out infinite;
+}
+
+.thesis-system-motion span {
+  position: absolute;
+  top: calc(-8% + (var(--art-phase) * 4%));
+  left: calc(7% + (var(--art-line) * 10%));
+  width: 1px;
+  height: 112%;
+  background: color-mix(in srgb, #d0b56e 82%, var(--on-accent));
+  opacity: calc(0.82 - (var(--art-phase) * 0.16));
+}
+
+.thesis-intersection {
+  position: absolute;
+  top: 9%;
+  left: 43%;
+  width: 12%;
+  height: 35%;
+  background: color-mix(in srgb, #d0b56e 76%, var(--study));
+  clip-path: polygon(34% 0, 100% 8%, 70% 100%, 0 86%);
+  mix-blend-mode: multiply;
+  opacity: 0.52;
+  transform: rotate(7deg);
+  transition:
+    clip-path 680ms var(--ease-out),
+    opacity 520ms ease,
+    transform 680ms var(--ease-out);
+}
+
+@keyframes thesis-organic-drift {
+  0%,
+  100% {
+    transform: translate3d(-0.28rem, 0.18rem, 0) rotate(-0.8deg);
+  }
+
+  50% {
+    transform: translate3d(0.42rem, -0.24rem, 0) rotate(1deg);
+  }
+}
+
+@keyframes thesis-system-drift {
+  0%,
+  100% {
+    transform: translate3d(0.2rem, -0.26rem, 0);
+  }
+
+  50% {
+    transform: translate3d(-0.36rem, 0.34rem, 0);
+  }
+}
+
+.thesis-cover-copy {
+  z-index: 2;
+  max-width: 24rem;
+  margin-block: auto 1.6rem;
+}
+
+.thesis-cover-copy > p {
+  color: color-mix(in srgb, var(--on-accent) 74%, transparent);
+}
+
+.thesis-card-front .thesis-cover-copy h3 span {
+  color: #d0b56e;
+}
+
+.thesis-cover-footer {
+  z-index: 2;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .journey-companion:hover .companion-wave-layer-primary {
+    transform: translate3d(0.45rem, -0.2rem, 0) scale(1.018);
+  }
+
+  .journey-companion:hover .companion-wave-layer-echo {
+    opacity: 0.62;
+    transform: rotate(68deg) scale(0.96);
+  }
+
+  .journey-companion[data-mode="study"]:hover .companion-wave-layer-primary {
+    transform: rotate(-2deg) translate3d(0.55rem, -0.2rem, 0) scale(1.018);
+  }
+
+  .journey-companion[data-mode="study"]:hover .companion-wave-layer-echo {
+    transform: rotate(75deg) scale(0.99);
+  }
+
+  .thesis-card:hover:not(.is-flipped) .thesis-organic-field {
+    transform: translate3d(0.45rem, -0.12rem, 0) rotate(-5deg);
+  }
+
+  .thesis-card:hover:not(.is-flipped) .thesis-system-field {
+    clip-path: inset(0 0 0 34%);
+    opacity: 0.94;
+    transform: translate3d(-0.35rem, 0.18rem, 0) rotate(16deg);
+  }
+
+  .thesis-card:hover:not(.is-flipped) .thesis-intersection {
+    clip-path: polygon(22% 0, 100% 4%, 82% 100%, 0 91%);
+    opacity: 0.74;
+    transform: translate3d(-0.22rem, 0.08rem, 0) rotate(3deg) scaleX(1.16);
+  }
+
+  .thesis-card:hover:not(.is-flipped) .thesis-cover-copy h3 span {
+    color: #e2c978;
+  }
+}
+
+/* Der Tonabnehmer liegt im Spielzustand sichtbar innerhalb der Rille. */
+.sound-card .vinyl-button[aria-pressed="true"] + .turntable-arm {
+  transform: rotate(30deg);
+}
+
+/* Kamera — Bedienung kompakt am Sucher, Inhalte ohne künstlichen Leerraum. */
+@media (min-width: 48.001rem) {
+  #fotografie .camera-copy {
+    min-height: 0;
+    padding: clamp(1.35rem, 2.2vw, 2rem);
+    justify-content: center;
+  }
+
+  #fotografie .camera-personal {
+    margin-top: 0.75rem;
+  }
+
+  #fotografie .camera-actions {
+    margin-top: 1.15rem;
+    padding-top: 0;
+  }
+
+  #fotografie .camera-fact-panel {
+    min-height: 0;
+    margin-top: 1.55rem;
+    margin-bottom: 0.9rem;
+  }
+
+  #fotografie .camera-control-deck {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  #fotografie .simulation-controls {
+    min-width: 0;
+    margin-top: 0.85rem;
+  }
+
+  #fotografie .camera-hardware {
+    width: auto;
+    min-height: 0;
+    flex: 0 0 auto;
+    padding: 0;
+  }
+
+  #fotografie .camera-viewer-shutter,
+  #fotografie .camera-viewer-shutter:hover,
+  #fotografie .camera-viewer-shutter:active {
+    position: static;
+  }
+}
+
+/* Album-Shelf — feste Covergrößen, sichtbare Navigation und ruhige Textzeilen. */
+.album-library-shell {
+  min-width: 0;
+  margin-top: 1.35rem;
+}
+
+.album-library-heading {
+  display: flex;
+  min-height: 2.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: color-mix(in srgb, var(--warm-strong) 78%, var(--muted));
+  font-size: 0.67rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.album-library-controls {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.album-library-controls button {
+  display: grid;
+  width: 2.15rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--warm) 42%, var(--line));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--warm-soft) 46%, var(--surface));
+  color: var(--warm-strong);
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 180ms ease, opacity 180ms ease;
+}
+
+.album-library-controls button:active {
+  transform: scale(0.94);
+}
+
+.album-library-controls button:disabled {
+  cursor: default;
+  opacity: 0.28;
+}
+
+.album-library {
+  display: flex;
+  overflow-x: auto;
+  margin-top: 0;
+  padding: 0.65rem 0.15rem 0.8rem;
+  gap: clamp(0.62rem, 1.2vw, 0.82rem);
+  align-items: start;
+  overscroll-behavior-inline: contain;
+  scroll-padding-inline: 0.15rem;
+  scroll-snap-type: x proximity;
+  scrollbar-color: color-mix(in srgb, var(--warm) 48%, transparent) transparent;
+  scrollbar-width: thin;
+}
+
+.album-library::-webkit-scrollbar {
+  height: 0.3rem;
+}
+
+.album-library::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--warm) 48%, transparent);
+}
+
+.album-choice {
+  flex: 0 0 clamp(7.15rem, 24%, 8.2rem);
+  grid-template-rows: auto minmax(3.75rem, auto);
+  scroll-snap-align: start;
+}
+
+.album-choice-copy {
+  min-height: 3.75rem;
+  grid-template-rows: auto auto;
+  align-content: start;
+  gap: 0.16rem;
+}
+
+.album-choice-copy strong {
+  min-height: 0;
+  font-size: clamp(0.65rem, 1.1vw, 0.75rem);
+}
+
+.album-choice-copy small,
+.album-choice.is-selected .album-choice-copy small,
+.album-choice[aria-pressed="true"] .album-choice-copy small {
+  display: -webkit-box;
+  overflow: hidden;
+  max-height: none;
+  padding-bottom: 0.1rem;
+  color: color-mix(in srgb, var(--warm-strong) 76%, var(--muted));
+  font-size: 0.6rem;
+  line-height: 1.25;
+  opacity: 0.76;
+  transform: none;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.album-choice.is-selected .album-choice-copy small,
+.album-choice[aria-pressed="true"] .album-choice-copy small {
+  opacity: 1;
+}
+
+.album-choice.is-selected .album-choice-cover,
+.album-choice[aria-pressed="true"] .album-choice-cover {
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--cover-color) 74%, var(--warm-strong)),
+    0 0.5rem 0 color-mix(in srgb, var(--cover-color) 20%, transparent);
+}
+
+.sound-card[data-album-theme="radiohead"] { --album-color: #b96255; }
+.sound-card[data-album-theme="sade"] { --album-color: #704b58; }
+.sound-card[data-album-theme="lil-yachty"] { --album-color: #705d83; }
+
+.album-choice[data-album="pink-floyd"] { --cover-color: var(--warm); }
+.album-choice[data-album="dire-straits"] { --cover-color: #76563f; }
+.album-choice[data-album="radiohead"] { --cover-color: #b96255; }
+.album-choice[data-album="frank-ocean"] { --cover-color: #4f7453; }
+.album-choice[data-album="tyler"] { --cover-color: #865268; }
+.album-choice[data-album="mac-miller"] { --cover-color: #3f6f85; }
+.album-choice[data-album="sade"] { --cover-color: #704b58; }
+.album-choice[data-album="lil-yachty"] { --cover-color: #705d83; }
+
+@media (max-width: 48rem) {
+  .journey-companion {
+    display: none;
+  }
+
+  .thesis-card-front::after {
+    height: 58%;
+  }
+
+  .thesis-organic-field {
+    inset: -3% 22% 41% -29%;
+  }
+
+  .thesis-system-field {
+    inset: -11% -18% 42% 23%;
+  }
+
+  .album-library-heading {
+    padding-inline: 0.1rem;
+  }
+
+  .album-library {
+    margin-inline: -0.2rem;
+    padding-inline: 0.2rem;
+    scrollbar-width: thin;
+  }
+
+  .album-library::-webkit-scrollbar {
+    display: block;
+  }
+
+  .album-choice {
+    flex-basis: 7rem;
+    grid-template-rows: auto minmax(3.6rem, auto);
+  }
+
+  .album-choice-copy {
+    min-height: 3.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-note-static .header-note-mark > .ph,
+  .header-tea-steam i {
+    animation: none;
+  }
+
+  .header-tea-steam i {
+    opacity: 0.32;
+  }
+
+  .companion-wave-motion,
+  .thesis-organic-motion,
+  .thesis-system-motion {
+    animation: none;
+  }
+
+  .companion-wave-layer,
+  .thesis-organic-field,
+  .thesis-system-field,
+  .thesis-intersection,
+  .sound-card .turntable-arm {
+    transition: none;
   }
 }

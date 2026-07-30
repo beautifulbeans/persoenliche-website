@@ -25,10 +25,25 @@ const { thesis } = profile;
     <article class="thesis-card" data-thesis-card data-reveal="scale">
       <div class="thesis-card-inner" data-thesis-inner>
         <div class="thesis-card-face thesis-card-front" data-thesis-front>
+          <div class="thesis-artwork" aria-hidden="true">
+            <div class="thesis-organic-field">
+              <div class="thesis-organic-motion">
+                {Array.from({ length: 7 }, (_, index) => <span style={`--art-line: ${index}`}></span>)}
+              </div>
+            </div>
+            <div class="thesis-system-field">
+              <div class="thesis-system-motion">
+                {Array.from({ length: 9 }, (_, index) => (
+                  <span style={`--art-line: ${index}; --art-phase: ${index % 3}`}></span>
+                ))}
+              </div>
+            </div>
+            <span class="thesis-intersection"></span>
+          </div>
+
           <div class="thesis-cover-top" aria-hidden="true">
-            <span class="thesis-cover-mark"><i class="ph ph-brain"></i></span>
-            <span class="thesis-cover-link"><i class="ph ph-plus"></i></span>
-            <span class="thesis-cover-mark"><i class="ph ph-paint-brush"></i></span>
+            <span>Bachelorarbeit</span>
+            <span>2024</span>
           </div>
 
           <div class="thesis-cover-copy">
