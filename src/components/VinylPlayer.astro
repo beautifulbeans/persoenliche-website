@@ -14,6 +14,7 @@ const albums = [
     title: "The Dark Side of the Moon",
     artist: "Pink Floyd",
     year: "1973",
+    spotifyUrl: "https://open.spotify.com/album/4LH4d3cOWNNsVw41Gqt2kv",
     monogram: "DS",
     tracks: [
       { position: "04", title: "Time" },
@@ -27,6 +28,7 @@ const albums = [
     title: "Dire Straits",
     artist: "Dire Straits",
     year: "1978",
+    spotifyUrl: "https://open.spotify.com/album/2rCS6Xwx32V27pvgFzLzlT",
     monogram: "DR",
     tracks: [
       { position: "06", title: "Sultans of Swing" },
@@ -40,6 +42,7 @@ const albums = [
     title: "In Rainbows",
     artist: "Radiohead",
     year: "2007",
+    spotifyUrl: "https://open.spotify.com/album/5vkqYmiPBYLaalcmjujWxK",
     monogram: "IR",
     tracks: [
       { position: "04", title: "Weird Fishes/Arpeggi" },
@@ -53,6 +56,7 @@ const albums = [
     title: "Blonde",
     artist: "Frank Ocean",
     year: "2016",
+    spotifyUrl: "https://open.spotify.com/album/3mH6qwIy9crq0I9YQbOuDf",
     monogram: "BL",
     tracks: [
       { position: "09", title: "Nights" },
@@ -66,6 +70,7 @@ const albums = [
     title: "IGOR",
     artist: "Tyler, the Creator",
     year: "2019",
+    spotifyUrl: "https://open.spotify.com/album/5zi7WsKlIiUXv09tbGLKsE",
     monogram: "IG",
     tracks: [
       { position: "01", title: "IGOR'S THEME" },
@@ -79,6 +84,7 @@ const albums = [
     title: "Swimming",
     artist: "Mac Miller",
     year: "2018",
+    spotifyUrl: "https://open.spotify.com/album/5wtE5aLX5r7jOosmPhJhhkX",
     monogram: "SW",
     tracks: [
       { position: "03", title: "What's the Use?" },
@@ -92,6 +98,7 @@ const albums = [
     title: "Love Deluxe",
     artist: "Sade",
     year: "1992",
+    spotifyUrl: "https://open.spotify.com/album/6Y8lHGQqTmbE6Hhj1mMCkX",
     monogram: "LD",
     tracks: [
       { position: "01", title: "No Ordinary Love" },
@@ -105,6 +112,7 @@ const albums = [
     title: "Let’s Start Here.",
     artist: "Lil Yachty",
     year: "2023",
+    spotifyUrl: "https://open.spotify.com/album/5iuR3BoEAOWAwblQXDtcdq",
     monogram: "LS",
     tracks: [
       { position: "01", title: "the BLACK seminole." },
@@ -155,6 +163,17 @@ const albums = [
               ))}
             </ol>
           </div>
+          <a
+            class="album-spotify-link"
+            href={album.spotifyUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`${album.title} von ${album.artist} auf Spotify hören`}
+          >
+            <i class="ph ph-spotify-logo" aria-hidden="true"></i>
+            <span>Auf Spotify hören</span>
+            <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+          </a>
         </section>
       ))}
     </div>
@@ -176,14 +195,17 @@ const albums = [
     <div class="album-library" role="group" aria-label="Album auswählen" data-album-library>
       {albums.map((album, index) => (
         <button class:list={["album-choice", index === 0 && "is-selected"]} type="button" data-album={album.key} data-album-monogram={album.monogram} aria-pressed={index === 0}>
-          <span class="album-choice-cover">
-            {album.cover ? (
-              <Image src={album.cover} alt={`Cover von ${album.title} von ${album.artist}`} widths={[180, 320]} sizes="(max-width: 40rem) 7.5rem, 8.5rem" loading="lazy" />
-            ) : (
-              <span class="album-choice-fallback" aria-label={`${album.title} - Cover kann lokal ergänzt werden`}>
-                <strong>{album.monogram}</strong>
-              </span>
-            )}
+          <span class="album-choice-media">
+            <span class="album-choice-record" aria-hidden="true"><i></i></span>
+            <span class="album-choice-cover">
+              {album.cover ? (
+                <Image src={album.cover} alt={`Cover von ${album.title} von ${album.artist}`} widths={[180, 320]} sizes="(max-width: 40rem) 7.5rem, 8.5rem" loading="lazy" />
+              ) : (
+                <span class="album-choice-fallback" aria-label={`${album.title} - Cover kann lokal ergänzt werden`}>
+                  <strong>{album.monogram}</strong>
+                </span>
+              )}
+            </span>
           </span>
           <span class="album-choice-copy">
             <strong>{album.title}</strong>
