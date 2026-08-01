@@ -153,7 +153,20 @@ const albums = [
     <div class="album-copy-stack" aria-live="polite">
       {albums.map((album, index) => (
         <section class:list={["album-copy-panel", index === 0 && "is-active"]} data-album-detail={album.key} hidden={index !== 0}>
-          <p class="album-artist">{album.artist}, {album.year}</p>
+          <div class="album-copy-meta">
+            <p class="album-artist">{album.artist}, {album.year}</p>
+            <a
+              class="album-spotify-link"
+              href={album.spotifyUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`${album.title} von ${album.artist} auf Spotify hören`}
+            >
+              <i class="ph ph-spotify-logo" aria-hidden="true"></i>
+              <span>Auf Spotify hören</span>
+              <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+            </a>
+          </div>
           <h3>{album.title}</h3>
           <div class="favorite-tracks">
             <span>Meine Favoriten</span>
@@ -163,17 +176,6 @@ const albums = [
               ))}
             </ol>
           </div>
-          <a
-            class="album-spotify-link"
-            href={album.spotifyUrl}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`${album.title} von ${album.artist} auf Spotify hören`}
-          >
-            <i class="ph ph-spotify-logo" aria-hidden="true"></i>
-            <span>Auf Spotify hören</span>
-            <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
-          </a>
         </section>
       ))}
     </div>

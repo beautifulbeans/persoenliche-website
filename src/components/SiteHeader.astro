@@ -29,62 +29,61 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
       <span class="wordmark-name">Fabian Deragisch</span>
     </a>
 
-    <button
-      class="header-note header-note-static"
-      type="button"
-      data-status-trigger
-      aria-controls="header-status-panel"
-      aria-expanded="false"
-      aria-haspopup="dialog"
-      aria-label="Status: Wahrscheinlich am Tee zubereiten"
-    >
-      <span class="header-note-mark" aria-hidden="true">
-        <span class="header-teapot">
-          <i class="header-teapot-lid"></i>
-          <i class="header-teapot-body"></i>
-          <i class="header-teapot-spout"></i>
-          <i class="header-teapot-handle"></i>
+    <div class="header-status-control">
+      <div
+        class="header-note header-note-static header-note-desktop"
+        aria-label="Status: Wahrscheinlich am Tee zubereiten"
+      >
+        <span class="header-note-mark" aria-hidden="true">
+          <span class="header-teapot">
+            <i class="header-teapot-lid"></i>
+            <i class="header-teapot-body"></i>
+            <i class="header-teapot-spout"></i>
+            <i class="header-teapot-handle"></i>
+          </span>
+          <span class="header-tea-steam"><i></i><i></i></span>
         </span>
-        <span class="header-tea-steam"><i></i><i></i></span>
-      </span>
-      <span class="header-note-copy">
-        <strong>Wahrscheinlich am Tee zubereiten</strong>
-      </span>
-    </button>
+        <span class="header-note-copy">
+          <strong>Wahrscheinlich am Tee zubereiten</strong>
+        </span>
+      </div>
 
-    <aside
-      class="header-status-panel"
-      id="header-status-panel"
-      data-status-panel
-      role="dialog"
-      aria-label="Aktueller Status von Fabian Deragisch"
-      aria-hidden="true"
-      inert
-    >
-      <div class="status-panel-portrait" aria-hidden="true">
-        <Image
-          src={portrait}
-          alt=""
-          width={320}
-          quality={86}
-          loading="eager"
-        />
-      </div>
-      <div class="status-panel-copy">
-        <span class="status-panel-label">Gerade wahrscheinlich</span>
-        <strong>am Tee zubereiten.</strong>
-        <span class="status-panel-signature">Fabian Deragisch · Wien</span>
-      </div>
-      <span class="status-panel-teapot" aria-hidden="true">
-        <span class="header-teapot">
-          <i class="header-teapot-lid"></i>
-          <i class="header-teapot-body"></i>
-          <i class="header-teapot-spout"></i>
-          <i class="header-teapot-handle"></i>
+      <button
+        class="header-note-mobile"
+        type="button"
+        data-status-trigger
+        aria-expanded="false"
+        aria-label="Status: Gerade wahrscheinlich am Tee zubereiten"
+      >
+        <span class="status-mobile-compact" aria-hidden="true">
+          <span class="header-note-mark">
+            <span class="header-teapot">
+              <i class="header-teapot-lid"></i>
+              <i class="header-teapot-body"></i>
+              <i class="header-teapot-spout"></i>
+              <i class="header-teapot-handle"></i>
+            </span>
+            <span class="header-tea-steam"><i></i><i></i></span>
+          </span>
         </span>
-        <span class="header-tea-steam"><i></i><i></i></span>
-      </span>
-    </aside>
+        <span class="status-mobile-expanded" aria-hidden="true">
+          <span class="status-panel-portrait">
+            <Image
+              src={portrait}
+              alt=""
+              width={320}
+              quality={86}
+              loading="eager"
+            />
+          </span>
+          <span class="status-panel-copy">
+            <span class="status-panel-label">Gerade wahrscheinlich</span>
+            <strong>am Tee zubereiten.</strong>
+            <span class="status-panel-signature">Fabian Deragisch · Wien</span>
+          </span>
+        </span>
+      </button>
+    </div>
   </div>
 
   <nav aria-label="Hauptnavigation">
@@ -117,13 +116,12 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
 
 <a class="mobile-contact-shortcut" href="#kontakt" data-mobile-contact aria-label="Direkt zu den Kontaktmöglichkeiten">
   <i class="ph ph-envelope-simple" aria-hidden="true"></i>
-  <span>Hallo sagen</span>
+  <span>Kontakt</span>
 </a>
 
 <script>
   const siteHeader = document.querySelector<HTMLElement>("[data-site-header]");
   const statusTrigger = siteHeader?.querySelector<HTMLButtonElement>("[data-status-trigger]");
-  const statusPanel = siteHeader?.querySelector<HTMLElement>("[data-status-panel]");
   const mobileContact = document.querySelector<HTMLAnchorElement>("[data-mobile-contact]");
   const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-site-header] nav a[href^='#']"));
   const observedSections = sectionLinks
@@ -160,11 +158,11 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
   sectionLinks.forEach((link) => link.addEventListener("click", () => setCurrentSection(link)));
 
   const setStatusOpen = (open: boolean) => {
-    if (!statusTrigger || !statusPanel) return;
+    if (!statusTrigger) return;
     statusTrigger.setAttribute("aria-expanded", String(open));
-    statusPanel.setAttribute("aria-hidden", String(!open));
-    statusPanel.toggleAttribute("inert", !open);
-    statusPanel.classList.toggle("is-open", open);
+    statusTrigger.classList.toggle("is-open", open);
+    statusTrigger.closest(".header-identity")?.classList.toggle("is-status-open", open);
+    siteHeader?.classList.toggle("is-status-open", open);
   };
 
   statusTrigger?.addEventListener("click", (event) => {
@@ -172,9 +170,7 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     setStatusOpen(statusTrigger.getAttribute("aria-expanded") !== "true");
   });
 
-  statusPanel?.addEventListener("click", (event) => event.stopPropagation());
   document.addEventListener("click", () => setStatusOpen(false));
-  window.addEventListener("scroll", () => setStatusOpen(false), { passive: true });
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape" || statusTrigger?.getAttribute("aria-expanded") !== "true") return;
     setStatusOpen(false);
@@ -182,6 +178,19 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
   });
 
   const contactSection = document.getElementById("kontakt");
+  let contactScrollFrame = 0;
+  const syncMobileContact = () => {
+    contactScrollFrame = 0;
+    mobileContact?.classList.toggle("is-compact", window.scrollY > 96);
+    setStatusOpen(false);
+  };
+
+  window.addEventListener("scroll", () => {
+    if (contactScrollFrame) return;
+    contactScrollFrame = window.requestAnimationFrame(syncMobileContact);
+  }, { passive: true });
+  syncMobileContact();
+
   if (mobileContact && contactSection && "IntersectionObserver" in window) {
     const contactObserver = new IntersectionObserver(
       ([entry]) => mobileContact.classList.toggle("is-hidden", Boolean(entry?.isIntersecting)),

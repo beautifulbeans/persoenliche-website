@@ -3398,63 +3398,29 @@ body.gallery-dialog-open {
 /* Header-Status: mobil kompakt, nach dem Antippen als ruhige Profilkarte lesbar. */
 .header-identity {
   position: relative;
+  z-index: 2;
+}
+
+.header-status-control {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
 }
 
 .header-note-static {
-  appearance: none;
-  cursor: pointer;
-  font: inherit;
-  transform: translateZ(0);
-  transition:
-    color 180ms ease,
-    transform 180ms cubic-bezier(0.32, 0.72, 0, 1);
+  cursor: default;
 }
 
-.header-note-static:active {
-  transform: scale(0.97);
-}
-
-.header-note-static[aria-expanded="true"] {
-  color: var(--accent-strong);
-}
-
-.header-status-panel {
-  position: absolute;
-  top: calc(100% + 0.7rem);
-  left: 3.45rem;
-  z-index: 60;
-  display: grid;
-  width: min(22rem, calc(100vw - (2 * var(--gutter))));
-  min-height: 7.2rem;
-  padding: 0.72rem;
-  grid-template-columns: 5.3rem minmax(0, 1fr) 2rem;
-  gap: 0.85rem;
-  align-items: center;
-  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line));
-  border-radius: 1.35rem;
-  background: color-mix(in srgb, var(--surface) 96%, var(--accent-soft));
-  box-shadow: 0 1.25rem 3.5rem rgb(42 49 35 / 0.18);
-  opacity: 0;
-  pointer-events: none;
-  transform: translate3d(0, -0.45rem, 0) scale(0.94);
-  transform-origin: 28% 0;
-  transition:
-    opacity 180ms ease,
-    transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-.header-status-panel.is-open {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translate3d(0, 0, 0) scale(1);
+.header-note-mobile {
+  display: none;
 }
 
 .status-panel-portrait {
   position: relative;
   overflow: hidden;
-  width: 5.3rem;
+  width: 4.6rem;
   aspect-ratio: 1;
-  border-radius: 0.95rem;
+  border-radius: 0.86rem;
   background: var(--accent-soft);
 }
 
@@ -3481,23 +3447,12 @@ body.gallery-dialog-open {
 
 .status-panel-copy strong {
   color: var(--ink);
-  font: 630 1.05rem/1.12 var(--font-sans);
+  font: 630 1rem/1.12 var(--font-sans);
   letter-spacing: -0.025em;
 }
 
 .status-panel-signature {
   margin-top: 0.42rem;
-}
-
-.status-panel-teapot {
-  position: relative;
-  display: grid;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--accent-soft);
-  color: var(--accent-strong);
 }
 
 .mobile-contact-shortcut {
@@ -3509,7 +3464,7 @@ body.gallery-dialog-open {
   position: relative;
   display: grid;
   min-width: 0;
-  padding-top: 1rem;
+  padding-top: 1.75rem;
 }
 
 .album-choice-media > .album-choice-cover {
@@ -3519,7 +3474,7 @@ body.gallery-dialog-open {
 
 .album-choice-record {
   position: absolute;
-  top: 1rem;
+  top: 1.75rem;
   left: 5%;
   z-index: 1;
   display: block;
@@ -3566,17 +3521,25 @@ body.gallery-dialog-open {
 .album-choice.is-selected .album-choice-record,
 .album-choice[aria-pressed="true"] .album-choice-record {
   opacity: 1;
-  transform: translate3d(0.28rem, -1rem, 0) rotate(8deg) scale(0.98);
+  transform: translate3d(0.55rem, -1.9rem, 0) rotate(9deg) scale(0.98);
+}
+
+.album-copy-meta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
 }
 
 .album-spotify-link {
   display: inline-flex;
   width: fit-content;
-  min-height: 2.65rem;
+  min-height: 2.35rem;
   align-items: center;
   gap: 0.45rem;
-  margin-top: 0.9rem;
-  padding: 0.55rem 0.72rem;
+  margin: 0;
+  padding: 0.45rem 0.62rem;
   border: 1px solid color-mix(in srgb, var(--album-color) 38%, var(--line));
   border-radius: 0.7rem;
   color: var(--warm-strong);
@@ -3603,10 +3566,6 @@ body.gallery-dialog-open {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .header-note-static:hover {
-    color: var(--accent-strong);
-  }
-
   .album-spotify-link:hover {
     background: color-mix(in srgb, var(--album-color) 10%, var(--surface));
     color: var(--ink);
@@ -3615,48 +3574,143 @@ body.gallery-dialog-open {
 }
 
 @media (max-width: 48rem) {
-  .header-note-static {
-    display: grid;
+  .header-status-control {
     width: 2.75rem;
-    min-width: 2.75rem;
-    max-width: 2.75rem;
     height: 2.75rem;
-    min-height: 2.75rem;
-    padding: 0;
-    place-items: center;
-    border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line));
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--surface) 84%, var(--accent-soft));
   }
 
-  .header-note-static .header-note-mark {
-    display: grid;
-    width: 1.7rem;
-    height: 1.7rem;
-    place-items: center;
+  .header-identity {
+    transition:
+      background-color 140ms ease,
+      border-color 140ms ease,
+      box-shadow 140ms ease;
   }
 
-  .header-note-static .header-note-copy {
+  .header-identity.is-status-open {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .site-header nav {
+    transition:
+      opacity 120ms ease,
+      transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .site-header.is-status-open nav {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0.25rem, 0, 0) scale(0.98);
+  }
+
+  .header-note-desktop {
     display: none;
   }
 
-  .header-status-panel {
+  .header-note-mobile {
     position: absolute;
-    top: calc(100% + 0.72rem);
+    top: 0;
     right: auto;
     left: 0;
-    width: min(20rem, calc(100vw - (2 * var(--gutter))));
-    grid-template-columns: 4.8rem minmax(0, 1fr) 1.8rem;
-    gap: 0.72rem;
-    transform-origin: 12% 0;
+    z-index: 60;
+    display: block;
+    overflow: hidden;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line));
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--surface) 88%, var(--accent-soft));
+    box-shadow: 0 0.2rem 0.65rem rgb(42 49 35 / 0.06);
+    color: var(--accent-strong);
+    cursor: pointer;
+    transform: translateZ(0);
+    transform-origin: top left;
+    transition:
+      width 280ms cubic-bezier(0.32, 0.72, 0, 1),
+      height 280ms cubic-bezier(0.32, 0.72, 0, 1),
+      border-radius 220ms cubic-bezier(0.32, 0.72, 0, 1),
+      background-color 180ms ease,
+      box-shadow 220ms ease,
+      transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  .status-panel-portrait {
-    width: 4.8rem;
+  .header-note-mobile:active {
+    transform: scale(0.97);
+  }
+
+  .header-note-mobile:focus-visible {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: -4px;
+  }
+
+  .header-note-mobile.is-open {
+    width: min(20rem, calc(100vw - 4.75rem));
+    height: 7rem;
+    border-radius: 1.25rem;
+    background: color-mix(in srgb, var(--surface) 96%, var(--accent-soft));
+    box-shadow: 0 1rem 2.8rem rgb(42 49 35 / 0.17);
+    transform: translateZ(0);
+  }
+
+  .header-note-mobile.is-open:active {
+    transform: scale(0.99);
+  }
+
+  .status-mobile-compact {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    transition:
+      opacity 100ms ease,
+      transform 180ms cubic-bezier(0.32, 0.72, 0, 1),
+      filter 150ms ease;
+  }
+
+  .status-mobile-compact .header-note-mark {
+    display: grid;
+    width: 1.72rem;
+    height: 1.72rem;
+    place-items: center;
+  }
+
+  .header-note-mobile.is-open .status-mobile-compact {
+    opacity: 0;
+    filter: blur(1.5px);
+    transform: translate3d(0.28rem, 0.16rem, 0) scale(0.82);
+  }
+
+  .status-mobile-expanded {
+    position: absolute;
+    inset: 0.65rem;
+    display: grid;
+    grid-template-columns: 4.6rem minmax(0, 1fr);
+    gap: 0.72rem;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    filter: blur(1.5px);
+    transform: translate3d(0, -0.2rem, 0) scale(0.985);
+    transform-origin: top left;
+    transition:
+      opacity 110ms ease,
+      filter 140ms ease,
+      transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .header-note-mobile.is-open .status-mobile-expanded {
+    opacity: 1;
+    filter: none;
+    transform: translate3d(0, 0, 0) scale(1);
+    transition-delay: 55ms;
   }
 
   .status-panel-copy strong {
-    font-size: 0.96rem;
+    font-size: clamp(0.9rem, 4vw, 1rem);
   }
 
   .mobile-contact-shortcut {
@@ -3665,27 +3719,55 @@ body.gallery-dialog-open {
     bottom: max(0.85rem, env(safe-area-inset-bottom));
     z-index: 45;
     display: inline-flex;
+    overflow: hidden;
+    width: 6.35rem;
     min-height: 2.8rem;
     align-items: center;
+    justify-content: center;
     gap: 0.48rem;
     padding: 0.55rem 0.78rem;
-    border: 1px solid color-mix(in srgb, var(--personal-accent) 34%, var(--personal-line));
+    border: 1px solid color-mix(in srgb, var(--surface) 22%, transparent);
     border-radius: 0.8rem;
-    background: color-mix(in srgb, var(--personal-surface) 94%, transparent);
-    box-shadow: 0 0.75rem 2rem rgb(34 50 47 / 0.16);
-    color: var(--personal-ink);
+    background: color-mix(in srgb, var(--ink) 92%, var(--accent-strong));
+    box-shadow: none;
+    color: var(--surface);
     font: 640 0.68rem/1 var(--font-sans);
     text-decoration: none;
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    backdrop-filter: blur(0.65rem);
     transition:
+      width 240ms cubic-bezier(0.32, 0.72, 0, 1),
       opacity 180ms ease,
       transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   .mobile-contact-shortcut > i {
+    flex: 0 0 auto;
     font-size: 1rem;
+  }
+
+  .mobile-contact-shortcut > span {
+    overflow: hidden;
+    max-width: 4rem;
+    opacity: 1;
+    white-space: nowrap;
+    transform: translate3d(0, 0, 0);
+    transition:
+      max-width 220ms cubic-bezier(0.32, 0.72, 0, 1),
+      opacity 120ms ease,
+      transform 180ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .mobile-contact-shortcut.is-compact {
+    width: 2.8rem;
+    gap: 0;
+    padding-inline: 0;
+  }
+
+  .mobile-contact-shortcut.is-compact > span {
+    max-width: 0;
+    opacity: 0;
+    transform: translate3d(0.22rem, 0, 0);
   }
 
   .mobile-contact-shortcut:active {
@@ -3699,11 +3781,17 @@ body.gallery-dialog-open {
   }
 
   .album-choice-media {
-    padding-top: 0.9rem;
+    padding-top: 1.55rem;
   }
 
   .album-choice-record {
-    top: 0.9rem;
+    top: 1.55rem;
+  }
+
+  .album-copy-meta {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.55rem;
   }
 }
 
@@ -3721,32 +3809,17 @@ body.gallery-dialog-open {
     transform: none;
   }
 
-  .header-status-panel,
+  .header-note-mobile,
+  .status-mobile-compact,
+  .status-mobile-expanded,
   .mobile-contact-shortcut,
   .album-choice-record,
   .album-spotify-link {
     transition: none;
   }
 
-  .header-status-panel {
-    transform: none;
-  }
-
   .album-choice.is-selected .album-choice-record,
   .album-choice[aria-pressed="true"] .album-choice-record {
-    transform: translate3d(0.28rem, -1rem, 0);
-  }
-}
-
-@media (max-width: 22rem) {
-  .mobile-contact-shortcut {
-    width: 2.8rem;
-    min-width: 2.8rem;
-    padding-inline: 0;
-    justify-content: center;
-  }
-
-  .mobile-contact-shortcut > span {
-    display: none;
+    transform: translate3d(0.55rem, -1.9rem, 0);
   }
 }
