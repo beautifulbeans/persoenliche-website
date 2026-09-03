@@ -2,29 +2,30 @@
   <div class="tea-copy">
     <p class="tea-label"><i class="ph ph-leaf" aria-hidden="true"></i> Mein tägliches Ritual</p>
     <h3>Grüner Tee.</h3>
-    <p class="tea-intro">Lose Blätter, eine ganze Kanne und je nach Sorte ein völlig anderer Charakter.</p>
+    <p class="tea-intro">Meist chinesischer Sencha, gern auch andere Grüntees: lose Blätter, eine ganze Kanne und mehrere Aufgüsse.</p>
 
     <div class="tea-profile-heading">
-      <p class="tea-fact-value" data-tea-value>Sencha</p>
+      <p class="tea-fact-value" data-tea-value>Chinesischer Sencha</p>
       <span data-tea-badge>Mein Favorit</span>
     </div>
     <p class="tea-taste" data-tea-taste>Frisch, grasig, klar</p>
     <p class="tea-fact-copy" aria-live="polite" data-tea-copy>
-      Mein Tee für fast jeden Tag. Er kann von leicht herb bis deutlich umami reichen und funktioniert gut über mehrere Aufgüsse.
+      Mein Tee für fast jeden Tag – und der, zu dem ich am häufigsten greife.
     </p>
 
     <div class="tea-fact-switch" role="group" aria-label="Grüntee-Sorte auswählen">
       <button class="is-selected" type="button" data-tea-kind="sencha" aria-pressed="true">Sencha</button>
       <button type="button" data-tea-kind="jasmine" aria-pressed="false">Jasmin</button>
-      <button type="button" data-tea-kind="matcha" aria-pressed="false">Matcha</button>
       <button type="button" data-tea-kind="genmaicha" aria-pressed="false">Genmaicha</button>
-      <button type="button" data-tea-kind="gyokuro" aria-pressed="false">Gyokuro</button>
     </div>
-    <p class="tea-source">Zubereitung: für viele Grüntees rund 80 °C</p>
+    <details class="tea-tip" data-tea-tip>
+      <summary><i class="ph ph-lightbulb" aria-hidden="true"></i><span>Tipp zum Aufguss</span><i class="ph ph-caret-down" aria-hidden="true"></i></summary>
+      <p data-tea-tip-copy>Mit etwa 75 bis 80 °C aufgießen und ruhig ein zweites oder drittes Mal Wasser nachgießen.</p>
+    </details>
   </div>
 
   <div class="tea-visual">
-    <button class="teapot" type="button" data-teapot aria-label="Nächste Teesorte probieren">
+    <button class="teapot" type="button" data-teapot aria-label="Nächste Teesorte ansehen">
       <span class="teapot-shadow" aria-hidden="true"></span>
       <span class="teapot-vessel" aria-hidden="true">
         <span class="teapot-handle"></span>
@@ -50,34 +51,25 @@
 
   const teaProfiles = {
     sencha: {
-      value: "Sencha",
+      value: "Chinesischer Sencha",
       badge: "Mein Favorit",
       taste: "Frisch, grasig, klar",
-      copy: "Mein Tee für fast jeden Tag. Er kann von leicht herb bis deutlich umami reichen und funktioniert gut über mehrere Aufgüsse.",
+      copy: "Mein Tee für fast jeden Tag – und der, zu dem ich am häufigsten greife.",
+      tip: "Mit etwa 75 bis 80 °C aufgießen und ruhig ein zweites oder drittes Mal Wasser nachgießen.",
     },
     jasmine: {
       value: "Jasmin-Grüntee",
       badge: "Floral",
       taste: "Duftig, leicht, weich",
-      copy: "Grüntee wird mit Jasminblüten aromatisiert. Das macht ihn zugänglich, ohne dass der eigentliche Tee ganz in den Hintergrund rückt.",
-    },
-    matcha: {
-      value: "Matcha",
-      badge: "Intensiv",
-      taste: "Cremig, vegetal, kräftig",
-      copy: "Hier wird das fein gemahlene Blatt mitgetrunken und nicht wieder entfernt. Konsistenz und Geschmack sind deshalb deutlich intensiver.",
+      copy: "Meine leichtere, floralere Alternative zu Sencha.",
+      tip: "Nicht zu heiß aufgießen, damit der Jasmin fein bleibt und der Tee nicht unnötig bitter wird.",
     },
     genmaicha: {
       value: "Genmaicha",
       badge: "Geröstet",
       taste: "Nussig, warm, mild",
-      copy: "Grüntee trifft auf gerösteten Reis. Dadurch entsteht ein weicher, fast brotiger Charakter, der sich klar von Sencha absetzt.",
-    },
-    gyokuro: {
-      value: "Gyokuro",
-      badge: "Umami",
-      taste: "Dicht, süßlich, konzentriert",
-      copy: "Die Blätter werden vor der Ernte beschattet. Gyokuro wird meist kühler und ruhiger aufgegossen, damit sein ausgeprägtes Umami zur Geltung kommt.",
+      copy: "Grüntee mit geröstetem Reis – mild und deutlich wärmer im Geschmack.",
+      tip: "Rund 80 °C reichen meist aus. Genmaicha passt außerdem überraschend gut zu herzhaftem Essen.",
     },
   } as const;
 
@@ -88,6 +80,8 @@
     const badge = ritual.querySelector<HTMLElement>("[data-tea-badge]");
     const taste = ritual.querySelector<HTMLElement>("[data-tea-taste]");
     const copy = ritual.querySelector<HTMLElement>("[data-tea-copy]");
+    const tip = ritual.querySelector<HTMLDetailsElement>("[data-tea-tip]");
+    const tipCopy = ritual.querySelector<HTMLElement>("[data-tea-tip-copy]");
     const buttons = Array.from(ritual.querySelectorAll<HTMLButtonElement>("[data-tea-kind]"));
     const keys = Object.keys(teaProfiles) as Array<keyof typeof teaProfiles>;
     let activeIndex = 0;
@@ -104,7 +98,9 @@
         if (badge) badge.textContent = profile.badge;
         if (taste) taste.textContent = profile.taste;
         if (copy) copy.textContent = profile.copy;
+        if (tipCopy) tipCopy.textContent = profile.tip;
       });
+      tip?.removeAttribute("open");
       pot?.classList.remove("is-brewing");
       const currentRun = ++brewingRun;
       requestAnimationFrame(() => {

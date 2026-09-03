@@ -32,13 +32,18 @@ const importedPhotos = Object.entries(photoModules)
     };
   });
 
-const homepagePhotoOrder = ["1_mercados_madeira.png", "Sun Downer.jpg", "Zufall.jpg"];
+const homepagePhotoOrder = [
+  "1_DSCF3245.jpeg",
+  "1_mercados_madeira.png",
+  "Sun Downer.jpg",
+  "Zufall.jpg",
+];
 const homepagePhotos = homepagePhotoOrder
   .map((fileName) => importedPhotos.find((photo) => photo.fileName === fileName))
   .filter((photo): photo is NonNullable<typeof photo> => Boolean(photo));
 
 const shots = homepagePhotos.length
-  ? homepagePhotos.slice(0, 3)
+  ? homepagePhotos.slice(0, 4)
   : photographyPlaceholders.map((placeholder, index) => ({
       src: null,
       alt: "",

@@ -128,7 +128,7 @@ const heroNameLines = ["Fabian", "Deragisch"];
             <span class="play-icon"><i class="ph ph-barbell" aria-hidden="true"></i></span>
             <h3>Training</h3>
           </div>
-          <p class="training-personal">Nicht jeder Tag startet motiviert. Regelmäßigkeit heißt für mich oft einfach: hingehen und anfangen.</p>
+          <p class="training-personal">Motivation ist nicht jeden Tag da. Hingehen und anfangen funktioniert meistens trotzdem.</p>
           <button class="training-set" type="button" data-training-move data-training-stage="0" aria-label="Nächsten Trainingssatz starten">
             <span class="training-lift-zone" aria-hidden="true">
               <span class="training-rack">
@@ -151,15 +151,20 @@ const heroNameLines = ["Fabian", "Deragisch"];
             <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </button>
           <p class="sr-only" aria-live="polite" data-training-move-status>Noch kein Satz gestartet.</p>
-          <p class="fact-kicker" data-training-kicker>Knochen</p>
-          <p class="training-fact" aria-live="polite" data-training-copy>
-            Krafttraining belastet nicht nur Muskeln. Der gezielte Widerstand setzt auch an den Knochen einen Reiz und kann sie stärken.
-          </p>
-          <div class="fact-switch" role="group" aria-label="Trainingsfakt auswählen">
-            <button class="is-selected" type="button" data-training-fact="bone" aria-pressed="true">Knochen</button>
-            <button type="button" data-training-fact="neural" aria-pressed="false">Nerven</button>
-            <button type="button" data-training-fact="rhythm" aria-pressed="false">Rhythmus</button>
-          </div>
+          <details class="training-insight">
+            <summary><i class="ph ph-info" aria-hidden="true"></i><span>Warum Krafttraining?</span><i class="ph ph-caret-down" aria-hidden="true"></i></summary>
+            <div class="training-insight-body">
+              <p class="fact-kicker" data-training-kicker>Knochen</p>
+              <p class="training-fact" aria-live="polite" data-training-copy>
+                Widerstand setzt nicht nur an den Muskeln, sondern auch an den Knochen einen Trainingsreiz.
+              </p>
+              <div class="fact-switch" role="group" aria-label="Trainingsfakt auswählen">
+                <button class="is-selected" type="button" data-training-fact="bone" aria-pressed="true">Knochen</button>
+                <button type="button" data-training-fact="neural" aria-pressed="false">Nerven</button>
+                <button type="button" data-training-fact="rhythm" aria-pressed="false">Rhythmus</button>
+              </div>
+            </div>
+          </details>
         </article>
 
         <VinylPlayer />
@@ -314,17 +319,17 @@ const heroNameLines = ["Fabian", "Deragisch"];
   const trainingFacts = {
     bone: {
       kicker: "Knochen",
-      copy: "Krafttraining belastet nicht nur Muskeln. Der gezielte Widerstand setzt auch an den Knochen einen Reiz und kann sie stärken.",
+      copy: "Widerstand setzt nicht nur an den Muskeln, sondern auch an den Knochen einen Trainingsreiz.",
       icon: "ph-bone",
     },
     neural: {
       kicker: "Nervensystem",
-      copy: "Kraft entsteht nicht nur durch mehr Muskelmasse. Auch neuronale Anpassungen können dazu beitragen, motorische Einheiten besser zu aktivieren.",
+      copy: "Kraft ist auch Koordination: Das Nervensystem lernt, Muskeln gezielter anzusteuern.",
       icon: "ph-brain",
     },
     rhythm: {
       kicker: "Rhythmus",
-      copy: "Für zusätzliche gesundheitliche Vorteile empfehlen offizielle Leitlinien muskelstärkende Aktivität an mindestens zwei Tagen pro Woche.",
+      copy: "Zwei Krafttrainingseinheiten pro Woche gelten als sinnvolle gesundheitliche Orientierung.",
       icon: "ph-calendar-check",
     },
   } as const;

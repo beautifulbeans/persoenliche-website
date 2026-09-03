@@ -9,6 +9,11 @@ export type PhotographyCopy = {
  * Ohne Eintrag erzeugt die Galerie einen lesbaren Titel aus dem Dateinamen.
  */
 export const photographyCopy: Record<string, PhotographyCopy> = {
+  "1_DSCF3245.jpeg": {
+    alt: "Schwarz-Weiß-Aufnahme eines DJ-Sets bei Radio Rudina mit Publikum und Discokugel",
+    title: "Radio Rudina Set",
+    note: "30. August 2026",
+  },
   "1_mercados_madeira.png": {
     alt: "Blick von oben in den Innenhof des Mercado dos Lavradores in Funchal, eingerahmt von roten Bougainvilleen",
     title: "Mercados Madeira",

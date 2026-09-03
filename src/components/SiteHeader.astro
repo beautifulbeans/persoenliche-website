@@ -30,33 +30,16 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     </a>
 
     <div class="header-status-control">
-      <div
-        class="header-note header-note-static header-note-desktop"
-        aria-label="Status: Wahrscheinlich am Tee zubereiten"
-      >
-        <span class="header-note-mark" aria-hidden="true">
-          <span class="header-teapot">
-            <i class="header-teapot-lid"></i>
-            <i class="header-teapot-body"></i>
-            <i class="header-teapot-spout"></i>
-            <i class="header-teapot-handle"></i>
-          </span>
-          <span class="header-tea-steam"><i></i><i></i></span>
-        </span>
-        <span class="header-note-copy">
-          <strong>Wahrscheinlich am Tee zubereiten</strong>
-        </span>
-      </div>
-
       <button
-        class="header-note-mobile"
+        class="header-note header-note-static header-note-desktop"
         type="button"
-        data-status-trigger
+        data-status-trigger-desktop
+        aria-controls="header-status-panel-desktop"
         aria-expanded="false"
-        aria-label="Status: Gerade wahrscheinlich am Tee zubereiten"
+        aria-label="Status: Gerade wahrscheinlich beim Sencha-Aufgießen"
       >
-        <span class="status-mobile-compact" aria-hidden="true">
-          <span class="header-note-mark">
+        <span class="header-note-mark status-activity-visual" data-status-visual data-status-kind="tea" aria-hidden="true">
+          <span class="status-activity-tea">
             <span class="header-teapot">
               <i class="header-teapot-lid"></i>
               <i class="header-teapot-body"></i>
@@ -65,21 +48,83 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
             </span>
             <span class="header-tea-steam"><i></i><i></i></span>
           </span>
+          <i class="ph ph-leaf status-activity-icon" data-status-icon></i>
+        </span>
+        <span class="header-note-copy">
+          <strong data-status-short>Beim Sencha-Aufgießen</strong>
+        </span>
+      </button>
+
+      <aside
+        class="header-status-panel header-status-panel-desktop"
+        id="header-status-panel-desktop"
+        data-status-panel-desktop
+        aria-hidden="true"
+        inert
+      >
+        <span class="status-panel-portrait">
+          <Image
+            src={portrait}
+            alt=""
+            width={320}
+            quality={86}
+            loading="eager"
+          />
+        </span>
+        <span class="status-panel-copy">
+          <span class="status-panel-label-row">
+            <span class="status-panel-label">Gerade wahrscheinlich</span>
+            <span class="status-activity-visual status-panel-activity" data-status-visual data-status-kind="tea" aria-hidden="true">
+              <span class="status-activity-tea">
+                <span class="header-teapot">
+                  <i class="header-teapot-lid"></i>
+                  <i class="header-teapot-body"></i>
+                  <i class="header-teapot-spout"></i>
+                  <i class="header-teapot-handle"></i>
+                </span>
+                <span class="header-tea-steam"><i></i><i></i></span>
+              </span>
+              <i class="ph ph-leaf status-activity-icon" data-status-icon></i>
+            </span>
+          </span>
+          <strong data-status-detail>beim Sencha-Aufgießen.</strong>
+        </span>
+      </aside>
+
+      <button
+        class="header-note-mobile"
+        type="button"
+        data-status-trigger-mobile
+        aria-expanded="false"
+        aria-label="Status: Gerade wahrscheinlich beim Sencha-Aufgießen"
+      >
+        <span class="status-mobile-portrait" aria-hidden="true">
+          <Image
+            src={portrait}
+            alt=""
+            width={320}
+            quality={86}
+            loading="eager"
+          />
+        </span>
+        <span class="status-mobile-compact" aria-hidden="true">
+          <span class="header-note-mark status-activity-visual" data-status-visual data-status-kind="tea">
+            <span class="status-activity-tea">
+              <span class="header-teapot">
+                <i class="header-teapot-lid"></i>
+                <i class="header-teapot-body"></i>
+                <i class="header-teapot-spout"></i>
+                <i class="header-teapot-handle"></i>
+              </span>
+              <span class="header-tea-steam"><i></i><i></i></span>
+            </span>
+            <i class="ph ph-leaf status-activity-icon" data-status-icon></i>
+          </span>
         </span>
         <span class="status-mobile-expanded" aria-hidden="true">
-          <span class="status-panel-portrait">
-            <Image
-              src={portrait}
-              alt=""
-              width={320}
-              quality={86}
-              loading="eager"
-            />
-          </span>
           <span class="status-panel-copy">
             <span class="status-panel-label">Gerade wahrscheinlich</span>
-            <strong>am Tee zubereiten.</strong>
-            <span class="status-panel-signature">Fabian Deragisch · Wien</span>
+            <strong data-status-detail>beim Sencha-Aufgießen.</strong>
           </span>
         </span>
       </button>
@@ -121,7 +166,9 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
 
 <script>
   const siteHeader = document.querySelector<HTMLElement>("[data-site-header]");
-  const statusTrigger = siteHeader?.querySelector<HTMLButtonElement>("[data-status-trigger]");
+  const desktopStatusTrigger = siteHeader?.querySelector<HTMLButtonElement>("[data-status-trigger-desktop]");
+  const desktopStatusPanel = siteHeader?.querySelector<HTMLElement>("[data-status-panel-desktop]");
+  const mobileStatusTrigger = siteHeader?.querySelector<HTMLButtonElement>("[data-status-trigger-mobile]");
   const mobileContact = document.querySelector<HTMLAnchorElement>("[data-mobile-contact]");
   const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-site-header] nav a[href^='#']"));
   const observedSections = sectionLinks
@@ -157,24 +204,177 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
 
   sectionLinks.forEach((link) => link.addEventListener("click", () => setCurrentSection(link)));
 
-  const setStatusOpen = (open: boolean) => {
-    if (!statusTrigger) return;
-    statusTrigger.setAttribute("aria-expanded", String(open));
-    statusTrigger.classList.toggle("is-open", open);
-    statusTrigger.closest(".header-identity")?.classList.toggle("is-status-open", open);
+  type StatusKind = "tea" | "work" | "commerce" | "training" | "music" | "camera" | "night";
+  type StatusProfile = {
+    kind: StatusKind;
+    short: string;
+    detail: string;
+    icon: string;
+  };
+
+  const statusProfiles = {
+    teaMorning: {
+      kind: "tea",
+      short: "Beim ersten Sencha-Aufguss",
+      detail: "beim ersten Sencha-Aufguss.",
+      icon: "ph-leaf",
+    },
+    teaBreak: {
+      kind: "tea",
+      short: "Beim nächsten Sencha-Aufguss",
+      detail: "beim nächsten Sencha-Aufguss.",
+      icon: "ph-leaf",
+    },
+    work: {
+      kind: "work",
+      short: "Website, SEO & Newsletter",
+      detail: "zwischen Website, SEO und Newsletter.",
+      icon: "ph-browser",
+    },
+    commerce: {
+      kind: "commerce",
+      short: "Mitten im E-Commerce-Alltag",
+      detail: "mitten im E-Commerce-Alltag.",
+      icon: "ph-shopping-bag-open",
+    },
+    training: {
+      kind: "training",
+      short: "Wahrscheinlich im Fitnessstudio",
+      detail: "im Fitnessstudio.",
+      icon: "ph-barbell",
+    },
+    music: {
+      kind: "music",
+      short: "Mit Musik im Ohr",
+      detail: "mit Musik im Ohr.",
+      icon: "ph-headphones",
+    },
+    camera: {
+      kind: "camera",
+      short: "Mit der Kamera unterwegs",
+      detail: "mit der Kamera unterwegs.",
+      icon: "ph-camera",
+    },
+    night: {
+      kind: "night",
+      short: "Gerade eher offline",
+      detail: "nicht mehr am Bildschirm.",
+      icon: "ph-moon-stars",
+    },
+  } as const satisfies Record<string, StatusProfile>;
+
+  const selectStatus = (date: Date): StatusProfile => {
+    const minutes = date.getHours() * 60 + date.getMinutes();
+    const day = date.getDay();
+    const isWeekday = day >= 1 && day <= 5;
+
+    if (isWeekday) {
+      if (minutes < 7 * 60) return statusProfiles.night;
+      if (minutes < 8 * 60) return statusProfiles.teaMorning;
+      if (minutes < 12 * 60) return statusProfiles.work;
+      if (minutes < 13 * 60) return statusProfiles.teaBreak;
+      if (minutes < 17 * 60) return statusProfiles.commerce;
+      if (minutes < 19 * 60) return statusProfiles.training;
+      if (minutes < 23 * 60 + 30) return statusProfiles.music;
+      return statusProfiles.night;
+    }
+
+    if (minutes < 8 * 60 + 30) return statusProfiles.night;
+    if (minutes < 11 * 60 + 30) return statusProfiles.teaMorning;
+    if (minutes < 17 * 60) return statusProfiles.camera;
+    if (minutes < 19 * 60) return statusProfiles.training;
+    if (minutes < 23 * 60 + 30) return statusProfiles.music;
+    return statusProfiles.night;
+  };
+
+  let activeStatusKey = "";
+  const syncStatus = (animate = false) => {
+    const profile = selectStatus(new Date());
+    const nextKey = `${profile.kind}:${profile.short}`;
+    if (nextKey === activeStatusKey) return;
+    activeStatusKey = nextKey;
+
+    const animatedNodes = Array.from(siteHeader?.querySelectorAll<HTMLElement>(".header-note, .header-status-panel") ?? []);
+    if (animate) animatedNodes.forEach((node) => node.classList.add("is-status-changing"));
+
+    const applyProfile = () => {
+      siteHeader?.querySelectorAll<HTMLElement>("[data-status-short]").forEach((node) => {
+        node.textContent = profile.short;
+      });
+      siteHeader?.querySelectorAll<HTMLElement>("[data-status-detail]").forEach((node) => {
+        node.textContent = profile.detail;
+      });
+      siteHeader?.querySelectorAll<HTMLElement>("[data-status-visual]").forEach((node) => {
+        node.dataset.statusKind = profile.kind;
+      });
+      siteHeader?.querySelectorAll<HTMLElement>("[data-status-icon]").forEach((node) => {
+        node.className = `ph ${profile.icon} status-activity-icon`;
+      });
+      [desktopStatusTrigger, mobileStatusTrigger].forEach((trigger) => {
+        trigger?.setAttribute("aria-label", `Status: Gerade wahrscheinlich ${profile.detail}`);
+      });
+      animatedNodes.forEach((node) => node.classList.remove("is-status-changing"));
+    };
+
+    if (animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      window.setTimeout(applyProfile, 100);
+    } else {
+      applyProfile();
+    }
+  };
+
+  syncStatus();
+  window.setInterval(() => syncStatus(true), 60_000);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) syncStatus(true);
+  });
+
+  const setMobileStatusOpen = (open: boolean) => {
+    if (!mobileStatusTrigger) return;
+    mobileStatusTrigger.setAttribute("aria-expanded", String(open));
+    mobileStatusTrigger.classList.toggle("is-open", open);
+    mobileStatusTrigger.closest(".header-identity")?.classList.toggle("is-status-open", open);
     siteHeader?.classList.toggle("is-status-open", open);
   };
 
-  statusTrigger?.addEventListener("click", (event) => {
+  const setDesktopStatusOpen = (open: boolean) => {
+    if (!desktopStatusTrigger || !desktopStatusPanel) return;
+    desktopStatusTrigger.setAttribute("aria-expanded", String(open));
+    desktopStatusTrigger.classList.toggle("is-open", open);
+    desktopStatusPanel.classList.toggle("is-open", open);
+    desktopStatusPanel.setAttribute("aria-hidden", String(!open));
+    if (open) desktopStatusPanel.removeAttribute("inert");
+    else desktopStatusPanel.setAttribute("inert", "");
+  };
+
+  const closeStatuses = () => {
+    setMobileStatusOpen(false);
+    setDesktopStatusOpen(false);
+  };
+
+  mobileStatusTrigger?.addEventListener("click", (event) => {
     event.stopPropagation();
-    setStatusOpen(statusTrigger.getAttribute("aria-expanded") !== "true");
+    setDesktopStatusOpen(false);
+    setMobileStatusOpen(mobileStatusTrigger.getAttribute("aria-expanded") !== "true");
   });
 
-  document.addEventListener("click", () => setStatusOpen(false));
+  desktopStatusTrigger?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setMobileStatusOpen(false);
+    setDesktopStatusOpen(desktopStatusTrigger.getAttribute("aria-expanded") !== "true");
+  });
+
+  desktopStatusPanel?.addEventListener("click", (event) => event.stopPropagation());
+  document.addEventListener("click", closeStatuses);
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || statusTrigger?.getAttribute("aria-expanded") !== "true") return;
-    setStatusOpen(false);
-    statusTrigger.focus();
+    if (event.key !== "Escape") return;
+    if (mobileStatusTrigger?.getAttribute("aria-expanded") === "true") {
+      setMobileStatusOpen(false);
+      mobileStatusTrigger.focus();
+    } else if (desktopStatusTrigger?.getAttribute("aria-expanded") === "true") {
+      setDesktopStatusOpen(false);
+      desktopStatusTrigger.focus();
+    }
   });
 
   const contactSection = document.getElementById("kontakt");
@@ -182,7 +382,7 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
   const syncMobileContact = () => {
     contactScrollFrame = 0;
     mobileContact?.classList.toggle("is-compact", window.scrollY > 96);
-    setStatusOpen(false);
+    closeStatuses();
   };
 
   window.addEventListener("scroll", () => {

@@ -70,12 +70,17 @@ const base = import.meta.env.BASE_URL;
   const pigeonStage = document.querySelector<HTMLElement>("[data-pigeon-stage]");
   const routeLinks = document.querySelectorAll<HTMLElement>("[data-contact-route]");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let routeNavigationTimer = 0;
 
   routeLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
+      if (
+        event instanceof MouseEvent
+        && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0)
+      ) return;
       const route = link.dataset.contactRoute ?? "Kontakt";
-      const mailLink = link.dataset.routeKind === "mail" && link instanceof HTMLAnchorElement ? link.href : null;
-      if (mailLink) event.preventDefault();
+      const destination = link instanceof HTMLAnchorElement ? link.href : null;
+      if (destination) event.preventDefault();
       routeLinks.forEach((item) => {
         const selected = item === link;
         item.classList.toggle("is-selected", selected);
@@ -102,10 +107,11 @@ const base = import.meta.env.BASE_URL;
         pigeonStatus.textContent = `${route} ist unterwegs.`;
       }
 
-      if (mailLink) {
-        window.setTimeout(() => {
-          window.location.href = mailLink;
-        }, reduceMotion.matches ? 0 : 650);
+      if (destination) {
+        window.clearTimeout(routeNavigationTimer);
+        routeNavigationTimer = window.setTimeout(() => {
+          window.location.href = destination;
+        }, reduceMotion.matches ? 0 : 1450);
       }
     });
   });

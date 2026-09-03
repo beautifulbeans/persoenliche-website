@@ -152,67 +152,37 @@ export const work: TimelineEntry[] = [
 export const education: TimelineEntry[] = [
   {
     period: "Oktober 2020 - Mai 2024",
-    title: "Bachelor Medien und Kommunikation",
+    title: "Medien und Kommunikation (B.A.)",
     organization: "Universität Passau",
-    description: "Bachelor of Arts, abgeschlossen mit der Gesamtnote 2,3.",
-    context: "Parallel im Marketing tätig",
+    description:
+      "Bachelorstudium mit Schwerpunkten in Medien, Kommunikation und digitaler Öffentlichkeit. 2024 mit der Gesamtnote 2,3 abgeschlossen.",
+    context: "Bachelor of Arts · Abschluss 2024",
     backTitle: "Was im Studium zusammenkam",
     backIntro:
-      "Das Studium verband Kommunikationswissenschaft mit ergänzenden Einblicken in Wirtschaft und Informatik.",
+      "Kommunikationswissenschaft im Mittelpunkt, ergänzt durch Einblicke in Wirtschaft und Informatik.",
     backDetails: [
       {
         icon: "ph-chats-circle",
-        title: "Kommunikation",
-        text: "Theorien, Modelle und Forschung zu Medien, Kommunikation und unterschiedlichen Formen öffentlicher Verständigung.",
+        title: "Medien und Kommunikation",
+        text: "Theorien, Modelle und Forschung zu Medien, Kommunikation und öffentlicher Verständigung.",
       },
       {
         icon: "ph-chart-pie-slice",
-        title: "Wirtschaft",
-        text: "Zusatzmodule vermittelten wirtschaftswissenschaftliche Grundlagen und neue Perspektiven auf Organisationen.",
-      },
-      {
-        icon: "ph-code",
-        title: "Informatik",
-        text: "Ergänzende Module gaben mir einen Einstieg in grundlegende Konzepte der Informatik und digitaler Systeme.",
+        title: "Zusatzmodule",
+        text: "Ergänzende Grundlagen aus Wirtschaft und Informatik.",
       },
       {
         icon: "ph-brain",
         title: "Bachelorarbeit",
         text: "Abschlussarbeit über die Zusammenarbeit von KI und Kunst, mit Blick auf Potenziale und kritische Fragen.",
       },
+      {
+        icon: "ph-books",
+        title: "Davor: BAE",
+        text: "2019 begann ich mit Business Administration & Economics und wechselte nach zwei Semestern zu Medien und Kommunikation.",
+      },
     ],
     icon: "ph-graduation-cap",
-    logoKey: "universitaet-passau",
-    logoAlt: "Logo der Universität Passau",
-    logoMonogram: "UP",
-  },
-  {
-    period: "Oktober 2019 - September 2020",
-    title: "Business Administration & Economics",
-    organization: "Universität Passau",
-    description:
-      "Mein erster Studienweg mit dem Ziel, später im Marketing zu arbeiten.",
-    backTitle: "Warum ich gewechselt habe",
-    backIntro:
-      "Der wirtschaftswissenschaftliche Einstieg war fachlich interessant, passte aber nicht dauerhaft zu mir. Medien und Kommunikation traf meine Interessen genauer.",
-    backDetails: [
-      {
-        icon: "ph-buildings",
-        title: "Grundlagen",
-        text: "Ein Einstieg in Betriebswirtschaft, Volkswirtschaft und wirtschaftliches Denken.",
-      },
-      {
-        icon: "ph-signpost",
-        title: "Ziel Marketing",
-        text: "Marketing war schon damals die Richtung, in die ich mich beruflich entwickeln wollte.",
-      },
-      {
-        icon: "ph-arrows-left-right",
-        title: "Bewusster Wechsel",
-        text: "Nach zwei Semestern wechselte ich zu Medien und Kommunikation, ohne das ursprüngliche Berufsziel aus den Augen zu verlieren.",
-      },
-    ],
-    icon: "ph-books",
     logoKey: "universitaet-passau",
     logoAlt: "Logo der Universität Passau",
     logoMonogram: "UP",
