@@ -34,69 +34,41 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
         class="header-note header-note-static header-note-desktop"
         type="button"
         data-status-trigger-desktop
-        aria-controls="header-status-panel-desktop"
         aria-expanded="false"
-        aria-label="Status: Gerade wahrscheinlich beim Sencha-Aufgießen"
+        aria-label="Status öffnen: Gerade wahrscheinlich beim Teeaufgießen"
       >
-        <span class="header-note-mark status-activity-visual" data-status-visual data-status-kind="tea" aria-hidden="true">
-          <span class="status-activity-tea">
-            <span class="header-teapot">
-              <i class="header-teapot-lid"></i>
-              <i class="header-teapot-body"></i>
-              <i class="header-teapot-spout"></i>
-              <i class="header-teapot-handle"></i>
+        <span class="header-note-compact">
+          <span class="header-note-mark status-activity-visual" data-status-visual data-status-kind="tea" aria-hidden="true">
+            <span class="status-activity-tea">
+              <span class="header-teapot">
+                <i class="header-teapot-lid"></i>
+                <i class="header-teapot-body"></i>
+                <i class="header-teapot-spout"></i>
+                <i class="header-teapot-handle"></i>
+              </span>
+              <span class="header-tea-steam"><i></i><i></i></span>
             </span>
-            <span class="header-tea-steam"><i></i><i></i></span>
+            <i class="ph ph-leaf status-activity-icon" data-status-icon></i>
           </span>
-          <i class="ph ph-leaf status-activity-icon" data-status-icon></i>
+          <span class="header-note-copy">
+            <strong data-status-short>Tee wird aufgegossen</strong>
+          </span>
         </span>
-        <span class="header-note-copy">
-          <strong data-status-short>Beim Sencha-Aufgießen</strong>
+        <span class="status-desktop-expanded" aria-hidden="true" data-status-expanded-desktop>
+          <span class="status-panel-label">Gerade wahrscheinlich</span>
+          <strong data-status-detail>beim Teeaufgießen.</strong>
+          <span class="status-desktop-close" aria-hidden="true">
+            <i class="ph ph-x"></i>
+          </span>
         </span>
       </button>
-
-      <aside
-        class="header-status-panel header-status-panel-desktop"
-        id="header-status-panel-desktop"
-        data-status-panel-desktop
-        aria-hidden="true"
-        inert
-      >
-        <span class="status-panel-portrait">
-          <Image
-            src={portrait}
-            alt=""
-            width={320}
-            quality={86}
-            loading="eager"
-          />
-        </span>
-        <span class="status-panel-copy">
-          <span class="status-panel-label-row">
-            <span class="status-panel-label">Gerade wahrscheinlich</span>
-            <span class="status-activity-visual status-panel-activity" data-status-visual data-status-kind="tea" aria-hidden="true">
-              <span class="status-activity-tea">
-                <span class="header-teapot">
-                  <i class="header-teapot-lid"></i>
-                  <i class="header-teapot-body"></i>
-                  <i class="header-teapot-spout"></i>
-                  <i class="header-teapot-handle"></i>
-                </span>
-                <span class="header-tea-steam"><i></i><i></i></span>
-              </span>
-              <i class="ph ph-leaf status-activity-icon" data-status-icon></i>
-            </span>
-          </span>
-          <strong data-status-detail>beim Sencha-Aufgießen.</strong>
-        </span>
-      </aside>
 
       <button
         class="header-note-mobile"
         type="button"
         data-status-trigger-mobile
         aria-expanded="false"
-        aria-label="Status: Gerade wahrscheinlich beim Sencha-Aufgießen"
+        aria-label="Status öffnen: Gerade wahrscheinlich beim Teeaufgießen"
       >
         <span class="status-mobile-portrait" aria-hidden="true">
           <Image
@@ -124,7 +96,7 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
         <span class="status-mobile-expanded" aria-hidden="true">
           <span class="status-panel-copy">
             <span class="status-panel-label">Gerade wahrscheinlich</span>
-            <strong data-status-detail>beim Sencha-Aufgießen.</strong>
+            <strong data-status-detail>beim Teeaufgießen.</strong>
           </span>
         </span>
       </button>
@@ -167,7 +139,7 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
 <script>
   const siteHeader = document.querySelector<HTMLElement>("[data-site-header]");
   const desktopStatusTrigger = siteHeader?.querySelector<HTMLButtonElement>("[data-status-trigger-desktop]");
-  const desktopStatusPanel = siteHeader?.querySelector<HTMLElement>("[data-status-panel-desktop]");
+  const desktopStatusExpanded = siteHeader?.querySelector<HTMLElement>("[data-status-expanded-desktop]");
   const mobileStatusTrigger = siteHeader?.querySelector<HTMLButtonElement>("[data-status-trigger-mobile]");
   const mobileContact = document.querySelector<HTMLAnchorElement>("[data-mobile-contact]");
   const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-site-header] nav a[href^='#']"));
@@ -204,7 +176,7 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
 
   sectionLinks.forEach((link) => link.addEventListener("click", () => setCurrentSection(link)));
 
-  type StatusKind = "tea" | "work" | "commerce" | "training" | "music" | "camera" | "night";
+  type StatusKind = "tea" | "training" | "music" | "camera" | "night";
   type StatusProfile = {
     kind: StatusKind;
     short: string;
@@ -225,17 +197,11 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
       detail: "beim nächsten Sencha-Aufguss.",
       icon: "ph-leaf",
     },
-    work: {
-      kind: "work",
-      short: "Website, SEO & Newsletter",
-      detail: "zwischen Website, SEO und Newsletter.",
-      icon: "ph-browser",
-    },
-    commerce: {
-      kind: "commerce",
-      short: "Mitten im E-Commerce-Alltag",
-      detail: "mitten im E-Commerce-Alltag.",
-      icon: "ph-shopping-bag-open",
+    teaDay: {
+      kind: "tea",
+      short: "Tee wird aufgegossen",
+      detail: "beim Teeaufgießen.",
+      icon: "ph-leaf",
     },
     training: {
       kind: "training",
@@ -271,9 +237,9 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     if (isWeekday) {
       if (minutes < 7 * 60) return statusProfiles.night;
       if (minutes < 8 * 60) return statusProfiles.teaMorning;
-      if (minutes < 12 * 60) return statusProfiles.work;
+      if (minutes < 12 * 60) return statusProfiles.teaDay;
       if (minutes < 13 * 60) return statusProfiles.teaBreak;
-      if (minutes < 17 * 60) return statusProfiles.commerce;
+      if (minutes < 17 * 60) return statusProfiles.teaDay;
       if (minutes < 19 * 60) return statusProfiles.training;
       if (minutes < 23 * 60 + 30) return statusProfiles.music;
       return statusProfiles.night;
@@ -294,7 +260,7 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     if (nextKey === activeStatusKey) return;
     activeStatusKey = nextKey;
 
-    const animatedNodes = Array.from(siteHeader?.querySelectorAll<HTMLElement>(".header-note, .header-status-panel") ?? []);
+    const animatedNodes = Array.from(siteHeader?.querySelectorAll<HTMLElement>(".header-note") ?? []);
     if (animate) animatedNodes.forEach((node) => node.classList.add("is-status-changing"));
 
     const applyProfile = () => {
@@ -311,7 +277,8 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
         node.className = `ph ${profile.icon} status-activity-icon`;
       });
       [desktopStatusTrigger, mobileStatusTrigger].forEach((trigger) => {
-        trigger?.setAttribute("aria-label", `Status: Gerade wahrscheinlich ${profile.detail}`);
+        const action = trigger?.getAttribute("aria-expanded") === "true" ? "schließen" : "öffnen";
+        trigger?.setAttribute("aria-label", `Status ${action}: Gerade wahrscheinlich ${profile.detail}`);
       });
       animatedNodes.forEach((node) => node.classList.remove("is-status-changing"));
     };
@@ -332,19 +299,24 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
   const setMobileStatusOpen = (open: boolean) => {
     if (!mobileStatusTrigger) return;
     mobileStatusTrigger.setAttribute("aria-expanded", String(open));
+    mobileStatusTrigger.setAttribute(
+      "aria-label",
+      mobileStatusTrigger.getAttribute("aria-label")?.replace(open ? "öffnen" : "schließen", open ? "schließen" : "öffnen") ?? "",
+    );
     mobileStatusTrigger.classList.toggle("is-open", open);
     mobileStatusTrigger.closest(".header-identity")?.classList.toggle("is-status-open", open);
     siteHeader?.classList.toggle("is-status-open", open);
   };
 
   const setDesktopStatusOpen = (open: boolean) => {
-    if (!desktopStatusTrigger || !desktopStatusPanel) return;
+    if (!desktopStatusTrigger) return;
     desktopStatusTrigger.setAttribute("aria-expanded", String(open));
+    desktopStatusTrigger.setAttribute(
+      "aria-label",
+      desktopStatusTrigger.getAttribute("aria-label")?.replace(open ? "öffnen" : "schließen", open ? "schließen" : "öffnen") ?? "",
+    );
     desktopStatusTrigger.classList.toggle("is-open", open);
-    desktopStatusPanel.classList.toggle("is-open", open);
-    desktopStatusPanel.setAttribute("aria-hidden", String(!open));
-    if (open) desktopStatusPanel.removeAttribute("inert");
-    else desktopStatusPanel.setAttribute("inert", "");
+    desktopStatusExpanded?.setAttribute("aria-hidden", String(!open));
   };
 
   const closeStatuses = () => {
@@ -364,7 +336,6 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     setDesktopStatusOpen(desktopStatusTrigger.getAttribute("aria-expanded") !== "true");
   });
 
-  desktopStatusPanel?.addEventListener("click", (event) => event.stopPropagation());
   document.addEventListener("click", closeStatuses);
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;

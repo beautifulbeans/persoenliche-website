@@ -3,6 +3,7 @@ import type { ImageMetadata } from "astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProjectorGallery, { type ProjectorShot } from "../components/ProjectorGallery.astro";
 import { photographyCopy } from "../data/photography";
+import { createGallerySchema } from "../data/structuredData";
 import "../styles/gallery-canvas.css";
 
 const photoModules = import.meta.glob<{ default: ImageMetadata }>(
@@ -36,6 +37,16 @@ const shots: ProjectorShot[] = Object.entries(photoModules)
       isNew: /^new[-_]/i.test(fileName),
     };
   });
+
+const siteUrl = Astro.site ?? new URL("https://fabianderagisch.com");
+const structuredData = createGallerySchema(
+  siteUrl,
+  shots.map((shot) => ({
+    url: new URL(shot.src.src, siteUrl).href,
+    title: shot.title,
+    description: shot.alt,
+  })),
+);
 ---
 
 <BaseLayout
@@ -43,6 +54,7 @@ const shots: ProjectorShot[] = Object.entries(photoModules)
   description="Eine wachsende Auswahl an Fotografien von Fabian Deragisch."
   themeColor="#111514"
   bodyClass="projector-gallery-page"
+  {structuredData}
 >
   <script is:inline>
     (() => {

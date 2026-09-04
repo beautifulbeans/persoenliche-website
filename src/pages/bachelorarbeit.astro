@@ -1,13 +1,17 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { profile } from "../data/profile";
+import { createThesisSchema } from "../data/structuredData";
 
 const pdfUrl = `../${profile.thesis.documentUrl.replace(/^\.\//, "")}#toolbar=0&navpanes=0&view=FitH`;
+const siteUrl = Astro.site ?? new URL("https://fabianderagisch.com");
+const structuredData = createThesisSchema(siteUrl);
 ---
 
 <BaseLayout
   title="Bachelorarbeit | Fabian Deragisch"
   description="Leseansicht der Bachelorarbeit Kreative Synergien von Fabian Deragisch."
+  {structuredData}
 >
   <main class="reader-page" id="inhalt">
     <header class="reader-header">

@@ -6,6 +6,7 @@ import "../styles/global.css";
 import "../styles/refinement.css";
 import "../styles/latest.css";
 import "../styles/photographic-opening.css";
+import type { JsonLd } from "../data/structuredData";
 
 interface Props {
   title?: string;
@@ -13,6 +14,7 @@ interface Props {
   robots?: string;
   themeColor?: string;
   bodyClass?: string;
+  structuredData?: JsonLd | JsonLd[];
 }
 
 const {
@@ -22,9 +24,13 @@ const {
   robots = "index, follow",
   themeColor = "#f2f3ed",
   bodyClass,
+  structuredData,
 } = Astro.props;
 
 const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
+const serializedStructuredData = structuredData
+  ? JSON.stringify(structuredData).replace(/</g, "\\u003c")
+  : null;
 ---
 
 <!doctype html>
@@ -38,6 +44,7 @@ const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astr
     <link rel="canonical" href={canonicalUrl} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="de_AT" />
+    <meta property="og:site_name" content="Fabian Deragisch" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
@@ -47,6 +54,9 @@ const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astr
     <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
     <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    {serializedStructuredData && (
+      <script is:inline type="application/ld+json" set:html={serializedStructuredData}></script>
+    )}
     <title>{title}</title>
   </head>
   <body class={bodyClass}>

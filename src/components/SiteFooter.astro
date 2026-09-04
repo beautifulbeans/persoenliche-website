@@ -18,13 +18,13 @@ const base = import.meta.env.BASE_URL;
           <span>E-Mail</span>
           <i class="ph ph-arrow-up-right route-arrow" aria-hidden="true"></i>
         </a>
-        <a href="https://at.linkedin.com/in/fabian-deragisch-57769a2a2" target="_blank" rel="noreferrer" data-contact-route="LinkedIn" data-route-kind="linkedin">
+        <a href="https://at.linkedin.com/in/fabian-deragisch-57769a2a2" target="_blank" rel="me noopener noreferrer" data-contact-route="LinkedIn" data-route-kind="linkedin">
           <span class="contact-route-number">02</span>
           <i class="ph ph-linkedin-logo" aria-hidden="true"></i>
           <span>LinkedIn</span>
           <i class="ph ph-arrow-up-right route-arrow" aria-hidden="true"></i>
         </a>
-        <a href="https://www.instagram.com/FabianDeragisch/" target="_blank" rel="noreferrer" data-contact-route="Instagram" data-route-kind="instagram">
+        <a href="https://www.instagram.com/FabianDeragisch/" target="_blank" rel="me noopener noreferrer" data-contact-route="Instagram" data-route-kind="instagram">
           <span class="contact-route-number">03</span>
           <i class="ph ph-instagram-logo" aria-hidden="true"></i>
           <span>Instagram</span>
@@ -52,7 +52,10 @@ const base = import.meta.env.BASE_URL;
   </section>
 
   <div class="footer-bottom section-shell">
-    <p>Fabian Deragisch <span data-current-year></span></p>
+    <div class="footer-signature">
+      <p>Fabian Deragisch <span data-current-year></span></p>
+      <p class="footer-built-note">Idee, Gestaltung und Umsetzung von mir.</p>
+    </div>
     <p class="privacy-note">Kein Tracking. Keine Werbung. Keine Cookies durch diese Website.</p>
     <nav aria-label="Rechtliche Hinweise">
       <a href={`${base}impressum/`}>Impressum</a>
