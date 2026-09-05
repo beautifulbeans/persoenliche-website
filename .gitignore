@@ -13,3 +13,7 @@ dist/
 # Rohmaterial mit privaten Angaben bleibt immer außerhalb des Repositories.
 private/
 content-private/
+
+# Tea Trail browser test outputs
+test-results/
+playwright-report/

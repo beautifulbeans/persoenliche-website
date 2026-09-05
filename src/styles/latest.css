@@ -722,7 +722,7 @@ body.intro-active {
   100% { opacity: 0; transform: translate3d(125%, 0, 0) rotate(-18deg); }
 }
 
-/* Galerie-Link, Minigame-Platzhalter und eigene Galerie-Seite. */
+/* Galerie-Link, Tea-Trail-Teaser und eigene Galerie-Seite. */
 .camera-actions {
   display: flex;
   flex-wrap: wrap;
@@ -897,21 +897,19 @@ body.intro-active {
   display: grid;
   margin-top: clamp(1.2rem, 3vw, 2rem);
   padding-block: clamp(1.25rem, 3vw, 2rem);
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr) auto;
   align-items: center;
-  gap: 1rem;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
   border-block: 1px solid var(--personal-line);
 }
 
-.minigame-orbit {
-  display: grid;
-  width: 3rem;
-  aspect-ratio: 1;
-  place-items: center;
-  border: 1px solid var(--personal-line-strong);
-  border-radius: 50%;
-  color: var(--personal-accent-strong);
-  font-size: 1.35rem;
+.minigame-preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 640 / 404;
+  object-fit: cover;
+  border-radius: 12px;
 }
 
 .minigame-teaser h3 {
@@ -922,19 +920,34 @@ body.intro-active {
   margin-top: 0.3rem;
   color: var(--personal-muted);
   font-size: 0.88rem;
+  max-width: 48ch;
+  text-wrap: pretty;
 }
 
-.minigame-status {
-  color: var(--personal-accent-strong);
+.minigame-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 48px;
+  padding: 0.75rem 1.1rem;
+  border: 1px solid var(--personal-ink);
+  border-radius: 999px;
+  color: var(--personal-ink);
   font-size: 0.82rem;
   font-weight: 670;
   white-space: nowrap;
+  text-decoration: none;
 }
 
-.minigame-status em {
-  font-family: var(--font-display);
-  font-size: 1.15em;
-  font-style: normal;
+.minigame-play:hover {
+  background: var(--personal-ink);
+  color: var(--personal-page);
+}
+
+.minigame-play:focus-visible {
+  outline: 2px solid var(--personal-ink);
+  outline-offset: 5px;
 }
 
 .gallery-page {
@@ -1037,13 +1050,6 @@ body.intro-active {
     transform: translate3d(0, -0.15rem, 0);
   }
 
-  .minigame-teaser:hover .minigame-orbit {
-    animation: minigame-orbit 760ms var(--ease-spring-soft);
-  }
-}
-
-@keyframes minigame-orbit {
-  50% { transform: rotate(14deg) scale(1.08); }
 }
 
 @media (max-width: 48rem) {
@@ -1228,11 +1234,15 @@ body.intro-active {
   }
 
   .minigame-teaser {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .minigame-status {
-    grid-column: 2;
+  .minigame-preview {
+    max-width: 26rem;
+  }
+
+  .minigame-play {
+    justify-self: start;
   }
 
   .gallery-header {

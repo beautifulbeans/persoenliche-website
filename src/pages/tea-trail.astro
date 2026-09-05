@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/tea-trail.css';
+import { ROUND_SECONDS, GENTLE_ROUND_SECONDS } from '../games/tea-trail/level';
+---
+<BaseLayout title="Tea Trail | Eine kleine Teepause mit Fabian Deragisch" description={`${ROUND_SECONDS} Sekunden, eine Tasse grüner Tee und ein kleines Gartenatelier. Spiele Tea Trail, das persönliche 3D-Minispiel von Fabian Deragisch.`} bodyClass="tea-trail-page" themeColor="#e7edef">
+  <div class="tt-shell" data-tea-trail>
+    <header class="tt-header">
+      <a class="tt-back" href="/#persoenlich"><i class="ph ph-arrow-left" aria-hidden="true"></i><span>Zurück zur Website</span></a>
+      <a href="/" class="tt-signature" aria-label="Fabian Deragisch, Startseite">Fabian Deragisch<span aria-hidden="true">.</span></a>
+    </header>
+    <main id="inhalt">
+      <div class="tt-heading">
+        <div><p class="tt-byline">Eine kleine Pause bei mir</p><h1>Tea Trail<span>.</span></h1></div>
+        <p>Ein kleiner Weg. Eine volle Tasse.<br />Wie viel Tee kommt bei dir an?</p>
+      </div>
+      <section class="tt-stage" aria-label="Tea Trail Spielbereich" data-stage data-state="idle">
+        <img class="tt-poster" src="/tea-trail/atelier-preview.webp" alt="Eine kleine Figur mit Teetablett auf der Startmatte eines begrünten Miniaturateliers. Vor ihr liegen eine Kamera und mehrere Objektive." width="1440" height="910" fetchpriority="high" />
+        <canvas class="tt-canvas" data-game-canvas tabindex="-1" aria-label="Tea Trail. Pfeiltasten oder WASD bewegen die Figur. Leertaste stabilisiert. Escape pausiert." aria-describedby="tt-controls-help" hidden></canvas>
+        <div class="tt-hud" data-hud hidden>
+          <div class="tt-hud-readings">
+            <div class="tt-clock"><span data-time>{ROUND_SECONDS}</span><small>Sek.</small></div>
+            <div class="tt-tea-meter"><div><i class="ph ph-leaf" aria-hidden="true"></i><span data-tea>100 %</span></div><div class="tt-meter-track" role="progressbar" aria-label="Verbleibender Tee" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span data-tea-fill></span></div></div>
+          </div>
+          <div class="tt-hud-actions"><button class="tt-icon" data-pause aria-label="Spiel pausieren"><i class="ph ph-pause" aria-hidden="true"></i></button><button class="tt-icon" data-settings-open aria-label="Spieleinstellungen öffnen"><i class="ph ph-sliders-horizontal" aria-hidden="true"></i></button></div>
+        </div>
+        <div class="tt-start" data-start-panel>
+          <span class="tt-start-leaf" aria-hidden="true"><i class="ph ph-leaf"></i></span>
+          <h2><span data-round-seconds>{ROUND_SECONDS}</span> Sekunden Pause?</h2>
+          <p>Bring den grünen Tee zum Tisch. Über die Schallplatte sparst du Zeit. Vor engen Kurven kurz ruhiger tragen – so bleibt mehr in der Tasse.</p>
+          <div class="tt-control-intro" id="tt-controls-help"><span class="tt-desktop-help"><kbd>W A S D</kbd> oder <kbd>↑ ← ↓ →</kbd></span><span class="tt-touch-help"><i class="ph ph-hand" aria-hidden="true"></i> Bewegen mit dem Joystick</span><span>Sanft lenken. Am Teetisch anhalten.</span></div>
+          <button class="tt-button tt-primary" data-start><span data-start-label>Spiel starten</span><i class="ph ph-arrow-up-right" aria-hidden="true"></i></button>
+          <button class="tt-text-button" data-settings-open>Spiel nach deinem Gefühl einstellen</button>
+          <p class="tt-load-status" data-load-status role="status"></p>
+          <noscript><p>Tea Trail braucht JavaScript. Du kannst weiterhin <a href="/#persoenlich">meine Website besuchen</a>.</p></noscript>
+        </div>
+        <div class="tt-location" data-location hidden><span data-area>Ankommen</span><span data-goal>0 % zum Teetisch</span></div>
+        <div class="tt-touch-controls" data-touch-controls hidden>
+          <div class="tt-joystick" data-joystick aria-label="Virtueller Joystick, ziehen zum Bewegen"><span class="tt-joystick-cross" aria-hidden="true"></span><span data-joystick-thumb></span></div>
+          <button class="tt-steady" data-steady aria-label="Gedrückt halten für ruhigeres Tragen"><i class="ph ph-hand-palm" aria-hidden="true"></i><span>Ruhig</span></button>
+        </div>
+        <p class="sr-only" role="status" aria-live="polite" data-game-status></p>
+      </section>
+      <div class="tt-below">
+        <p><i class="ph ph-leaf" aria-hidden="true"></i><span data-best>Deine erste Tasse wartet.</span></p>
+        <div class="tt-audio"><button class="tt-icon" data-mute aria-label="Ton stummschalten" aria-pressed="false"><i class="ph ph-speaker-high" aria-hidden="true"></i></button><label class="sr-only" for="tt-volume">Lautstärke</label><input id="tt-volume" data-volume type="range" min="0" max="100" value="40" aria-label="Lautstärke" /></div>
+        <p class="tt-key-help">Leertaste: vor Kurven bremsen <span>·</span> Esc: Pause</p>
+      </div>
+      <details class="tt-about"><summary>Ein Atelier voller kleiner Umwege<i class="ph ph-plus" aria-hidden="true"></i></summary><div><p>Fotografie, Vinyl, Training, Spielkarten und Tee: Dinge, die mich begleiten, werden hier zu einem kleinen Parcours. Für die {ROUND_SECONDS}-Sekunden-Runde nimmst du die Abkürzung über den Plattenspieler. Die Blätter zeigen den breiteren Weg, für den dir der sanfte Modus mehr Zeit lässt.</p><p>Bis zu drei Teeblätter belohnen eine volle Tasse, eine gute Zeit und ruhige Bewegung. Deine Bestleistung bleibt nur in diesem Browser, getrennt für den normalen und den sanften Modus. Keine Anmeldung, keine Werbung.</p></div></details>
+    </main>
+    <dialog class="tt-dialog" data-pause-dialog aria-labelledby="tt-pause-title"><div class="tt-dialog-inner"><i class="ph ph-pause tt-dialog-symbol" aria-hidden="true"></i><h2 id="tt-pause-title">Der Tee kann warten.</h2><p>Die Zeit steht still. Atme kurz durch.</p><button class="tt-button tt-primary" data-resume>Weiterspielen<i class="ph ph-arrow-right" aria-hidden="true"></i></button><button class="tt-text-button" data-settings-open>Einstellungen</button><a class="tt-exit" href="/#persoenlich">Zurück zur Website</a></div></dialog>
+    <dialog class="tt-dialog tt-settings" data-settings-dialog aria-labelledby="tt-settings-title"><div class="tt-dialog-inner">
+      <div class="tt-dialog-top"><h2 id="tt-settings-title">Dein Spielgefühl.</h2><button class="tt-icon" data-settings-close aria-label="Einstellungen schließen"><i class="ph ph-x" aria-hidden="true"></i></button></div>
+      <label class="tt-toggle"><span><strong>Sanfter Modus</strong><small>Mehr Stabilität, etwas weniger Tempo und {GENTLE_ROUND_SECONDS} Sekunden Zeit.<br />Gilt ab der nächsten Runde.</small></span><input type="checkbox" data-gentle /></label>
+      <div class="tt-sensor-setting"><div><strong>Handyneigung</strong><p>Optional: Deine Haltung beeinflusst das Tablett. Der Joystick bewegt die Figur weiterhin.</p></div><button class="tt-button tt-secondary" data-sensor-enable>Neigung aktivieren</button><button class="tt-button tt-secondary" data-sensor-disable hidden>Neigung deaktivieren</button><button class="tt-text-button" data-calibrate hidden>Aktuelle Haltung als Mitte setzen</button><p class="tt-sensor-status" data-sensor-status role="status">Die Neigung ist aus. Die Ruhig-Taste hilft auch ohne Sensoren.</p></div>
+      <label class="tt-range-label" for="tt-sensitivity"><span>Sensorstärke</span><output data-sensitivity-output>50 %</output></label><input id="tt-sensitivity" data-sensitivity type="range" min="0" max="100" value="50" />
+      <p class="tt-settings-note">Mit Leertaste oder der Ruhig-Taste auf dem Handy trägst du langsamer und stabiler.</p>
+      <button class="tt-button tt-primary" data-settings-done>Passt für mich<i class="ph ph-check" aria-hidden="true"></i></button>
+    </div></dialog>
+    <dialog class="tt-dialog tt-results" data-result-dialog aria-labelledby="tt-result-title"><div class="tt-dialog-inner">
+      <div class="tt-result-leaves" data-result-leaves aria-label="Bewertung"></div><h2 id="tt-result-title" data-result-title>Der Tee ist da.</h2><p data-result-summary></p>
+      <dl class="tt-result-stats"><div><dt>Tee übrig</dt><dd data-result-tea></dd></div><div><dt>Zeit</dt><dd data-result-time></dd></div><div><dt>Punkte</dt><dd data-result-score></dd></div></dl>
+      <p class="tt-result-best" data-result-best></p>
+      <div class="tt-loss"><canvas data-loss-map width="210" height="260" role="img" aria-label="Parcourskarte mit markierten Stellen, an denen Tee verschüttet wurde"></canvas><div><h3>Wo Tee verloren ging</h3><ul data-loss-list></ul><p data-loss-tip></p></div></div>
+      <button class="tt-button tt-primary" data-restart>Noch einmal<i class="ph ph-arrow-clockwise" aria-hidden="true"></i></button><a class="tt-exit" href="/#persoenlich">Zurück zur Website</a>
+    </div></dialog>
+    <dialog class="tt-dialog" data-error-dialog aria-labelledby="tt-error-title"><div class="tt-dialog-inner"><h2 id="tt-error-title">Eine kurze Unterbrechung.</h2><p data-error-message></p><button class="tt-button tt-primary" data-reload>Atelier erneut laden</button><a class="tt-exit" href="/#persoenlich">Zurück zur Website</a></div></dialog>
+  </div>
+</BaseLayout>
+<script>
+  import { mountTeaTrail } from '../games/tea-trail/boot';
+  mountTeaTrail();
+</script>

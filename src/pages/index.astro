@@ -13,6 +13,7 @@ import VinylPlayer from "../components/VinylPlayer.astro";
 import { profile } from "../data/profile";
 import portrait from "../assets/portrait/fabian-deragisch.jpg";
 import { createProfilePageSchema } from "../data/structuredData";
+import { ROUND_SECONDS } from "../games/tea-trail/level";
 
 const heroNameLines = ["Fabian", "Deragisch"];
 const siteUrl = Astro.site ?? new URL("https://fabianderagisch.com");
@@ -219,13 +220,13 @@ const structuredData = createProfilePageSchema({
         </article>
       </div>
 
-      <section class="minigame-teaser section-shell" aria-labelledby="minigame-title" data-reveal="up">
-        <span class="minigame-orbit" aria-hidden="true"><i class="ph ph-game-controller"></i></span>
-        <div>
-          <h3 id="minigame-title">Ein kleines Minigame.</h3>
-          <p>Hier entsteht später etwas zum Ausprobieren.</p>
+      <section class="minigame-teaser section-shell" id="tea-trail" aria-labelledby="minigame-title">
+        <img class="minigame-preview" src="/tea-trail/teaser.webp" alt="Mit einer Tasse Tee durch mein kleines Gartenatelier: der Start von Tea Trail." width="640" height="404" loading="lazy" decoding="async" />
+        <div class="minigame-copy">
+          <h3 id="minigame-title">Kleines Minigame.<br />Kurz abschalten.</h3>
+          <p>{ROUND_SECONDS} Sekunden, eine Tasse Tee und ein paar kleine Umwege.</p>
         </div>
-        <span class="minigame-status">Coming <em>(Soon)</em></span>
+        <a class="minigame-play" href="/tea-trail/" data-astro-prefetch="false">Tea Trail spielen<i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
       </section>
     </section>
   </main>

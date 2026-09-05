@@ -8,15 +8,28 @@
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro check && ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
-    "sanitize:images": "node scripts/sanitize-images.mjs"
+    "sanitize:images": "node scripts/sanitize-images.mjs",
+    "test:tea-trail": "playwright test",
+    "tea-trail:assets": "node scripts/build-tea-trail.mjs",
+    "tea-trail:preview": "node scripts/capture-tea-trail.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
     "@astrojs/sitemap": "^3.7.3",
+    "@dimforge/rapier3d-compat": "^0.20.0",
     "@fontsource-variable/cormorant-garamond": "^5.2.6",
     "@fontsource-variable/manrope": "^5.2.8",
     "@phosphor-icons/web": "^2.1.2",
     "astro": "^7.0.8",
+    "three": "^0.185.1",
     "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
+    "@playwright/test": "^1.63.0",
+    "@types/three": "^0.185.4",
+    "meshoptimizer": "^1.2.0"
   }
 }
