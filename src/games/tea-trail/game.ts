@@ -12,6 +12,7 @@ export interface GameOptions {
   onPause: () => void;
   onEnd: (result: RoundResult) => void;
   onError: (message: string) => void;
+  onServe: () => void;
 }
 export class Game {
   sim: Simulation;
@@ -25,6 +26,8 @@ export class Game {
   private frames: number[] = [];
   private abort = new AbortController();
   private disposed = false;
+  private serving = 0;
+  private servingStarted = false;
   private timer: HTMLElement;
   private tea: HTMLElement;
   private fill: HTMLElement;
@@ -78,8 +81,10 @@ export class Game {
     await this.view.load();
     if (!this.disposed) this.view.render(this.sim, 0);
   }
-  start(gentle: boolean) {
-    this.sim.reset(gentle);
+  start(gentle: boolean, levelId = 0) {
+    this.sim.reset(gentle, Math.random(), levelId);
+    this.serving = 0;
+    this.servingStarted = false;
     this.view.resetSpills();
     this.frames = [];
     this.view.render(this.sim, 0);
@@ -127,7 +132,14 @@ export class Game {
         this.accumulator -= 1 / 60;
         steps++;
       }
-      this.view.render(this.sim, delta);
+      if (this.sim.arrived) {
+        if (!this.servingStarted) {
+          this.servingStarted = true;
+          this.options.onServe();
+        }
+        this.serving = Math.min(1, this.serving + delta / 1.8);
+      }
+      this.view.render(this.sim, delta, false, this.serving);
       const p = this.sim.position;
       this.options.audio.update(
         delta,
@@ -146,7 +158,7 @@ export class Game {
         this.hudClock = 0;
         this.updateHud();
       }
-      if (this.sim.ended) {
+      if (this.sim.ended && (!this.sim.arrived || this.serving >= 1)) {
         this.updateHud();
         this.pause();
         this.options.onEnd(this.sim.result());
@@ -171,11 +183,12 @@ export class Game {
       "aria-valuenow",
       String(Math.round(this.sim.liquid.amount * 100)),
     );
-    this.goal.textContent =
-      this.sim.progress > 0.91
-        ? "Am Tisch langsam anhalten"
-        : `${Math.round(this.sim.progress * 100)} % zum Teetisch`;
-    this.area.textContent = sectionAt(this.sim.position.z);
+    this.goal.textContent = this.sim.arrived
+      ? "Der Tee wird abgestellt …"
+      : this.sim.checkpoint < this.sim.course.checkpoints.length
+        ? `Wegmarke ${this.sim.checkpoint + 1} von ${this.sim.course.checkpoints.length} · ${Math.round(this.sim.progress * 100)} % zum Teetisch`
+        : "Zu den drei Pfeilen · dort anhalten";
+    this.area.textContent = `Level ${this.sim.levelId + 1} · ${sectionAt(this.sim.position.z)}`;
   }
   get metrics() {
     const sorted = [...this.frames].sort((a, b) => a - b);

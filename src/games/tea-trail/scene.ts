@@ -69,6 +69,12 @@ export class Diorama {
   private frameCount = 0;
   private goalRing: THREE.Mesh;
   private shadow: THREE.Mesh;
+  private courseId = -1;
+  private courseProps = new THREE.Group();
+  private marks: THREE.Mesh[] = [];
+  private arrows = new THREE.Group();
+  private serveFrom = new THREE.Vector3();
+  private serveRotation = new THREE.Quaternion();
   constructor(private canvas: HTMLCanvasElement) {
     const mobile =
       document.querySelector<HTMLElement>("[data-tea-trail]")?.dataset.touch ===
@@ -79,16 +85,14 @@ export class Diorama {
     this.quality = mobile ? "medium" : "high";
     this.renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: !mobile,
+      antialias: true,
       alpha: false,
       powerPreference: "high-performance",
     });
     this.renderer.setClearColor("#b5c7ad");
-    this.renderer.setPixelRatio(
-      Math.min(devicePixelRatio, mobile ? 1.35 : 1.75),
-    );
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 2 : 2.25));
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1;
     this.scene.background = new THREE.Color("#b5c7ad");
@@ -97,13 +101,13 @@ export class Diorama {
     const pmrem = new THREE.PMREMGenerator(this.renderer);
     this.env = pmrem.fromScene(environment, 0.04);
     this.scene.environment = this.env.texture;
-    this.scene.environmentIntensity = 0.23;
+    this.scene.environmentIntensity = 0.35;
     environment.dispose();
     pmrem.dispose();
     this.scene.add(new THREE.HemisphereLight("#f5f2d7", "#647267", 1.2));
     this.sun.position.set(-15, 25, -6);
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048);
+    this.sun.shadow.mapSize.set(mobile ? 1536 : 2048, mobile ? 1536 : 2048);
     Object.assign(this.sun.shadow.camera, {
       left: -23,
       right: 23,
@@ -175,6 +179,30 @@ export class Diorama {
     this.goalRing.rotation.x = -Math.PI / 2;
     this.goalRing.position.set(GOAL.x, 0.105, GOAL.z);
     this.scene.add(this.goalRing);
+    this.scene.add(this.courseProps, this.arrows);
+    const arrowShape = new THREE.Shape();
+    arrowShape.moveTo(-0.25, 0.3);
+    arrowShape.lineTo(0, -0.12);
+    arrowShape.lineTo(0.25, 0.3);
+    arrowShape.lineTo(0.25, 0.02);
+    arrowShape.lineTo(0, -0.4);
+    arrowShape.lineTo(-0.25, 0.02);
+    arrowShape.closePath();
+    const arrowGeo = new THREE.ShapeGeometry(arrowShape);
+    for (let i = 0; i < 3; i++) {
+      const arrow = new THREE.Mesh(
+        arrowGeo,
+        new THREE.MeshBasicMaterial({
+          color: "#335a43",
+          side: THREE.DoubleSide,
+          depthTest: false,
+        }),
+      );
+      arrow.rotation.x = Math.PI / 2;
+      arrow.position.set((i - 1) * 0.7, 0.17, -11.5);
+      arrow.renderOrder = 3;
+      this.arrows.add(arrow);
+    }
     // A bounded pool and instancing keep repeated marks to one draw call.
     const leaves = new THREE.InstancedMesh(
       new THREE.SphereGeometry(0.12, 6, 4),
@@ -200,7 +228,7 @@ export class Diorama {
     }
     this.scene.add(leaves);
     this.label("START", 0, 14.9, 2);
-    this.label("TEETISCH", 0, -12.25, 2.8);
+    this.label("TEE HIER ABSTELLEN", 0, -12.1, 3.6);
     this.label("RUHIGER WEG", -5.7, 2.65, 3.3);
     this.label("ABKÜRZUNG", -0.55, 2.8, 3);
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -268,7 +296,7 @@ export class Diorama {
       [0, 0.065],
     ].map(([r, y]) => new THREE.Vector2(r, y));
     const porcelain = this.make(
-      new THREE.LatheGeometry(profile, 32),
+      new THREE.LatheGeometry(profile, 64),
       "#f6f2df",
       this.cup,
       0,
@@ -278,7 +306,7 @@ export class Diorama {
     );
     (porcelain.material as THREE.MeshStandardMaterial).metalness = 0.08;
     this.make(
-      new THREE.TorusGeometry(0.125, 0.034, 8, 24),
+      new THREE.TorusGeometry(0.125, 0.034, 12, 40),
       "#f6f2df",
       this.cup,
       0.36,
@@ -442,6 +470,9 @@ export class Diorama {
     this.renderer.setSize(this.width, this.height, false);
   }
   resetSpills() {
+    this.character.body.add(this.tray);
+    this.tray.position.set(0, 1.16, -0.59);
+    this.tray.quaternion.identity();
     this.nextPuddle = this.nextParticle = 0;
     this.spillClock = 0;
     this.dummy.scale.setScalar(0);
@@ -454,26 +485,190 @@ export class Diorama {
     this.puddles.instanceMatrix.needsUpdate =
       this.droplets.instanceMatrix.needsUpdate = true;
   }
-  render(sim: Simulation, dt: number, overview = false) {
+  private setupCourse(sim: Simulation) {
+    this.disposeObjects(this.courseProps);
+    this.courseProps.clear();
+    this.marks = [];
+    for (const { definition: d } of sim.props) {
+      const prop = new THREE.Group();
+      if (d.kind === "cards") {
+        this.make(
+          new RoundedBoxGeometry(d.radius * 2, 1.3, 0.22, 3, 0.08),
+          "#f2eedf",
+          prop,
+        );
+        const pip = this.make(
+          new THREE.OctahedronGeometry(0.22),
+          "#a55b48",
+          prop,
+          0,
+          0.05,
+          0.13,
+        );
+        pip.scale.z = 0.18;
+        this.make(
+          new THREE.CylinderGeometry(0.13, 0.18, 0.15, 24),
+          "#8d7554",
+          prop,
+          0,
+          -0.61,
+          0,
+        );
+      } else {
+        const color = d.kind === "tin" ? "#476c5a" : "#a66b57";
+        this.make(
+          new THREE.CylinderGeometry(d.radius, d.radius * 0.98, 0.72, 40),
+          color,
+          prop,
+        );
+        this.make(
+          new THREE.CylinderGeometry(
+            d.radius * 1.04,
+            d.radius * 1.04,
+            0.08,
+            40,
+          ),
+          "#bda274",
+          prop,
+          0,
+          0.38,
+          0,
+          0.35,
+        );
+        if (d.kind === "chips")
+          for (let y = -0.28; y < 0.3; y += 0.14)
+            this.make(
+              new THREE.TorusGeometry(d.radius, 0.018, 6, 32),
+              "#eee6d0",
+              prop,
+              0,
+              y,
+              0,
+            ).rotation.x = Math.PI / 2;
+      }
+      this.courseProps.add(prop);
+    }
+    for (const [index, mark] of sim.course.checkpoints.entries()) {
+      const mesh = new THREE.Mesh(
+        new THREE.RingGeometry(mark.radius - 0.09, mark.radius, 64),
+        new THREE.MeshBasicMaterial({
+          color: "#b1833e",
+          transparent: true,
+          opacity: 0.8,
+          depthWrite: false,
+        }),
+      );
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.position.set(mark.x, 0.32, mark.z);
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 128;
+      const ctx = canvas.getContext("2d")!;
+      ctx.fillStyle = "#f7f2df";
+      ctx.beginPath();
+      ctx.arc(64, 64, 44, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#694918";
+      ctx.font = "600 60px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(index + 1), 64, 66);
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      const number = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.8, 0.8),
+        new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+          depthWrite: false,
+        }),
+      );
+      number.position.z = 0.005;
+      mesh.add(number);
+      this.courseProps.add(mesh);
+      this.marks.push(mesh);
+    }
+    this.courseId = sim.levelId;
+  }
+  render(sim: Simulation, dt: number, overview = false, serving = 0) {
     if (this.disposed) return;
     const begin = performance.now();
+    if (this.courseId !== sim.levelId) this.setupCourse(sim);
+    sim.props.forEach((prop, i) => {
+      this.courseProps.children[i].position.copy(prop.body.translation());
+      this.courseProps.children[i].quaternion.copy(prop.body.rotation());
+    });
+    this.marks.forEach((mark, i) => {
+      const material = mark.material as THREE.MeshBasicMaterial;
+      material.color.set(i < sim.checkpoint ? "#587c61" : "#a66c28");
+      material.opacity =
+        i < sim.checkpoint ? 0.25 : i === sim.checkpoint ? 1 : 0.4;
+      mark.children[0].visible = i >= sim.checkpoint;
+    });
+    this.arrows.visible = !sim.arrived;
+    this.goalRing.visible = !sim.arrived;
+    this.arrows.position.y = this.reduced
+      ? 0
+      : Math.sin(sim.elapsed * 3) * 0.06;
     const p = sim.position,
       l = sim.liquid;
     this.windTime.value = this.reduced ? 0 : sim.elapsed;
-    this.character.update(sim, dt, this.reduced);
+    const approach = THREE.MathUtils.smoothstep(serving, 0, 0.4);
+    const rate =
+      serving > 0 && serving < 0.4
+        ? (6 * (serving / 0.4) * (1 - serving / 0.4)) / 0.72
+        : 0;
+    const velocity = { x: -p.x * rate, z: (-13.05 - p.z) * rate };
+    const yawDelta = Math.atan2(Math.sin(-sim.yaw), Math.cos(-sim.yaw));
+    this.character.update(
+      sim,
+      dt,
+      this.reduced,
+      serving > 0
+        ? {
+            position: {
+              x: p.x * (1 - approach),
+              z: THREE.MathUtils.lerp(p.z, -13.05, approach),
+            },
+            yaw: sim.yaw + yawDelta * approach,
+            speed: Math.hypot(velocity.x, velocity.z),
+            velocity,
+          }
+        : undefined,
+    );
+    if (serving > 0.4) {
+      this.character.body.rotation.x = Math.sin(serving * Math.PI) * 0.13;
+      this.avatar.updateMatrixWorld(true);
+      if (this.tray.parent !== this.scene) {
+        this.scene.attach(this.tray);
+        this.serveFrom.copy(this.tray.position);
+        this.serveRotation.copy(this.tray.quaternion);
+      }
+      const reach = THREE.MathUtils.smoothstep(serving, 0.4, 0.95);
+      this.tray.position.lerpVectors(
+        this.serveFrom,
+        new THREE.Vector3(-0.05, 1.015, -14.12),
+        reach,
+      );
+      this.tray.position.y += Math.sin(reach * Math.PI) * 0.2;
+      this.tray.quaternion.slerpQuaternions(
+        this.serveRotation,
+        new THREE.Quaternion(),
+        reach,
+      );
+    }
     const facingCos = Math.cos(sim.yaw),
       facingSin = Math.sin(sim.yaw);
     const trayX = l.trayX * facingCos - l.trayZ * facingSin;
     const trayZ = l.trayX * facingSin + l.trayZ * facingCos;
     const cupX = l.cupX * facingCos - l.cupZ * facingSin;
     const cupZ = l.cupX * facingSin + l.cupZ * facingCos;
-    this.tray.rotation.set(trayZ, 0, -trayX);
-    this.cup.rotation.set(cupZ, 0, -cupX);
+    if (serving <= 0.4) this.tray.rotation.set(trayZ, 0, -trayX);
+    this.cup.rotation.set(serving ? 0 : cupZ, 0, serving ? 0 : -cupX);
     // Cancel the vessel's attitude: resting fluid stays level under world gravity.
     this.tea.rotation.set(
-      -trayZ - cupZ - this.character.body.rotation.x,
+      serving ? 0 : -trayZ - cupZ - this.character.body.rotation.x,
       0,
-      trayX + cupX,
+      serving ? 0 : trayX + cupX,
     );
     const vertices = this.tea.geometry.attributes.position;
     for (let i = 0; i < vertices.count; i++) {
@@ -485,15 +680,20 @@ export class Diorama {
         i,
         TEA_BASE_HEIGHT +
           l.amount * TEA_FILL_DEPTH +
-          l.x * worldX +
-          l.z * worldZ +
-          l.wave * (worldX * worldX - worldZ * worldZ) * 2,
+          (1 - serving) *
+            (l.x * worldX +
+              l.z * worldZ +
+              l.wave * (worldX * worldX - worldZ * worldZ) * 2),
       );
     }
     vertices.needsUpdate = true;
     this.tea.geometry.computeVertexNormals();
     this.tea.visible = l.amount > 0.005;
-    this.shadow.position.set(p.x, this.avatar.position.y + 0.012, p.z);
+    this.shadow.position.set(
+      this.avatar.position.x,
+      this.avatar.position.y + 0.012,
+      this.avatar.position.z,
+    );
     if (this.roller) {
       this.roller.position.set(sim.rollerX, 0.68, 4.25);
       this.roller.rotation.z = -sim.rollerX / 0.6;
@@ -578,7 +778,7 @@ export class Diorama {
   private downgrade() {
     if (this.quality === "high") {
       this.quality = "medium";
-      this.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.3));
+      this.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.6));
     } else if (this.quality === "medium") {
       this.quality = "low";
       this.renderer.setPixelRatio(1);

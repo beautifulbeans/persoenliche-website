@@ -18,7 +18,7 @@ type Leg = {
   yaw: number;
 };
 const up = new THREE.Vector3(0, 1, 0);
-const sphere = (r: number) => new THREE.SphereGeometry(r, 16, 12);
+const sphere = (r: number) => new THREE.SphereGeometry(r, 28, 20);
 
 /** Feet stay in world space during stance; only the swinging foot follows a landing arc. */
 export class CharacterRig {
@@ -223,9 +223,22 @@ export class CharacterRig {
       .applyAxisAngle(up, yaw)
       .add(this.root.position);
   }
-  update(sim: Simulation, dt: number, reduced: boolean) {
+  update(
+    sim: Simulation,
+    dt: number,
+    reduced: boolean,
+    pose?: {
+      position: { x: number; z: number };
+      yaw: number;
+      speed: number;
+      velocity: { x: number; z: number };
+    },
+  ) {
     this.landed = false;
-    const p = sim.position;
+    const p = pose?.position ?? sim.position;
+    const yaw = pose?.yaw ?? sim.yaw;
+    const speed = pose?.speed ?? sim.speed;
+    const velocity = pose?.velocity ?? sim.lastV;
     const surfaceY =
       sim.surface === "vinyl"
         ? 0.285
@@ -237,35 +250,35 @@ export class CharacterRig {
     this.ground +=
       (surfaceY - this.ground) * (dt === 0 ? 1 : 1 - Math.exp(-24 * dt));
     this.root.position.set(p.x, this.ground, p.z);
-    this.root.rotation.y = sim.yaw;
+    this.root.rotation.y = yaw;
     this.root.updateMatrixWorld(true);
     if (!this.initialized || sim.elapsed === 0) {
       for (const leg of this.legs) {
-        leg.position.copy(this.restingFoot(leg, sim.yaw));
+        leg.position.copy(this.restingFoot(leg, yaw));
         leg.planted = true;
-        leg.yaw = sim.yaw;
+        leg.yaw = yaw;
       }
       this.previous.copy(this.root.position);
       this.distance = 0;
       this.initialized = true;
     }
     const travelled = this.previous.distanceTo(this.root.position);
-    this.velocity.set(sim.lastV.x, 0, sim.lastV.z);
+    this.velocity.set(velocity.x, 0, velocity.z);
     this.distance += travelled;
     this.previous.copy(this.root.position);
-    const moving = sim.speed > 0.08;
+    const moving = speed > 0.08;
     if (dt > 0 && !this.legs.some((leg) => !leg.planted)) {
       const leg = this.legs[this.nextLeg];
-      const offset = leg.position.distanceTo(this.restingFoot(leg, sim.yaw));
+      const offset = leg.position.distanceTo(this.restingFoot(leg, yaw));
       if ((moving && this.distance > 0.045) || (!moving && offset > 0.11)) {
         leg.from.copy(leg.position);
-        leg.duration = clamp(0.47 / Math.max(sim.speed, 1.8), 0.155, 0.2);
+        leg.duration = clamp(0.47 / Math.max(speed, 1.8), 0.155, 0.2);
         leg.to
-          .copy(this.restingFoot(leg, sim.yaw))
+          .copy(this.restingFoot(leg, yaw))
           .addScaledVector(this.velocity, leg.duration * 1.65);
         leg.swing = 0;
         leg.planted = false;
-        leg.yaw = sim.yaw;
+        leg.yaw = yaw;
         this.nextLeg = 1 - this.nextLeg;
         this.distance = 0;
       } else if (!moving) this.nextLeg = 1 - this.nextLeg;
@@ -273,7 +286,7 @@ export class CharacterRig {
     for (const leg of this.legs) {
       if (!leg.planted) {
         if (!moving)
-          leg.to.lerp(this.restingFoot(leg, sim.yaw), 1 - Math.exp(-20 * dt));
+          leg.to.lerp(this.restingFoot(leg, yaw), 1 - Math.exp(-20 * dt));
         leg.swing = Math.min(1, leg.swing + dt / leg.duration);
         const t = leg.swing;
         // Smooth swing and toe clearance, followed by an exact planted position.
@@ -302,7 +315,7 @@ export class CharacterRig {
       leg.boot.position.copy(this.local);
       leg.boot.rotation.set(
         leg.planted ? 0 : Math.sin(leg.swing * Math.PI * 2) * 0.2,
-        leg.yaw - sim.yaw,
+        leg.yaw - yaw,
         0,
       );
     }
@@ -313,7 +326,7 @@ export class CharacterRig {
         : 0;
     this.body.position.y +=
       (bob - this.body.position.y) * (1 - Math.exp(-20 * dt));
-    const lean = reduced ? 0 : -Math.min(0.045, sim.speed * 0.014);
+    const lean = reduced ? 0 : -Math.min(0.045, speed * 0.014);
     this.body.rotation.x +=
       (lean - this.body.rotation.x) * (1 - Math.exp(-12 * dt));
   }

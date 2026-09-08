@@ -1,6 +1,8 @@
 import RAPIER from "@dimforge/rapier3d-compat";
 import {
   GOAL,
+  COURSES,
+  type CourseProp,
   LEVEL,
   OBSTACLES,
   PLAYER_RADIUS,
@@ -28,6 +30,9 @@ export interface Spill {
   section: string;
 }
 export interface RoundResult {
+  levelId: number;
+  arrived: boolean;
+  checkpoints: number;
   finished: boolean;
   tea: number;
   elapsed: number;
@@ -56,6 +61,13 @@ export class Simulation {
   contactMaterial: ContactMaterial = "wood";
   private contactMaterials = new Map<number, ContactMaterial>();
   gentle = false;
+  levelId = 0;
+  checkpoint = 0;
+  arrived = false;
+  props: { definition: CourseProp; body: RAPIER.RigidBody }[] = [];
+  get course() {
+    return COURSES[this.levelId];
+  }
   finished = false;
   ended = false;
   phase = 0;
@@ -182,9 +194,50 @@ export class Simulation {
     return clamp((START.z - this.position.z) / (START.z - GOAL.z), 0, 1);
   }
   get duration() {
-    return roundDuration(this.gentle);
+    return roundDuration(this.gentle, this.levelId);
   }
-  reset(gentle: boolean, variation = Math.random()) {
+  reset(gentle: boolean, variation = Math.random(), levelId = this.levelId) {
+    this.levelId = Math.max(
+      0,
+      Math.min(COURSES.length - 1, Math.floor(levelId)),
+    );
+    this.checkpoint = 0;
+    this.arrived = false;
+    for (const prop of this.props) {
+      for (let i = 0; i < prop.body.numColliders(); i++)
+        this.contactMaterials.delete(prop.body.collider(i).handle);
+      this.world.removeRigidBody(prop.body);
+    }
+    this.props = this.course.props.map((definition) => {
+      const moving = definition.kind === "cards";
+      const descriptor = moving
+        ? RAPIER.RigidBodyDesc.kinematicPositionBased()
+        : RAPIER.RigidBodyDesc.dynamic()
+            .enabledTranslations(true, false, true)
+            .enabledRotations(false, true, false)
+            .setLinearDamping(3)
+            .setAngularDamping(4)
+            .setCcdEnabled(true);
+      const body = this.world.createRigidBody(
+        descriptor.setTranslation(
+          definition.x,
+          moving ? 0.7 : 0.42,
+          definition.z,
+        ),
+      );
+      const shape = moving
+        ? RAPIER.ColliderDesc.cuboid(definition.radius, 0.65, 0.14)
+        : RAPIER.ColliderDesc.cylinder(0.4, definition.radius);
+      const collider = this.world.createCollider(
+        shape
+          .setMass(moving ? 2 : definition.kind === "chips" ? 3.5 : 1.4)
+          .setFriction(0.65)
+          .setRestitution(0.08),
+        body,
+      );
+      this.contactMaterials.set(collider.handle, moving ? "cloth" : "metal");
+      return { definition, body };
+    });
     this.gentle = gentle;
     this.elapsed =
       this.collisions =
@@ -210,6 +263,18 @@ export class Simulation {
     this.events.drainCollisionEvents(() => {});
   }
   updateObstacles(time: number) {
+    time *= this.course.pace;
+    for (const { definition: d, body } of this.props) {
+      if (d.kind === "cards")
+        body.setNextKinematicTranslation({
+          x:
+            d.x +
+            Math.sin((time / this.course.pace) * (d.rate ?? 1) + this.phase) *
+              (d.travel ?? 1),
+          y: 0.7,
+          z: d.z,
+        });
+    }
     this.rollerX =
       ROLLER.x + Math.sin(time * 0.85 + this.phase) * ROLLER.travel;
     this.roller.setNextKinematicTranslation({
@@ -378,10 +443,16 @@ export class Simulation {
       this.lastSpill = this.elapsed;
     }
     const pos = this.position;
-    this.finished =
+    const mark = this.course.checkpoints[this.checkpoint];
+    if (mark && Math.hypot(pos.x - mark.x, pos.z - mark.z) < mark.radius)
+      this.checkpoint++;
+    this.arrived =
+      this.checkpoint === this.course.checkpoints.length &&
       Math.hypot(pos.x - GOAL.x, pos.z - GOAL.z) < GOAL.radius &&
       this.speed < 1.35;
-    this.ended = this.finished || this.elapsed >= this.duration;
+    this.finished =
+      this.arrived && this.liquid.amount >= this.course.minimumTea;
+    this.ended = this.arrived || this.elapsed >= this.duration;
   }
   result(): RoundResult {
     const smoothness = clamp(
@@ -390,6 +461,9 @@ export class Simulation {
       1,
     );
     return {
+      levelId: this.levelId,
+      arrived: this.arrived,
+      checkpoints: this.checkpoint,
       finished: this.finished,
       tea: this.liquid.amount,
       elapsed: this.elapsed,

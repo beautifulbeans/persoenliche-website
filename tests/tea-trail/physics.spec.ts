@@ -8,6 +8,7 @@ import { Liquid, scoreRound } from "../../src/games/tea-trail/liquid";
 import { CharacterRig } from "../../src/games/tea-trail/character";
 import { CAMERA_ANGLE } from "../../src/games/tea-trail/input";
 import {
+  COURSES,
   ROUND_SECONDS,
   GENTLE_ROUND_SECONDS,
   SAFE_WAYPOINTS,
@@ -17,11 +18,16 @@ const neutral: Controls = { x: 0, z: 0, tiltX: 0, tiltZ: 0, steady: false };
 test.beforeAll(async () => {
   await RAPIER.init();
 });
-function drive(points: typeof SAFE_WAYPOINTS, gentle = false, variation = 0) {
+function drive(
+  points: typeof SAFE_WAYPOINTS,
+  gentle = false,
+  variation = 0,
+  levelId = points === SAFE_WAYPOINTS ? 2 : 0,
+) {
   const sim = new Simulation();
-  sim.reset(gentle, variation);
+  sim.reset(gentle, variation, levelId);
   let waypoint = 1;
-  for (let frame = 0; frame < 2101 && !sim.ended; frame++) {
+  for (let frame = 0; frame < 2701 && !sim.ended; frame++) {
     const p = sim.position,
       target = points[waypoint];
     const dx = target.x - p.x,
@@ -256,7 +262,7 @@ test("15-second deadline and the separate gentle timer end exactly their own rou
 test("15-second shortcut and gentle detour can be finished with digital WASD and a brake key", () => {
   for (const points of [SAFE_WAYPOINTS, SHORT_WAYPOINTS]) {
     const sim = new Simulation();
-    sim.reset(points === SAFE_WAYPOINTS, 0);
+    sim.reset(points === SAFE_WAYPOINTS, 0, points === SAFE_WAYPOINTS ? 2 : 0);
     let waypoint = 1;
     let digital = { x: 0, z: 0 };
     for (let frame = 0; frame < sim.duration * 60 + 1 && !sim.ended; frame++) {
@@ -304,4 +310,89 @@ test("15-second shortcut and gentle detour can be finished with digital WASD and
     expect(result.tea).toBeGreaterThan(0.8);
     sim.dispose();
   }
+});
+
+test("all three levels are winnable with digital directions and deliberate braking", () => {
+  for (let level = 0; level < COURSES.length; level++) {
+    const brake = [1.15, 1.8, 1.4][level];
+    const sim = new Simulation();
+    sim.reset(false, 0, level);
+    const points = COURSES[level].path;
+    let waypoint = 1;
+    let digital = { x: 0, z: 0 };
+    for (let f = 0; f < 2700 && !sim.ended; f++) {
+      const p = sim.position,
+        t = points[waypoint],
+        dx = t.x - p.x,
+        dz = t.z - p.z,
+        d = Math.hypot(dx, dz);
+      if (d < 0.7 && waypoint < points.length - 1) waypoint++;
+      if (f % 7 === 0) {
+        const sx = dx * Math.cos(CAMERA_ANGLE) - dz * Math.sin(CAMERA_ANGLE),
+          sz = dx * Math.sin(CAMERA_ANGLE) + dz * Math.cos(CAMERA_ANGLE),
+          angle =
+            (Math.round(Math.atan2(sz, sx) / (Math.PI / 4)) * Math.PI) / 4;
+        const x = Math.cos(angle),
+          z = Math.sin(angle);
+        digital = {
+          x: x * Math.cos(CAMERA_ANGLE) + z * Math.sin(CAMERA_ANGLE),
+          z: -x * Math.sin(CAMERA_ANGLE) + z * Math.cos(CAMERA_ANGLE),
+        };
+      }
+      const stop = waypoint === points.length - 1 && d < 1.1;
+      sim.step(1 / 60, {
+        ...(stop ? { x: 0, z: 0 } : digital),
+        tiltX: 0,
+        tiltZ: 0,
+        steady: d < brake,
+      });
+    }
+    expect(
+      sim.finished,
+      `Level ${level + 1}: ${Math.round(sim.liquid.amount * 100)} % tea`,
+    ).toBe(true);
+    expect(sim.checkpoint).toBe(3);
+    expect(sim.elapsed).toBeLessThan(sim.duration);
+    sim.dispose();
+  }
+});
+test("a collision moves a tea tin and a retry restores it", () => {
+  const sim = new Simulation();
+  sim.reset(false, 0, 0);
+  const tin = sim.props[0].body;
+  const origin = { ...tin.translation() };
+  sim.player.setTranslation({ x: origin.x, y: 0.72, z: origin.z + 1.2 }, true);
+  for (let i = 0; i < 45; i++) sim.step(1 / 60, { ...neutral, z: -1 });
+  expect(
+    Math.hypot(tin.translation().x - origin.x, tin.translation().z - origin.z),
+  ).toBeGreaterThan(0.12);
+  sim.reset(false, 0, 0);
+  expect(sim.props[0].body.translation().z).toBeCloseTo(origin.z, 4);
+  sim.dispose();
+});
+test("the table cannot bypass course marks and a near-empty cup cannot unlock a level", () => {
+  const sim = new Simulation();
+  sim.player.setTranslation({ x: 0, y: 0.72, z: -13.1 }, true);
+  sim.step(1 / 60, neutral);
+  expect(sim.ended).toBe(false);
+  sim.checkpoint = 3;
+  sim.liquid.amount = 0.3;
+  sim.step(1 / 60, neutral);
+  expect(sim.arrived).toBe(true);
+  expect(sim.finished).toBe(false);
+  sim.dispose();
+});
+test("strong phone tilt actually spills tea while a small tilt stays comfortable", () => {
+  const pour = (tilt: number) => {
+    const sim = new Simulation();
+    for (let i = 0; i < 180; i++) sim.step(1 / 60, { ...neutral, tiltX: tilt });
+    const result = sim.result();
+    sim.dispose();
+    return result;
+  };
+  const quiet = pour(0.04),
+    tilted = pour(0.5);
+  expect(quiet.tea).toBeGreaterThan(0.999);
+  expect(tilted.tea).toBeLessThan(0.95);
+  expect(tilted.loss.Handyneigung).toBeGreaterThan(0.03);
 });

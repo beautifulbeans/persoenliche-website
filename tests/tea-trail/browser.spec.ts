@@ -409,16 +409,20 @@ test("completed round persists best and pagehide releases WebGL", async ({
   await startGame(page);
   await page.evaluate(() => {
     const d = (window as any).__teaTrail;
+    d.game.sim.checkpoint = 3;
     d.game.sim.player.setTranslation({ x: 0, y: 0.72, z: -13.1 }, true);
     d.game.sim.player.setLinvel({ x: 0, y: 0, z: 0 }, true);
   });
   await expect(page.locator("[data-result-dialog]")).toBeVisible();
   await expect(page.locator("[data-result-best]")).toHaveText(
-    "Deine neue persönliche Bestleistung.",
+    "Deine neue Bestleistung in dieser Sitzung.",
   );
   expect(
     await page.evaluate(
-      () => JSON.parse(localStorage.getItem("tea-trail:best:v3")!).normal.score,
+      () =>
+        JSON.parse(sessionStorage.getItem("tea-trail:session-best:v4")!)[
+          "0:normal"
+        ].score,
     ),
   ).toBeGreaterThan(800);
   const disposed = await page.evaluate(() => {

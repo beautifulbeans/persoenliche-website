@@ -50,7 +50,7 @@ test("static release lazy-loads, plays, pauses and has no debug API", async ({
   await page.keyboard.down("KeyW");
   await page.waitForTimeout(1000);
   await page.keyboard.up("KeyW");
-  await expect(page.locator("[data-goal]")).not.toHaveText("0 % zum Teetisch");
+  await expect(page.locator("[data-goal]")).not.toContainText("· 0 % zum Teetisch");
   await page
     .getByRole("button", { name: "Ton stummschalten", exact: true })
     .click();
@@ -91,6 +91,9 @@ test("static release supports small touch screens and reduced motion", async ({
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await expect(page.locator("[data-level]")).toHaveCount(3);
+  await expect(page.locator("[data-sensor-intro]")).toBeVisible();
+  await page.screenshot({ path: "/tmp/tea-trail-production-small-intro.png", fullPage: true });
   await page.getByRole("button", { name: "Spiel starten", exact: true }).tap();
   await expect(page.locator("[data-stage]")).toHaveAttribute(
     "data-state",

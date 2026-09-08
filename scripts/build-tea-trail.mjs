@@ -126,7 +126,7 @@ const cyl = (
   r = [0, 0, 0],
   parent = atelier,
   mat = "matte",
-  segments = 24,
+  segments = 40,
 ) =>
   mesh(
     new THREE.CylinderGeometry(top, bottom, h, segments),
@@ -147,8 +147,8 @@ const sphere = (
   const m = mesh(
     new THREE.SphereGeometry(
       radius,
-      radius < 0.13 ? 8 : 16,
-      radius < 0.13 ? 5 : 12,
+      radius < 0.13 ? 12 : 28,
+      radius < 0.13 ? 8 : 20,
     ),
     c,
     mat,
@@ -166,7 +166,7 @@ const torus = (
   r = [0, 0, 0],
   parent = atelier,
   mat = "ceramic",
-) => mesh(new THREE.TorusGeometry(radius, tube, 7, 32), c, mat, parent, p, r);
+) => mesh(new THREE.TorusGeometry(radius, tube, 10, 48), c, mat, parent, p, r);
 function pot(x, z, size = 1, parent = atelier) {
   cyl(
     0.48 * size,
@@ -405,9 +405,9 @@ function shrub(x, z, size = 1) {
     const a = i * 2.4;
     const geometry = new THREE.IcosahedronGeometry(
       (0.46 + random() * 0.14) * size,
-      1,
+      2,
     );
-    geometry.computeVertexNormals();
+    // Keep the smooth radial normals; recomputing on unindexed triangles faceted every leaf crown.
     const bush = mesh(
       geometry,
       ["#557b4b", "#6c914e", "#819f59"][i % 3],

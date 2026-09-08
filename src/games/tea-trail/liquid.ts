@@ -55,13 +55,13 @@ export class Liquid {
   step(dt: number, input: LiquidInput) {
     const stability = input.gentle ? 0.55 : 1;
     const tx = clamp(
-      (-input.ax * 0.033 - (input.cornerX ?? 0) * 0.18 + input.tiltX * 0.3) *
+      (-input.ax * 0.033 - (input.cornerX ?? 0) * 0.18 + input.tiltX * 1.4) *
         stability,
       -0.8,
       0.8,
     );
     const tz = clamp(
-      (-input.az * 0.033 - (input.cornerZ ?? 0) * 0.18 + input.tiltZ * 0.3) *
+      (-input.az * 0.033 - (input.cornerZ ?? 0) * 0.18 + input.tiltZ * 1.4) *
         stability,
       -0.8,
       0.8,

@@ -1,6 +1,6 @@
 import { TiltSensor } from "./sensors";
 import { TeaAudio } from "./audio";
-import { GOAL, OBSTACLES, START, roundDuration } from "./level";
+import { GOAL, OBSTACLES, START, roundDuration, COURSES } from "./level";
 import type { Game } from "./game";
 import type { RoundResult } from "./simulation";
 interface Preferences {
@@ -14,8 +14,8 @@ interface Best {
   tea: number;
   time: number;
 }
-const SETTINGS_KEY = "tea-trail:settings:v1",
-  BEST_KEY = "tea-trail:best:v3";
+const SETTINGS_KEY = "tea-trail:session-settings:v2",
+  BEST_KEY = "tea-trail:session-best:v4";
 const defaults: Preferences = {
   volume: 40,
   muted: false,
@@ -28,7 +28,7 @@ const bounded = (value: unknown, fallback: number) =>
     : fallback;
 function readPrefs(): Preferences {
   try {
-    const value = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? "null");
+    const value = JSON.parse(sessionStorage.getItem(SETTINGS_KEY) ?? "null");
     return value && typeof value === "object"
       ? {
           volume: bounded(value.volume, 40),
@@ -43,9 +43,12 @@ function readPrefs(): Preferences {
 }
 function readBest(): Record<string, Best> {
   try {
-    const value = JSON.parse(localStorage.getItem(BEST_KEY) ?? "{}");
+    const value = JSON.parse(sessionStorage.getItem(BEST_KEY) ?? "{}");
     const out: Record<string, Best> = {};
-    for (const mode of ["normal", "gentle"]) {
+    for (const mode of COURSES.flatMap((_, i) => [
+      `${i}:normal`,
+      `${i}:gentle`,
+    ])) {
       const b = value?.[mode];
       if (
         b &&
@@ -57,7 +60,7 @@ function readBest(): Record<string, Best> {
         b.tea <= 1 &&
         Number.isFinite(b.time) &&
         b.time >= 0 &&
-        b.time <= roundDuration(mode === "gentle")
+        b.time <= roundDuration(mode.endsWith(":gentle"), Number(mode[0]))
       )
         out[mode] = b;
     }
@@ -79,6 +82,105 @@ export function mountTeaTrail() {
   const signal = abort.signal;
   const prefs = readPrefs();
   let best = readBest();
+  let selectedLevel = 0;
+  let unlocked = 0;
+  type Attempt = {
+    levelId: number;
+    tea: number;
+    elapsed: number;
+    score: number;
+    finished: boolean;
+    gentle: boolean;
+  };
+  let attempts: Attempt[] = [];
+  try {
+    const saved = JSON.parse(
+      sessionStorage.getItem("tea-trail:session-progress:v2") ?? "null",
+    );
+    if (saved && Number.isInteger(saved.unlocked))
+      unlocked = Math.max(0, Math.min(COURSES.length - 1, saved.unlocked));
+    if (Number.isInteger(saved?.selected))
+      selectedLevel = Math.max(0, Math.min(unlocked, saved.selected));
+    if (Array.isArray(saved?.attempts))
+      attempts = saved.attempts
+        .filter(
+          (a: Attempt) =>
+            Number.isInteger(a.levelId) &&
+            a.levelId >= 0 &&
+            a.levelId < COURSES.length &&
+            Number.isFinite(a.tea) &&
+            a.tea >= 0 &&
+            a.tea <= 1 &&
+            Number.isFinite(a.elapsed) &&
+            a.elapsed >= 0 &&
+            a.elapsed <= 45 &&
+            Number.isInteger(a.score) &&
+            a.score >= 0 &&
+            a.score <= 1000 &&
+            typeof a.finished === "boolean" &&
+            typeof a.gentle === "boolean",
+        )
+        .slice(0, 8);
+  } catch {
+    /* Session history remains available in memory. */
+  }
+  const saveProgress = () => {
+    try {
+      sessionStorage.setItem(
+        "tea-trail:session-progress:v2",
+        JSON.stringify({ unlocked, selected: selectedLevel, attempts }),
+      );
+    } catch {
+      /* Memory fallback. */
+    }
+  };
+  const renderHistory = () => {
+    root
+      .querySelectorAll<HTMLElement>("[data-history]")
+      .forEach((container) => {
+        container.replaceChildren();
+        if (!attempts.length) {
+          const empty = document.createElement("p");
+          empty.textContent =
+            "Noch keine Versuche. Deine nächsten acht Runden erscheinen hier.";
+          container.append(empty);
+          return;
+        }
+        const table = document.createElement("table");
+        const caption = document.createElement("caption");
+        caption.className = "sr-only";
+        caption.textContent = "Letzte Versuche, neuester zuerst";
+        table.append(caption);
+        const head = document.createElement("thead");
+        const heading = document.createElement("tr");
+        for (const title of ["Level", "Tee", "Zeit", "Punkte", "Ergebnis"]) {
+          const th = document.createElement("th");
+          th.scope = "col";
+          th.textContent = title;
+          heading.append(th);
+        }
+        head.append(heading);
+        table.append(head);
+        const body = document.createElement("tbody");
+        for (const a of attempts) {
+          const row = document.createElement("tr");
+          for (const text of [
+            `${a.levelId + 1}${a.gentle ? " · Sanft" : ""}`,
+            `${Math.round(a.tea * 100)} %`,
+            `${a.elapsed.toFixed(1).replace(".", ",")} s`,
+            String(a.score),
+            a.finished ? "Geschafft" : "Noch einmal",
+          ]) {
+            const cell = document.createElement("td");
+            cell.textContent = text;
+            row.append(cell);
+          }
+          body.append(row);
+        }
+        table.append(body);
+        container.append(table);
+      });
+  };
   let game: Game | null = null;
   let busy = false;
   let disposed = false;
@@ -107,14 +209,34 @@ export function mountTeaTrail() {
   sensor.strength = prefs.sensitivity / 100;
   const savePrefs = () => {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(prefs));
+      sessionStorage.setItem(SETTINGS_KEY, JSON.stringify(prefs));
     } catch {
       /* Private browsing or blocked storage keeps session preferences. */
     }
   };
   const updateBest = () => {
-    q("round-seconds").textContent = String(roundDuration(prefs.gentle));
-    const b = best[prefs.gentle ? "gentle" : "normal"];
+    q("round-seconds").textContent = String(
+      roundDuration(prefs.gentle, selectedLevel),
+    );
+    q("course-title").textContent =
+      `Level ${selectedLevel + 1} · ${COURSES[selectedLevel].name}`;
+    q("course-description").textContent = COURSES[selectedLevel].description;
+    q("course-requirement").textContent =
+      `Alle drei Wegmarken passieren. Mindestens ${Math.round(COURSES[selectedLevel].minimumTea * 100)} % Tee am Tisch abstellen.`;
+    root
+      .querySelectorAll<HTMLButtonElement>("[data-level]")
+      .forEach((button) => {
+        const index = Number(button.dataset.level);
+        button.disabled = index > unlocked;
+        button.setAttribute("aria-pressed", String(index === selectedLevel));
+        button.querySelector("i")!.className =
+          `ph ${index > unlocked ? "ph-lock-simple" : "ph-leaf"}`;
+        button.title =
+          index > unlocked
+            ? "Vorheriges Level erfolgreich abschließen"
+            : COURSES[index].description;
+      });
+    const b = best[`${selectedLevel}:${prefs.gentle ? "gentle" : "normal"}`];
     q("best").textContent = b
       ? `Bestleistung${prefs.gentle ? " · Sanft" : ""}: ${b.score} Punkte · ${Math.round(b.tea * 100)} % Tee`
       : "Deine erste Tasse wartet.";
@@ -135,6 +257,7 @@ export function mountTeaTrail() {
   q("sensitivity-output").textContent = `${prefs.sensitivity} %`;
   updateAudio();
   updateBest();
+  renderHistory();
   const closeDialogs = () => {
     for (const dialog of [
       pauseDialog,
@@ -153,7 +276,7 @@ export function mountTeaTrail() {
     pauseDialog.showModal();
   };
   const resume = () => {
-    if (!game || game.sim.ended) return;
+    if (!game || (game.sim.ended && !game.sim.arrived)) return;
     closeDialogs();
     playing = true;
     stage.dataset.state = "playing";
@@ -211,10 +334,14 @@ export function mountTeaTrail() {
     closeDialogs();
     q("result-title").textContent = result.finished
       ? "Zeit für einen guten Tee."
-      : "Der Tisch wartet noch.";
+      : result.arrived
+        ? "Ein bisschen mehr Tee, bitte."
+        : "Der Tisch wartet noch.";
     q("result-summary").textContent = result.finished
       ? `${result.leaves === 3 ? "Ruhige Hände, eine volle Tasse." : result.tea > 0.55 ? "Gut angekommen. Jeder ruhigere Schritt zählt." : "Angekommen! Mit sanfteren Kurven bleibt beim nächsten Mal mehr Tee."}${result.gentle ? " Im sanften Modus." : ""}`
-      : `${result.duration} Sekunden sind um. ${Math.round(result.tea * 100)} % Tee sind noch in deiner Tasse. Die Abkürzung spart Zeit. Vor engen Kurven kurz ruhiger tragen.`;
+      : result.arrived
+        ? `Am Tisch angekommen, aber dieses Level braucht mindestens ${Math.round(COURSES[result.levelId].minimumTea * 100)} % Tee. Bremse vor den Kurven kurz ab.`
+        : `${result.duration} Sekunden sind um. ${Math.round(result.tea * 100)} % Tee sind noch in deiner Tasse. Merke dir die Wegmarken. Vor engen Kurven kurz ruhiger tragen.`;
     q("result-tea").textContent = `${Math.round(result.tea * 100)} %`;
     q("result-time").textContent =
       `${result.elapsed.toFixed(1).replace(".", ",")} s`;
@@ -228,7 +355,7 @@ export function mountTeaTrail() {
       icon.setAttribute("aria-hidden", "true");
       leaves.append(icon);
     }
-    const mode = result.gentle ? "gentle" : "normal";
+    const mode = `${result.levelId}:${result.gentle ? "gentle" : "normal"}`;
     let storageAvailable = true;
     const newBest =
       result.finished && (!best[mode] || result.score > best[mode].score);
@@ -239,16 +366,36 @@ export function mountTeaTrail() {
         time: result.elapsed,
       };
       try {
-        localStorage.setItem(BEST_KEY, JSON.stringify(best));
+        sessionStorage.setItem(BEST_KEY, JSON.stringify(best));
       } catch {
         storageAvailable = false;
       }
     }
     q("result-best").textContent = newBest
       ? storageAvailable
-        ? "Deine neue persönliche Bestleistung."
+        ? "Deine neue Bestleistung in dieser Sitzung."
         : "Neue Bestleistung für diese Sitzung. Browserspeicherung ist hier nicht verfügbar."
       : `${result.collisions} ${result.collisions === 1 ? "Kollision" : "Kollisionen"} · ${Math.round(result.smoothness * 100)} % ruhige Bewegung`;
+    attempts.unshift({
+      levelId: result.levelId,
+      tea: result.tea,
+      elapsed: result.elapsed,
+      score: result.score,
+      finished: result.finished,
+      gentle: result.gentle,
+    });
+    attempts = attempts.slice(0, 8);
+    if (result.finished)
+      unlocked = Math.max(
+        unlocked,
+        Math.min(COURSES.length - 1, result.levelId + 1),
+      );
+    q("next-level").hidden =
+      !result.finished || result.levelId >= COURSES.length - 1;
+    if (result.finished && result.levelId === COURSES.length - 1)
+      q("result-title").textContent = "Drei Level. Ein guter Tee.";
+    saveProgress();
+    renderHistory();
     updateBest();
     drawMap(result);
     const list = q("loss-list");
@@ -309,6 +456,11 @@ export function mountTeaTrail() {
           onPause: pause,
           onEnd: finish,
           onError: error,
+          onServe: () => {
+            stage.dataset.state = "serving";
+            q("game-status").textContent =
+              "Am Tisch angekommen. Die Figur stellt den Tee ab.";
+          },
         });
         await game.load();
         if (disposed) return;
@@ -322,7 +474,6 @@ export function mountTeaTrail() {
         q("location").hidden =
         q("touch-controls").hidden =
           false;
-      stage.dataset.state = "playing";
       q("load-status").textContent = "";
       q("game-status").textContent =
         "Die Runde beginnt. Folge dem Weg zum Teetisch.";
@@ -333,7 +484,8 @@ export function mountTeaTrail() {
       game.view.resize();
       stage.scrollIntoView({ block: "nearest", behavior: "instant" });
       playing = true;
-      game.start(prefs.gentle);
+      game.start(prefs.gentle, selectedLevel);
+      stage.dataset.state = "playing";
       // Diagnostics are intentionally absent from production builds.
       if (import.meta.env.DEV)
         (window as unknown as { __teaTrail?: unknown }).__teaTrail = {
@@ -373,6 +525,50 @@ export function mountTeaTrail() {
         });
     }
   };
+  const chooseLevel = () => {
+    game?.pause();
+    playing = false;
+    closeDialogs();
+    root.classList.remove("is-playing");
+    stage.dataset.state = "idle";
+    startPanel.hidden = false;
+    q("start-label").textContent = "Spiel starten";
+    canvas.hidden = true;
+    root.querySelector<HTMLImageElement>(".tt-poster")!.hidden = false;
+    q("hud").hidden = q("location").hidden = q("touch-controls").hidden = true;
+    updateBest();
+    start.focus();
+  };
+  root.querySelectorAll<HTMLButtonElement>("[data-level]").forEach((button) =>
+    button.addEventListener(
+      "click",
+      () => {
+        const index = Number(button.dataset.level);
+        if (playing || index > unlocked) return;
+        selectedLevel = index;
+        saveProgress();
+        updateBest();
+      },
+      { signal },
+    ),
+  );
+  q("choose-level").addEventListener("click", chooseLevel, { signal });
+  q("next-level").addEventListener(
+    "click",
+    () => {
+      selectedLevel = Math.min(unlocked, selectedLevel + 1);
+      saveProgress();
+      chooseLevel();
+    },
+    { signal },
+  );
+  q("sensor-intro").addEventListener(
+    "click",
+    () => {
+      openSettings();
+    },
+    { signal },
+  );
   start.addEventListener("click", begin, { signal });
   q("restart").addEventListener("click", begin, { signal });
   q("pause").addEventListener("click", pause, { signal });
