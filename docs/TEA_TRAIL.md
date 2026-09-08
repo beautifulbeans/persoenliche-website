@@ -86,7 +86,7 @@ Gemessen auf Apple M1 mit Chrome: vollständige Level-1-Runde einschließlich Se
 
 | Ressource | Dateigröße | Lokal gzip-komprimiert |
 | --- | ---: | ---: |
-| Spiel-Engine einschließlich Rapier-WASM | 3.556.576 Bytes | 1.262.706 Bytes |
+| Spiel-Engine einschließlich Rapier-WASM | 3.556.576 Bytes | 1.262.701 Bytes |
 | Kleine Spielseiten-Steuerung vor Start | 26.461 Bytes | 9.675 Bytes |
 | Meshopt-GLB | 1.741.496 Bytes | 313.953 Bytes |
 | Holztextur | 19.744 Bytes | bereits WebP |

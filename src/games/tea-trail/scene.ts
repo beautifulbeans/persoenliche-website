@@ -92,7 +92,7 @@ export class Diorama {
     this.renderer.setClearColor("#b5c7ad");
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 2 : 2.25));
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1;
     this.scene.background = new THREE.Color("#b5c7ad");
