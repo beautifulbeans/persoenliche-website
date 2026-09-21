@@ -63,12 +63,12 @@ const galleryPhotoCount = importedPhotos.length;
     data-simulation="provia"
     data-frame-names={JSON.stringify(frameNames)}
   >
+    <div class="camera-screen-top" aria-hidden="true">
+      <span>Fujifilm X-T30 III</span>
+      <span>ISO 400 · F2.8 · 1/250</span>
+    </div>
     <div class="camera-display">
       <div class="camera-frames">
-        <div class="camera-screen-top" aria-hidden="true">
-          <span>FUJIFILM X-T30 III</span>
-          <span>ISO 400&nbsp;&nbsp;F2.8&nbsp;&nbsp;1/250</span>
-        </div>
 
         {shots.map((shot, index) =>
           shot.src ? (
@@ -76,11 +76,12 @@ const galleryPhotoCount = importedPhotos.length;
               <Image
                 src={shot.src}
                 alt={shot.alt}
+                draggable="false"
                 widths={[640, 960, 1440]}
                 sizes="(max-width: 48rem) calc(100vw - 3rem), 58vw"
                 loading={index === 0 ? "eager" : "lazy"}
               />
-              <figcaption>
+              <figcaption class="sr-only">
                 <span>{shot.title}</span>
                 <small>{shot.note}</small>
               </figcaption>
@@ -99,17 +100,9 @@ const galleryPhotoCount = importedPhotos.length;
           href="/galerie/"
           aria-label={`Alle ${galleryPhotoCount} Fotos in der Fotogalerie ansehen`}
         >
-          <span class="camera-gallery-slide-orbit" aria-hidden="true">
-            <i class="ph ph-images"></i>
-          </span>
-          <span class="camera-gallery-slide-copy">
-            <small>Letztes Bild · Fotogalerie</small>
+          <span class="camera-gallery-end">
             <strong>Galerie öffnen</strong>
-            <span class="camera-gallery-slide-action">
-              <i class="ph ph-images" aria-hidden="true"></i>
-              Alle {galleryPhotoCount} Fotos
-              <i class="ph ph-arrow-right" aria-hidden="true"></i>
-            </span>
+            <span>Alle {galleryPhotoCount} Fotos <i class="ph ph-arrow-up-right" aria-hidden="true"></i></span>
           </span>
         </a>
 
@@ -124,7 +117,10 @@ const galleryPhotoCount = importedPhotos.length;
       </div>
 
       <div class="camera-screen-bottom">
-        <span class="camera-playback-mode"><i class="ph ph-images" aria-hidden="true"></i> Wiedergabe</span>
+        <div class="camera-image-caption" aria-live="polite">
+          <strong data-camera-image-title>{shots[0]?.title}</strong>
+          <span data-camera-image-note>{shots[0]?.note}</span>
+        </div>
         <div class="camera-gallery-nav" aria-label="Fotogalerie steuern">
           <button type="button" data-camera-previous aria-label="Vorheriges Foto">
             <i class="ph ph-caret-left" aria-hidden="true"></i>
@@ -134,14 +130,14 @@ const galleryPhotoCount = importedPhotos.length;
             <i class="ph ph-caret-right" aria-hidden="true"></i>
           </button>
         </div>
-        <span class="camera-file-name" data-camera-file-name>{shots[0]?.fileName}</span>
+
       </div>
     </div>
 
     <div class="camera-control-deck">
       <div class="simulation-controls camera-simulation-dock">
         <span>Filmsimulation</span>
-        <div role="group" aria-label="Filmsimulation auswählen">
+        <div role="group" aria-label="Filmsimulation auswählen" data-sliding-selection>
           <button class="is-selected" type="button" data-film-simulation="provia" aria-pressed="true">Provia</button>
           <button type="button" data-film-simulation="classic" aria-pressed="false">Classic</button>
           <button type="button" data-film-simulation="acros" aria-pressed="false">Acros</button>
@@ -154,12 +150,15 @@ const galleryPhotoCount = importedPhotos.length;
         </button>
       </div>
     </div>
+    <div class="camera-file-details">
+      <span>Wiedergabe</span>
+      <span class="camera-file-name" data-camera-file-name>{shots[0]?.fileName}</span>
+    </div>
     <p class="sr-only" aria-live="polite" data-camera-capture-status></p>
   </div>
 
   <div class="camera-copy">
     <div class="play-card-heading">
-      <span class="play-icon"><i class="ph ph-camera" aria-hidden="true"></i></span>
       <h3>Fotografie</h3>
     </div>
     <p class="camera-personal">Eine kleine Auswahl meiner Fotos. Mehr davon liegt in der Galerie, und die wächst weiter.</p>
@@ -168,22 +167,29 @@ const galleryPhotoCount = importedPhotos.length;
       <a class="camera-gallery-link" href="/galerie/">
         Galerie ansehen <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
       </a>
-      <a class="fact-source" href="https://www.fujifilm-x.com/global/products/cameras/x-t30-iii/" target="_blank" rel="noreferrer">
-        Kamera: Fujifilm <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
-      </a>
     </div>
 
-    <div class="camera-fact-panel">
-      <p class="fact-kicker" data-camera-kicker>Meine Kamera</p>
-      <h4 data-camera-fact-title>Kompakt und bewusst analog bedienbar</h4>
-      <p aria-live="polite" data-camera-fact-copy>Die spiegellose X-T30 III wiegt 378 Gramm und kombiniert einen 26,1-Megapixel-Sensor mit Fujifilms aktuellem X-Processor 5.</p>
-    </div>
-
-    <div class="camera-fact-switch" role="group" aria-label="Kamerafakt auswählen">
-      <button class="is-selected" type="button" data-camera-fact="model" aria-pressed="true">X-T30 III</button>
-      <button type="button" data-camera-fact="mirrorless" aria-pressed="false">Spiegellos</button>
-      <button type="button" data-camera-fact="simulation" aria-pressed="false">Filmsimulation</button>
-    </div>
+    <details class="camera-info" data-fluid-details>
+      <summary>
+        <span>Über die Kamera <small>Fujifilm X-T30 III</small></span>
+        <i class="ph ph-plus" aria-hidden="true"></i>
+      </summary>
+      <div class="camera-info-body">
+        <div class="camera-fact-switch" data-sliding-selection role="group" aria-label="Kamerafakt auswählen">
+          <button class="is-selected" type="button" data-camera-fact="model" aria-pressed="true">X-T30 III</button>
+          <button type="button" data-camera-fact="mirrorless" aria-pressed="false">Spiegellos</button>
+          <button type="button" data-camera-fact="simulation" aria-pressed="false">Filmsimulation</button>
+        </div>
+        <div class="camera-fact-panel">
+          <p class="fact-kicker" data-camera-kicker>Meine Kamera</p>
+          <h4 data-camera-fact-title>Kompakt und bewusst analog bedienbar</h4>
+          <p aria-live="polite" data-camera-fact-copy>Die spiegellose X-T30 III wiegt 378 Gramm und kombiniert einen 26,1-Megapixel-Sensor mit Fujifilms aktuellem X-Processor 5.</p>
+        </div>
+        <a class="fact-source" href="https://www.fujifilm-x.com/global/products/cameras/x-t30-iii/" target="_blank" rel="noreferrer">
+          Kamera: Fujifilm <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </details>
   </div>
 </article>
 
@@ -210,7 +216,8 @@ const galleryPhotoCount = importedPhotos.length;
 
   document.querySelectorAll<HTMLElement>(".camera-card").forEach((card) => {
     const viewer = card.querySelector<HTMLElement>("[data-camera-viewer]");
-    const cameraDisplay = card.querySelector<HTMLElement>(".camera-display");
+    const imageTitle = card.querySelector<HTMLElement>("[data-camera-image-title]");
+    const imageNote = card.querySelector<HTMLElement>("[data-camera-image-note]");
     const frameArea = card.querySelector<HTMLElement>(".camera-frames");
     const frames = Array.from(card.querySelectorAll<HTMLElement>(".camera-shot"));
     const flash = card.querySelector<HTMLElement>("[data-camera-flash]");
@@ -235,7 +242,7 @@ const galleryPhotoCount = importedPhotos.length;
     let frameTransition = 0;
     let captureRun = 0;
     let captureAnimations: Animation[] = [];
-    let simulationAnimation: Animation | undefined;
+
 
     const showFrame = (index: number, direction: 1 | -1 = 1) => {
       if (!frames.length) return;
@@ -256,6 +263,11 @@ const galleryPhotoCount = importedPhotos.length;
         frame.classList.toggle("is-active", frame === previousFrame || frame === nextFrame);
       });
       frameIndex = nextIndex;
+      frames.forEach((frame) => { frame.inert = frame !== nextFrame; });
+      animateContentSwap([imageTitle, imageNote], () => {
+        if (imageTitle) imageTitle.textContent = nextFrame.querySelector("figcaption span")?.textContent ?? "Galerie öffnen";
+        if (imageNote) imageNote.textContent = nextFrame.querySelector("figcaption small")?.textContent ?? "Alle Fotos entdecken";
+      }, { offset: 3, stagger: 0 });
 
       if (prefersReducedMotion()) {
         frames.forEach((frame) => frame.classList.toggle("is-active", frame === nextFrame));
@@ -263,13 +275,13 @@ const galleryPhotoCount = importedPhotos.length;
         const outgoing = previousFrame?.animate(
           [
             { opacity: 1, transform: "translate3d(0, 0, 0)" },
-            { opacity: 0, transform: `translate3d(${direction * -7}%, 0, 0)` },
+            { opacity: 0, transform: `translate3d(${direction * -3}%, 0, 0)` },
           ],
           { duration: 220, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" },
         );
         const incoming = nextFrame?.animate(
           [
-            { opacity: 0, transform: `translate3d(${direction * 9}%, 0, 0)` },
+            { opacity: 0, transform: `translate3d(${direction * 3}%, 0, 0)` },
             { opacity: 1, transform: "translate3d(0, 0, 0)" },
           ],
           { duration: 280, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" },
@@ -285,6 +297,8 @@ const galleryPhotoCount = importedPhotos.length;
       if (counter) counter.textContent = `${frameIndex + 1} / ${frames.length}`;
       if (fileName) fileName.textContent = frameNames[frameIndex] ?? `DSCF${String(frameIndex + 1).padStart(4, "0")}.JPG`;
     };
+
+    frames.forEach((frame, index) => { frame.inert = index !== frameIndex; });
 
     previous?.addEventListener("click", () => showFrame(frameIndex - 1, -1));
     next?.addEventListener("click", () => showFrame(frameIndex + 1, 1));
@@ -331,7 +345,7 @@ const galleryPhotoCount = importedPhotos.length;
           { transform: "scale(1.008)", offset: 0.18 },
           { transform: "scale(1)" },
         ],
-        { duration: 620, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 360, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       const focusPulse = focusFrame?.animate(
         [
@@ -340,16 +354,16 @@ const galleryPhotoCount = importedPhotos.length;
           { transform: "translate(-50%, -50%) scale(0.72)", opacity: 0, offset: 0.42 },
           { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
         ],
-        { duration: 620, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 360, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       const flashPulse = flash?.animate(
         [
           { opacity: 0 },
-          { opacity: 0.84, offset: 0.08 },
+          { opacity: 0.2, offset: 0.08 },
           { opacity: 0, offset: 0.24 },
           { opacity: 0 },
         ],
-        { duration: 560, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 320, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       const curtainTopMotion = curtainTop?.animate(
         [
@@ -358,7 +372,7 @@ const galleryPhotoCount = importedPhotos.length;
           { transform: "translate3d(0, 0, 0)", offset: 0.44 },
           { transform: "translate3d(0, -102%, 0)" },
         ],
-        { duration: 560, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
+        { duration: 320, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
       );
       const curtainBottomMotion = curtainBottom?.animate(
         [
@@ -367,7 +381,7 @@ const galleryPhotoCount = importedPhotos.length;
           { transform: "translate3d(0, 0, 0)", offset: 0.44 },
           { transform: "translate3d(0, 102%, 0)" },
         ],
-        { duration: 560, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
+        { duration: 320, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
       );
       const scanMotion = sensorScan?.animate(
         [
@@ -375,7 +389,7 @@ const galleryPhotoCount = importedPhotos.length;
           { opacity: 0.86, offset: 0.16 },
           { opacity: 0, transform: "translate3d(0, 120%, 0)" },
         ],
-        { duration: 380, delay: 240, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 220, delay: 140, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       const readoutMotion = captureReadout?.animate(
         [
@@ -384,7 +398,7 @@ const galleryPhotoCount = importedPhotos.length;
           { opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.72 },
           { opacity: 0, transform: "translate3d(0, -0.25rem, 0)" },
         ],
-        { duration: 760, delay: 250, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 700, delay: 160, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       captureAnimations = [framePulse, focusPulse, flashPulse, curtainTopMotion, curtainBottomMotion, scanMotion, readoutMotion]
         .filter((animation): animation is Animation => Boolean(animation));
@@ -410,16 +424,7 @@ const galleryPhotoCount = importedPhotos.length;
       button.addEventListener("click", () => {
         setPressedState(simulationButtons, button);
         if (viewer) viewer.dataset.simulation = button.dataset.filmSimulation ?? "provia";
-        if (cameraDisplay && !prefersReducedMotion()) {
-          simulationAnimation?.cancel();
-          simulationAnimation = cameraDisplay.animate(
-            [
-              { opacity: 0.58, filter: "blur(2px)" },
-              { opacity: 1, filter: "blur(0)" },
-            ],
-            { duration: 220, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
-          );
-        }
+
       });
     });
   });

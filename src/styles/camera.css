@@ -1,0 +1,323 @@
+/* Photography first. Controls sit outside the image; camera notes unfold on demand. */
+#fotografie.camera-card {
+  grid-template-columns: minmax(0, 1.55fr) minmax(18rem, 0.85fr);
+  align-items: start;
+  gap: clamp(2rem, 4vw, 4rem);
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  border: 0;
+  border-radius: 1rem;
+  background: var(--personal-surface);
+  box-shadow: none;
+}
+
+#fotografie .camera-viewer {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+#fotografie .camera-screen-top {
+  position: static;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  padding: 0 0 0.85rem;
+  color: var(--personal-muted);
+  font: 550 0.72rem/1.5 var(--font-sans);
+  text-shadow: none;
+  letter-spacing: 0;
+}
+
+#fotografie .camera-display {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--personal-ink);
+  box-shadow: none;
+}
+
+#fotografie .camera-frames { border-radius: 0.65rem; }
+#fotografie .camera-photo img {
+  transition: filter 260ms ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+#fotografie .camera-shot figcaption.sr-only {
+  position: absolute;
+  inset: auto;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+#fotografie .focus-frame { opacity: 0; }
+
+#fotografie .camera-screen-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 5.5rem;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  color: var(--personal-ink);
+}
+#fotografie .camera-image-caption {
+  display: grid;
+  min-width: 0;
+  gap: 0.25rem;
+}
+#fotografie .camera-image-caption strong {
+  font: 650 0.9rem/1.4 var(--font-sans);
+}
+#fotografie .camera-image-caption > span {
+  padding: 0;
+  text-align: left;
+  color: var(--personal-muted);
+  font: 450 0.75rem/1.5 var(--font-sans);
+}
+#fotografie .camera-gallery-nav { flex: 0 0 auto; gap: 0.25rem; }
+#fotografie .camera-screen-bottom .camera-gallery-nav button {
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--personal-ink);
+}
+#fotografie .camera-screen-bottom .camera-gallery-nav > span {
+  min-width: 2.5rem;
+  color: var(--personal-muted);
+  font: 550 0.75rem/1 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+#fotografie .camera-control-deck {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0.85rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--personal-line);
+  border-radius: 0;
+  background: transparent;
+}
+#fotografie .simulation-controls {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+#fotografie .simulation-controls > span {
+  display: block;
+  margin: 0;
+  color: var(--personal-muted);
+  font: 500 0.72rem/1.5 var(--font-sans);
+  text-transform: none;
+  letter-spacing: 0;
+}
+#fotografie .simulation-controls > div {
+  display: flex;
+  gap: 0;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--tone-camera-soft);
+  overflow: visible;
+}
+#fotografie .simulation-controls button {
+  width: auto;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.85rem;
+  border: 0;
+  background: transparent;
+  color: var(--tone-camera-strong);
+  font: 600 0.75rem/1.2 var(--font-sans);
+}
+#fotografie .simulation-controls button[aria-pressed="true"] {
+  background: var(--tone-camera-strong);
+  color: #fff;
+}
+#fotografie .camera-hardware { width: auto; min-height: 0; padding: 0; align-self: center; }
+#fotografie .camera-viewer-shutter,
+#fotografie .camera-viewer-shutter:hover,
+#fotografie .camera-viewer-shutter:active {
+  position: static;
+  width: 3.25rem;
+  height: 3.25rem;
+  min-height: 3.25rem;
+  padding: 0;
+  flex: 0 0 auto;
+}
+#fotografie .camera-shutter-disc {
+  width: 3.25rem;
+  height: 3.25rem;
+  min-height: 3.25rem;
+  border: 1px solid var(--tone-camera-strong);
+  background: var(--tone-camera-strong);
+  box-shadow: inset 0 0 0 0.25rem var(--personal-surface);
+  color: #fff;
+}
+
+#fotografie .camera-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 2.3rem 0 0;
+  justify-content: flex-start;
+}
+#fotografie .play-card-heading { margin: 0; }
+#fotografie .play-card-heading h3 { font-size: clamp(2.4rem, 4vw, 3.4rem); }
+#fotografie .camera-personal {
+  max-width: 36ch;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+#fotografie .camera-actions { order: initial; margin: 1.5rem 0 2.5rem; padding: 0; }
+#fotografie .camera-gallery-link {
+  width: auto;
+  min-height: 2.9rem;
+  border: 0;
+  padding-inline: 1.25rem;
+  background: var(--tone-camera-strong);
+  color: #fff;
+}
+#fotografie .camera-info { border-top: 1px solid var(--personal-line-strong); }
+#fotografie .camera-info summary {
+  display: flex;
+  min-height: 4.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  cursor: pointer;
+  list-style: none;
+  color: var(--personal-ink);
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+#fotografie .camera-info summary::-webkit-details-marker { display: none; }
+#fotografie .camera-info summary small {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 450;
+  color: var(--personal-muted);
+}
+#fotografie .camera-info summary > i {
+  font-size: 1.1rem;
+  transition: transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+#fotografie .camera-info[open] summary > i { transform: rotate(45deg); }
+#fotografie .camera-info-body { padding: 0.25rem 0 1.25rem; }
+#fotografie .camera-fact-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0 0 1.5rem;
+  overflow: visible;
+}
+#fotografie .camera-fact-switch button {
+  min-height: 2.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 0;
+  font-size: 0.75rem;
+  background: var(--tone-camera-soft);
+  color: var(--tone-camera-strong);
+}
+#fotografie .camera-fact-switch button[aria-pressed="true"] {
+  background: var(--tone-camera-strong);
+  color: #fff;
+}
+#fotografie .camera-fact-panel { margin: 0; min-height: 0; }
+#fotografie .camera-fact-panel .fact-kicker { font-size: 0.75rem; }
+#fotografie .fact-source {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-size: 0.75rem;
+}
+#fotografie .camera-fact-panel h4 {
+  max-width: none;
+  margin: 0.6rem 0 0.8rem;
+  font: 650 1.05rem/1.45 var(--font-sans);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+#fotografie .camera-fact-panel > p:last-child { margin-bottom: 1rem; font-size: 0.85rem; line-height: 1.7; }
+#fotografie .camera-file-details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  color: var(--personal-muted);
+  font: 450 0.7rem/1.5 var(--font-sans);
+}
+#fotografie .camera-file-name { color: inherit; font: inherit; }
+
+@media (max-width: 60rem) {
+  #fotografie.camera-card { grid-template-columns: minmax(0, 1fr); gap: 1.8rem; }
+  #fotografie .camera-copy { padding: 0; }
+  #fotografie .camera-personal { max-width: 52ch; }
+  #fotografie .camera-actions { margin: 1.1rem 0 1.8rem; }
+}
+@media (max-width: 30rem) {
+  #fotografie.camera-card { padding: 1rem; }
+  #fotografie .camera-screen-top { font-size: 0.7rem; }
+  #fotografie .camera-screen-bottom { gap: 0.4rem; }
+  #fotografie .camera-image-caption strong { font-size: 0.82rem; }
+  #fotografie .camera-image-caption > span { font-size: 0.7rem; }
+  #fotografie .camera-gallery-nav { gap: 0; }
+  #fotografie .camera-screen-bottom .camera-gallery-nav > span { min-width: 2rem; }
+  #fotografie .camera-control-deck { gap: 0.65rem; }
+  #fotografie .simulation-controls { gap: 0.5rem; }
+  #fotografie .simulation-controls button { padding-inline: 0.65rem; font-size: 0.7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #fotografie .camera-photo img,
+  #fotografie .camera-info summary > i { transition: none; }
+}
+
+/* One end card, one invitation — no stacked captions or ornamental overlays. */
+#fotografie .camera-gallery-slide::before,
+#fotografie .camera-gallery-slide::after { content: none; }
+#fotografie .camera-gallery-end {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+#fotografie .camera-gallery-end strong {
+  font: 550 clamp(1.8rem, 4vw, 3.5rem)/1.1 var(--font-display);
+  letter-spacing: -0.025em;
+}
+#fotografie .camera-gallery-end > span { display: flex; align-items: center; gap: 0.8rem; font-size: 0.85rem; }
+#fotografie .camera-gallery-end i { transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1); }
+#fotografie .is-gallery-frame .camera-image-caption { visibility: hidden; }
+@media (hover: hover) and (pointer: fine) {
+  #fotografie .camera-gallery-slide:hover .camera-gallery-end i { transform: translate(3px, -3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #fotografie .camera-gallery-end i { transition: none; }
+}

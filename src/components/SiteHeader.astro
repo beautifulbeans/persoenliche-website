@@ -5,7 +5,13 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
 
 <header class="site-header" data-site-header>
   <div class="header-identity">
-    <a class="wordmark" href="#oben" aria-label="Zurück zum Anfang">
+    <button
+      class="wordmark"
+      type="button"
+      data-status-trigger-identity
+      aria-expanded="false"
+      aria-label="Status öffnen: Gerade wahrscheinlich beim Teeaufgießen"
+    >
       <span class="wordmark-avatar">
         <Image
           class="wordmark-avatar-image wordmark-avatar-color"
@@ -27,7 +33,7 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
         />
       </span>
       <span class="wordmark-name">Fabian Deragisch</span>
-    </a>
+    </button>
 
     <div class="header-status-control">
       <button
@@ -138,6 +144,8 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
 
 <script>
   const siteHeader = document.querySelector<HTMLElement>("[data-site-header]");
+  const headerIdentity = siteHeader?.querySelector<HTMLElement>(".header-identity");
+  const identityStatusTrigger = siteHeader?.querySelector<HTMLButtonElement>("[data-status-trigger-identity]");
   const desktopStatusTrigger = siteHeader?.querySelector<HTMLButtonElement>("[data-status-trigger-desktop]");
   const desktopStatusExpanded = siteHeader?.querySelector<HTMLElement>("[data-status-expanded-desktop]");
   const mobileStatusTrigger = siteHeader?.querySelector<HTMLButtonElement>("[data-status-trigger-mobile]");
@@ -276,7 +284,7 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
       siteHeader?.querySelectorAll<HTMLElement>("[data-status-icon]").forEach((node) => {
         node.className = `ph ${profile.icon} status-activity-icon`;
       });
-      [desktopStatusTrigger, mobileStatusTrigger].forEach((trigger) => {
+      [identityStatusTrigger, desktopStatusTrigger, mobileStatusTrigger].forEach((trigger) => {
         const action = trigger?.getAttribute("aria-expanded") === "true" ? "schließen" : "öffnen";
         trigger?.setAttribute("aria-label", `Status ${action}: Gerade wahrscheinlich ${profile.detail}`);
       });
@@ -306,6 +314,11 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     mobileStatusTrigger.classList.toggle("is-open", open);
     mobileStatusTrigger.closest(".header-identity")?.classList.toggle("is-status-open", open);
     siteHeader?.classList.toggle("is-status-open", open);
+    identityStatusTrigger?.setAttribute("aria-expanded", String(open));
+    identityStatusTrigger?.setAttribute(
+      "aria-label",
+      identityStatusTrigger.getAttribute("aria-label")?.replace(open ? "öffnen" : "schließen", open ? "schließen" : "öffnen") ?? "",
+    );
   };
 
   const setDesktopStatusOpen = (open: boolean) => {
@@ -317,6 +330,12 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     );
     desktopStatusTrigger.classList.toggle("is-open", open);
     desktopStatusExpanded?.setAttribute("aria-hidden", String(!open));
+    identityStatusTrigger?.setAttribute("aria-expanded", String(open));
+    identityStatusTrigger?.setAttribute(
+      "aria-label",
+      identityStatusTrigger.getAttribute("aria-label")?.replace(open ? "öffnen" : "schließen", open ? "schließen" : "öffnen") ?? "",
+    );
+    headerIdentity?.classList.toggle("is-status-open", open);
   };
 
   const closeStatuses = () => {
@@ -334,6 +353,19 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     event.stopPropagation();
     setMobileStatusOpen(false);
     setDesktopStatusOpen(desktopStatusTrigger.getAttribute("aria-expanded") !== "true");
+  });
+
+  headerIdentity?.addEventListener("click", (event) => {
+    const target = event.target as Element;
+    if (target.closest("[data-status-trigger-desktop], [data-status-trigger-mobile]")) return;
+    event.stopPropagation();
+    if (window.matchMedia("(max-width: 48rem)").matches) {
+      setDesktopStatusOpen(false);
+      setMobileStatusOpen(mobileStatusTrigger?.getAttribute("aria-expanded") !== "true");
+      return;
+    }
+    setMobileStatusOpen(false);
+    setDesktopStatusOpen(desktopStatusTrigger?.getAttribute("aria-expanded") !== "true");
   });
 
   document.addEventListener("click", closeStatuses);

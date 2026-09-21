@@ -71,7 +71,7 @@ export const work: TimelineEntry[] = [
       "SEO-Maßnahmen und Website-Content",
       "Monitoring mit Search Console und SISTRIX",
       "KPI- und Performance-Reportings",
-      "Newsletter, CM-Mailings und CRM-Segmente",
+      "Newsletter, CRM-Mailings und CRM-Segmente",
     ],
     backTitle: "Was ich konkret mache",
     backIntro:
@@ -90,7 +90,7 @@ export const work: TimelineEntry[] = [
       {
         icon: "ph-envelope-simple",
         title: "CRM und E-Mail",
-        text: "In Microsoft Dynamics baue ich Segmente sowie CM-Mailings und kümmere mich um das Newsletter-Marketing.",
+        text: "In Microsoft Dynamics baue ich Segmente sowie CRM-Mailings und kümmere mich um das Newsletter-Marketing.",
       },
       {
         icon: "ph-paint-brush",

@@ -119,15 +119,8 @@ const { thesis } = profile;
       if (!reduceMotion.matches) {
         flipAnimation?.cancel();
         flipAnimation = thesisCard.animate(
-          [
-            { scale: "1" },
-            { scale: "1.012", offset: 0.48 },
-            { scale: "1" },
-          ],
-          {
-            duration: flipped ? 560 : 480,
-            easing: "cubic-bezier(0.23, 1, 0.32, 1)",
-          },
+          [{ opacity: 0.94 }, { opacity: 1 }],
+          { duration: flipped ? 420 : 340, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
         );
         void flipAnimation.finished
           .catch(() => undefined)

@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/card-games.css';
+import { rules } from '../games/cards/rules';
+---
+<BaseLayout title="Eine Runde Karten | Fabian Deragisch" description="Durak, Arschloch, Neunerln und Texas Hold’em gegen taktische Bots spielen. Ohne Echtgeld." bodyClass="card-games-page">
+  <div class="cg-shell">
+    <header class="cg-header">
+      <a href="/#spielkarten"><i class="ph ph-arrow-left" aria-hidden="true"></i> Zur Website</a>
+      <span class="cg-brand">♠ <b>SPIELZIMMER</b> <small>Eine Runde geht immer.</small></span>
+      <button data-rules-open><i class="ph ph-info" aria-hidden="true"></i> Spielregeln</button>
+    </header>
+    <main id="inhalt">
+      <div class="cg-heading"><h1 data-game-title>Durak</h1><span data-game-subtitle>Duell · 36 Karten</span></div>
+      <nav class="cg-game-tabs" aria-label="Kartenspiel auswählen">{Object.entries(rules).map(([kind, rule]) => <button data-game-kind={kind} aria-pressed={kind === 'durak' ? 'true' : 'false'}>{rule.name}</button>)}</nav>
+      <section class="cg-table" aria-label="Spieltisch">
+        <div class="cg-opponents" data-opponents></div>
+        <div class="cg-table-meta"><span data-game-info></span><span class="cg-level">Bot · anspruchsvoll</span></div>
+        <div class="cg-board" data-board></div>
+        <div class="cg-stock" data-stock></div>
+        
+        <div class="cg-result" data-result hidden></div>
+      </section>
+      <section class="cg-player" aria-label="Deine Karten und Aktionen">
+        <p class="cg-message" role="status" aria-live="polite" data-message></p>
+        <div class="cg-hand-heading"><h2>Deine Hand <span data-hand-count></span></h2><span data-player-meta></span></div>
+        <p class="cg-hand-hint" data-hand-hint>Karte auswählen und ausspielen.</p>
+        <div class="cg-hand" data-hand></div>
+        <div class="cg-actions" data-actions></div>
+      </section>
+      <div class="cg-bottom"><button class="cg-text-button" data-history-open>Spielverlauf</button><button class="cg-text-button" data-new-game>Neu starten <i class="ph ph-arrow-clockwise" aria-hidden="true"></i></button></div>
+      <noscript><p>Zum Spielen bitte JavaScript aktivieren.</p></noscript>
+    </main>
+    <footer class="cg-footer"><span>♣ Gute Karten. Gute Gesellschaft.</span> <span>Ohne Konto · ohne Echtgeld</span></footer>
+  </div>
+  <dialog class="cg-dialog" data-history-dialog aria-label="Spielverlauf"><div><button class="cg-dialog-close" data-history-close aria-label="Verlauf schließen">✕</button><h2>Am Tisch passiert</h2><ol data-history></ol></div></dialog>
+  <dialog class="cg-dialog" data-rules-dialog aria-labelledby="cg-rules-title"><div><button class="cg-dialog-close" data-dialog-close aria-label="Spielregeln schließen"><i class="ph ph-x" aria-hidden="true"></i></button><h2 id="cg-rules-title" data-rules-title></h2><div data-rules-body></div></div></dialog>
+  <dialog class="cg-dialog" data-restart-dialog aria-labelledby="cg-restart-title"><div><h2 id="cg-restart-title">Neue Runde anfangen?</h2><p>Die laufende Partie wird beendet.</p><div class="cg-dialog-actions"><button data-restart-cancel>Weiterspielen</button><button class="cg-primary" data-restart-confirm>Neu beginnen</button></div></div></dialog>
+</BaseLayout>
+<script>
+  import '../games/cards/app';
+</script>

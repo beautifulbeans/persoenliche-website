@@ -298,15 +298,16 @@ const albums = [
 
         panels.forEach((panel) => {
           const active = panel.dataset.albumDetail === key;
+          panel.getAnimations().forEach((animation) => animation.cancel());
           panel.classList.toggle("is-active", active);
           panel.toggleAttribute("hidden", !active);
           if (active && !prefersReducedMotion()) {
             panel.animate(
               [
-                { opacity: 0, transform: "translate3d(0, 1.25rem, 0) scale(0.985)", clipPath: "inset(100% 0 0 0)" },
-                { opacity: 1, transform: "translate3d(0, 0, 0) scale(1)", clipPath: "inset(0 0 0 0)" },
+                { opacity: 0.25, transform: "translate3d(0, 0.4rem, 0)" },
+                { opacity: 1, transform: "translate3d(0, 0, 0)" },
               ],
-              { duration: 440, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+              { duration: 260, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
             );
           }
         });

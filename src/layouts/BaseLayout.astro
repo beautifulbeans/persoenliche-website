@@ -6,6 +6,8 @@ import "../styles/global.css";
 import "../styles/refinement.css";
 import "../styles/latest.css";
 import "../styles/photographic-opening.css";
+import "../styles/camera.css";
+import "../styles/interactions.css";
 import type { JsonLd } from "../data/structuredData";
 
 interface Props {
@@ -64,3 +66,7 @@ const serializedStructuredData = structuredData
     <slot />
   </body>
 </html>
+
+<script>
+  import "../scripts/interactions";
+</script>

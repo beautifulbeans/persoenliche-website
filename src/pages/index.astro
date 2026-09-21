@@ -109,7 +109,7 @@ const structuredData = createProfilePageSchema({
             <span><i class="ph ph-vinyl-record"></i>IGOR</span>
             <span><i class="ph ph-camera"></i>Fujifilm</span>
             <span><i class="ph ph-poker-chip"></i>Poker</span>
-            <span><i class="ph ph-cards"></i>Schafkopf</span>
+            <span><i class="ph ph-cards"></i>Arschloch</span>
           </div>
           <div class="interest-row" aria-hidden="true">
             <span><i class="ph ph-leaf"></i>Grüner Tee</span>
@@ -121,7 +121,7 @@ const structuredData = createProfilePageSchema({
             <span><i class="ph ph-vinyl-record"></i>IGOR</span>
             <span><i class="ph ph-camera"></i>Fujifilm</span>
             <span><i class="ph ph-poker-chip"></i>Poker</span>
-            <span><i class="ph ph-cards"></i>Schafkopf</span>
+            <span><i class="ph ph-cards"></i>Arschloch</span>
           </div>
         </div>
       </div>
@@ -180,21 +180,28 @@ const structuredData = createProfilePageSchema({
         <article class="play-card cards-card" id="spielkarten" data-reveal="scale">
           <div class="cards-heading">
             <div>
-              <p class="fact-kicker">Spiele ich gern</p>
+              <p class="fact-kicker">Spielbar gegen Bots</p>
               <h3 data-card-game-title>Durak</h3>
             </div>
-            <span class="cards-icon"><i class="ph ph-cards-three" aria-hidden="true"></i></span>
+            <span class="cards-live-pill"><i class="ph ph-play" aria-hidden="true"></i> Vier Spiele</span>
           </div>
-          <p class="cards-personal">Bei einer Runde Karten bin ich fast immer dabei. Am liebsten Durak, Neunern oder Poker.</p>
+          <p class="cards-personal">Bei einer Runde Karten bin ich fast immer dabei. Am liebsten Durak, Neunerln oder Poker.</p>
           <p class="card-game-copy" aria-live="polite" data-card-game-copy>Angreifen, verteidigen, Trumpf im Blick behalten. Verloren hat, wer am Ende noch Karten hält.</p>
           <div class="card-game-switch" role="group" aria-label="Kartenspiel auswählen">
             <button class="is-selected" type="button" data-card-game="durak" aria-pressed="true">Durak</button>
-            <button type="button" data-card-game="president" aria-pressed="false">Präsident</button>
-            <button type="button" data-card-game="neunern" aria-pressed="false">Neunern</button>
+            <button type="button" data-card-game="arschloch" aria-pressed="false">Arschloch</button>
+            <button type="button" data-card-game="neunern" aria-pressed="false">Neunerln</button>
             <button type="button" data-card-game="poker" aria-pressed="false">Poker</button>
-            <button type="button" data-card-game="schafkopf" aria-pressed="false">Schafkopf</button>
+          </div>
+          <div class="cards-launch">
+            <span class="cards-launch-copy">
+              <span class="cards-launch-icon"><i class="ph ph-cards-three" aria-hidden="true"></i></span>
+              <span><strong>Eine echte Runde starten</strong><small>Gegen taktische Bots · ohne Anmeldung</small></span>
+            </span>
+            <a class="play-card-action cards-play-link" href="/kartenspiele/?spiel=durak" target="_blank" rel="noopener" aria-label="Durak spielen (neuer Tab)" data-play-cards><span data-play-label>Durak starten</span> <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
           </div>
           <div class="card-table" data-card-table aria-label="Bewegliche Spielkarten">
+            <span class="card-table-hint" aria-hidden="true"><i class="ph ph-hand-grabbing"></i> Karten anfassen und verschieben</span>
             <button class="playing-card is-red" type="button" data-table-card data-rank="Q" data-suit="♥" aria-label="Dame Herz bewegen">
               <span class="card-corner"><strong>Q</strong><i>♥</i></span><span class="card-suit">♥</span>
             </button>
@@ -212,6 +219,7 @@ const structuredData = createProfilePageSchema({
             </button>
           </div>
           <div class="cards-action-row">
+            <span class="cards-preview-label">Spielvorschau</span>
             <button class="play-card-action" type="button" data-draw-card>
               Neu mischen <i class="ph ph-arrows-clockwise" aria-hidden="true"></i>
             </button>
@@ -412,10 +420,9 @@ const structuredData = createProfilePageSchema({
 
   const cardGames = {
     durak: ["Durak", "Angreifen, verteidigen, Trumpf im Blick behalten. Verloren hat, wer am Ende noch Karten hält."],
-    president: ["Präsident", "Karten so schnell wie möglich loswerden. Das Spiel ist auch unter einem deutlich direkteren Namen bekannt."],
-    neunern: ["Neunern", "Ein schneller Klassiker für die Runde. Die genaue Variante gehört bei regionalen Kartenspielen meistens schon zur Diskussion dazu."],
+    arschloch: ["Arschloch", "Einzelkarten, Paare oder Drillinge überbieten. Wer zuerst alle Karten loswird, gewinnt."],
+    neunern: ["Neunerln", "7 zieht zwei, 8 setzt aus, 9 wünscht eine Farbe. Gleiche Farbe oder gleicher Wert – und die Hand zuerst leeren."],
     poker: ["Poker", "Wahrscheinlichkeit, Timing und die Frage, was die anderen aus wenigen Informationen machen."],
-    schafkopf: ["Schafkopf", "Ein bayerischer Klassiker mit Partnerspiel, klaren Regeln und viel Taktik am Tisch."],
   } as const;
   const cardGameButtons = document.querySelectorAll<HTMLButtonElement>("[data-card-game]");
   const cardGameTitle = document.querySelector<HTMLElement>("[data-card-game-title]");
@@ -426,6 +433,13 @@ const structuredData = createProfilePageSchema({
       const game = cardGames[key];
       if (!game) return;
       setPressedState(cardGameButtons, button);
+      const playLink = document.querySelector<HTMLAnchorElement>("[data-play-cards]");
+      if (playLink) {
+        playLink.href = `/kartenspiele/?spiel=${key}`;
+        playLink.setAttribute("aria-label", `${game[0]} spielen (neuer Tab)`);
+        const playLabel = playLink.querySelector<HTMLElement>("[data-play-label]");
+        if (playLabel) playLabel.textContent = `${game[0]} starten`;
+      }
       animateContentSwap([cardGameTitle, cardGameCopy], () => {
         if (cardGameTitle) cardGameTitle.textContent = game[0];
         if (cardGameCopy) cardGameCopy.textContent = game[1];
@@ -603,7 +617,7 @@ const structuredData = createProfilePageSchema({
     if (!prefersReducedMotion()) {
       const gather = tableCards.map((card, index) => card.animate(
         [{ transform: card.style.transform }, { transform: centerTransform }],
-        { duration: 300, delay: index * 32, easing: "cubic-bezier(0.77, 0, 0.175, 1)", fill: "forwards" },
+        { duration: 180, delay: index * 18, easing: "cubic-bezier(0.77, 0, 0.175, 1)", fill: "forwards" },
       ));
       await Promise.allSettled(gather.map((animation) => animation.finished));
     }
@@ -622,7 +636,7 @@ const structuredData = createProfilePageSchema({
         const destination = position ? cardTransform(position.x, position.y, position.rotation) : centerTransform;
         return card.animate(
           [{ transform: centerTransform }, { transform: destination }],
-          { duration: 520, delay: index * 55, easing: "cubic-bezier(0.23, 1, 0.32, 1)", fill: "forwards" },
+          { duration: 280, delay: index * 25, easing: "cubic-bezier(0.23, 1, 0.32, 1)", fill: "forwards" },
         );
       });
       await Promise.allSettled(deal.map((animation) => animation.finished));

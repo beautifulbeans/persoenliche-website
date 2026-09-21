@@ -11,7 +11,9 @@
     "sanitize:images": "node scripts/sanitize-images.mjs",
     "test:tea-trail": "playwright test",
     "tea-trail:assets": "node scripts/build-tea-trail.mjs",
-    "tea-trail:preview": "node scripts/capture-tea-trail.mjs"
+    "tea-trail:preview": "node scripts/capture-tea-trail.mjs",
+    "test:cards": "node scripts/test-cards.mjs",
+    "test:cards:browser": "playwright test --config=playwright.cards.config.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
