@@ -12,6 +12,7 @@ const voices: Record<number, Record<string, string[]>> = {
     pass: ['Ich passe.', 'Bin diesmal raus.', 'Weiter ohne mich.'],
     defend: ['Die ist gedeckt.', 'Geht sich aus.', 'Abgewehrt.'],
     take: ['Dann nehm ich sie.', 'Okay, die gehen an mich.', 'Muss ich wohl aufnehmen.'],
+    transfer: ['Zurück zu dir.', 'Den schieb ich weiter.', 'Gleicher Wert – du bist dran.'],
     check: ['Ich checke.', 'Von mir aus weiter.', 'Ich bleib ruhig.'],
     call: ['Ich geh mit.', 'Das zahl ich.', 'Bin dabei.'],
     fold: ['Die Hand geb ich ab.', 'Das wird mir zu heiß.', 'Ich bin raus.'],
@@ -21,6 +22,7 @@ const voices: Record<number, Record<string, string[]>> = {
     pass: ['Keine passende Antwort.', 'Ich passe diesmal.', 'Da geh ich nicht drüber.'],
     defend: ['Korrekt gedeckt.', 'Der Angriff steht.', 'Gelöst.'],
     take: ['Keine Deckung. Ich nehme.', 'Dann eben aufnehmen.', 'Die Rechnung geht nicht auf.'],
+    transfer: ['Weitergeschoben.', 'Der kommt zurück.', 'Passender Wert. Du deckst.'],
     check: ['Check.', 'Noch kein Grund zu setzen.', 'Ich schau mir die nächste an.'],
     call: ['Ich gleiche aus.', 'Mitgegangen.', 'Die Quote passt.'],
     fold: ['Nicht gut genug.', 'Ich steige aus.', 'Die Rechnung passt nicht.'],
@@ -30,6 +32,7 @@ const voices: Record<number, Record<string, string[]>> = {
     pass: ['Na gut, ich passe.', 'Dann eben später.', 'Ausnahmsweise passe ich.'],
     defend: ['Erwischt? Wohl kaum.', 'Schön gedeckt.', 'Nicht mit mir.'],
     take: ['Autsch. Die nehm ich.', 'Geschenkt ist geschenkt.', 'Okay, alle zu mir.'],
+    transfer: ['Nicht so schnell – zurück.', 'Den darfst du selbst decken.', 'Schieben kann ich auch.'],
     check: ['Mal sehen, was kommt.', 'Ich checke.', 'Noch halte ich still.'],
     call: ['Ich will es sehen.', 'Da geh ich mit.', 'Komm, zeig her.'],
     fold: ['Für heute genug Mut.', 'Die schenk ich dir.', 'Ich bin raus.'],
@@ -75,7 +78,7 @@ export function renderSpeech() {
 
 export function actionSpeech(game: Game, move: Move, who: number, rank?: number, drawn = 0) {
   const defaults: Record<string, string> = {
-    attack: 'Ich greife an.', defend: 'Gedeckt.', take: 'Ich nehme auf.', done: 'Fertig.',
+    attack: 'Ich greife an.', defend: 'Gedeckt.', transfer: 'Weitergeschoben.', take: 'Ich nehme auf.', done: 'Fertig.',
     pass: 'Ich passe.', fold: 'Ich bin raus.', check: 'Ich checke.', call: 'Ich gehe mit.',
     exchange: 'Die ist für dich.', knock: 'Klopf, klopf.', 'knock-penalty': 'Klopfen vergessen!',
   };

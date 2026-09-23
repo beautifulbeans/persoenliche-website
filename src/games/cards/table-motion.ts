@@ -36,8 +36,18 @@ export function animateCards(game: Game, before?: Positions) {
     const dx = old.rect.x + old.rect.width/2 - next.rect.x - next.rect.width/2;
     const dy = old.rect.y + old.rect.height/2 - next.rect.y - next.rect.height/2;
     if (target) target.style.visibility = 'hidden';
-    const animation = ghost.animate([{transform:`translate(${dx}px,${dy}px) scale(.72) rotate(-8deg)`,opacity:.75},{transform:'translate(0,0) scale(1) rotate(0deg)',opacity:1}],{duration:360,delay:before ? 0 : delay,easing:'cubic-bezier(.22,.75,.22,1)',fill:'both'});
-    delay += 35;
-    animation.finished.catch(() => {}).finally(() => { ghost.remove(); if (target) target.style.visibility = ''; });
+    const animation = ghost.animate([{transform:`translate(${dx}px,${dy}px) scale(.72) rotate(-8deg)`,opacity:.75},{transform:'translate(0,0) scale(1) rotate(0deg)',opacity:1}],{duration:560,delay:before ? 0 : delay,easing:'cubic-bezier(.23,1,.32,1)',fill:'both'});
+    let cleared = false;
+    const release = () => {
+      if (cleared) return;
+      cleared = true;
+      ghost.remove();
+      if (target) target.style.visibility = '';
+      animation.cancel();
+    };
+    // A suspended Web Animation must never leave the real hand card invisible.
+    window.setTimeout(release, 760 + (before ? 0 : delay));
+    delay += 70;
+    animation.finished.catch(() => {}).finally(release);
   });
 }

@@ -277,14 +277,14 @@ const galleryPhotoCount = importedPhotos.length;
             { opacity: 1, transform: "translate3d(0, 0, 0)" },
             { opacity: 0, transform: `translate3d(${direction * -3}%, 0, 0)` },
           ],
-          { duration: 220, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" },
+          { duration: 300, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" },
         );
         const incoming = nextFrame?.animate(
           [
             { opacity: 0, transform: `translate3d(${direction * 3}%, 0, 0)` },
             { opacity: 1, transform: "translate3d(0, 0, 0)" },
           ],
-          { duration: 280, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" },
+          { duration: 380, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" },
         );
         void Promise.allSettled([outgoing?.finished, incoming?.finished]).then(() => {
           if (transitionRun !== frameTransition) return;
@@ -345,7 +345,7 @@ const galleryPhotoCount = importedPhotos.length;
           { transform: "scale(1.008)", offset: 0.18 },
           { transform: "scale(1)" },
         ],
-        { duration: 360, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 480, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       const focusPulse = focusFrame?.animate(
         [
@@ -354,7 +354,7 @@ const galleryPhotoCount = importedPhotos.length;
           { transform: "translate(-50%, -50%) scale(0.72)", opacity: 0, offset: 0.42 },
           { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
         ],
-        { duration: 360, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 480, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       const flashPulse = flash?.animate(
         [
@@ -363,7 +363,7 @@ const galleryPhotoCount = importedPhotos.length;
           { opacity: 0, offset: 0.24 },
           { opacity: 0 },
         ],
-        { duration: 320, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 440, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       const curtainTopMotion = curtainTop?.animate(
         [
@@ -372,7 +372,7 @@ const galleryPhotoCount = importedPhotos.length;
           { transform: "translate3d(0, 0, 0)", offset: 0.44 },
           { transform: "translate3d(0, -102%, 0)" },
         ],
-        { duration: 320, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
+        { duration: 440, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
       );
       const curtainBottomMotion = curtainBottom?.animate(
         [
@@ -381,7 +381,7 @@ const galleryPhotoCount = importedPhotos.length;
           { transform: "translate3d(0, 0, 0)", offset: 0.44 },
           { transform: "translate3d(0, 102%, 0)" },
         ],
-        { duration: 320, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
+        { duration: 440, easing: "cubic-bezier(0.77, 0, 0.175, 1)" },
       );
       const scanMotion = sensorScan?.animate(
         [
@@ -389,7 +389,7 @@ const galleryPhotoCount = importedPhotos.length;
           { opacity: 0.86, offset: 0.16 },
           { opacity: 0, transform: "translate3d(0, 120%, 0)" },
         ],
-        { duration: 220, delay: 140, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 300, delay: 190, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       const readoutMotion = captureReadout?.animate(
         [
@@ -398,7 +398,7 @@ const galleryPhotoCount = importedPhotos.length;
           { opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.72 },
           { opacity: 0, transform: "translate3d(0, -0.25rem, 0)" },
         ],
-        { duration: 700, delay: 160, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        { duration: 850, delay: 210, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
       captureAnimations = [framePulse, focusPulse, flashPulse, curtainTopMotion, curtainBottomMotion, scanMotion, readoutMotion]
         .filter((animation): animation is Animation => Boolean(animation));

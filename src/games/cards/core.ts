@@ -41,7 +41,7 @@ export abstract class Game {
     this.apply(move);
   }
   log(text: string) {
-    const verbs: Record<string, string> = { greift: 'greifst', legt: 'legst', deckt: 'deckst', nimmt: 'nimmst', beginnt: 'beginnst', spielt: 'spielst', hat: 'hast', muss: 'musst', gewinnt: 'gewinnst', erhält: 'erhältst', gibt: 'gibst', erhöht: 'erhöhst', geht: 'gehst', checkt: 'checkst', ist: 'bist' };
+    const verbs: Record<string, string> = { greift: 'greifst', legt: 'legst', deckt: 'deckst', schiebt: 'schiebst', nimmt: 'nimmst', beginnt: 'beginnst', spielt: 'spielst', hat: 'hast', muss: 'musst', gewinnt: 'gewinnst', erhält: 'erhältst', gibt: 'gibst', erhöht: 'erhöhst', geht: 'gehst', checkt: 'checkst', ist: 'bist' };
     text = text.replace(/\bDu (\w+)/g, (match, verb: string) => verbs[verb] ? `Du ${verbs[verb]}` : match);
     this.message = text; this.history.push(text); this.history = this.history.slice(-12);
   }

@@ -55,7 +55,7 @@ function schedule() {
   timer = window.setTimeout(() => {
     if (run !== generation || game.over || game.turn === 0 || rulesDialog.open || restartDialog.open || historyDialog.open) return;
     play(game.bot());
-  }, prefersReducedMotion() ? 250 : 620 + Math.random() * 260);
+  }, prefersReducedMotion() ? 900 : 1100 + Math.random() * 600);
 }
 function presidentPrompt(president: President, legal: Move[]): string {
   if (president.exchangeLoser !== null) return 'Wähle eine Karte zum Zurückgeben';
@@ -71,8 +71,9 @@ function render() {
   const ourTurn = game.turn === 0 && !game.over;
   const legal = ourTurn ? game.legal() : [];
   const playable = new Set(legal.flatMap(m => m.cards ?? []));
-  document.querySelector('.cg-table')!.classList.toggle('is-knockable', legal.some(m=>m.type==='knock'));
-  el('message').textContent = game.over ? 'Runde beendet' : !ourTurn ? `${game.players[game.turn]!.name} ist dran` : game instanceof Durak ? game.phase === 'defend' ? 'Decken oder aufnehmen' : game.board.length ? 'Nachlegen oder beenden' : 'Lege eine Karte' : game instanceof President ? presidentPrompt(game, legal) : game instanceof Nines ? game.missedKnock[0] ? 'Klopfen vergessen: erst Strafkarten ziehen' : game.knocked[0] ? 'Geklopft. Jetzt Karte ablegen.' : game.players[0]!.hand.length === 2 && legal.some(m=>m.type === 'knock') ? 'Vor der vorletzten Karte klopfen' : game.penalty ? `7 legen oder ${game.penalty} ziehen` : legal.some(m => m.cards) ? 'Gleiche Farbe oder gleicher Wert' : 'Ziehe eine Karte' : 'Wähle deinen Einsatz';
+  const table = document.querySelector<HTMLElement>('.cg-table')!;
+  table.classList.toggle('is-knockable', legal.some(m=>m.type==='knock'));
+  el('message').textContent = game.over ? 'Runde beendet' : !ourTurn ? `${game.players[game.turn]!.name} überlegt …` : game instanceof Durak ? game.phase === 'defend' ? legal.some(move => move.type === 'transfer') ? 'Decken, schieben oder aufnehmen' : 'Decken oder aufnehmen' : game.board.length ? 'Nachlegen oder beenden' : 'Lege eine Karte' : game instanceof President ? presidentPrompt(game, legal) : game instanceof Nines ? game.missedKnock[0] ? 'Klopfen vergessen: erst Strafkarten ziehen' : game.knocked[0] ? 'Geklopft. Jetzt Karte ablegen.' : game.players[0]!.hand.length === 2 && legal.some(m=>m.type === 'knock') ? 'Vor der vorletzten Karte klopfen' : game.penalty ? `7 legen oder ${game.penalty} ziehen` : legal.some(m => m.cards) ? 'Gleiche Farbe oder gleicher Wert' : 'Ziehe eine Karte' : 'Wähle deinen Einsatz';
   el('game-info').replaceChildren();
   if (game instanceof Poker) el('game-info').append(chipStack(game.pot, 'Pot'));
   else if (game instanceof Nines) { el('game-info').textContent = `${symbols[game.activeSuit]}${game.penalty ? ` +${game.penalty}` : ''}`; }
@@ -83,6 +84,7 @@ function render() {
   const opponents = el('opponents'); opponents.replaceChildren();
   game.players.slice(1).forEach((p, n) => {
     const seat = document.createElement('div'); seat.className = 'cg-seat'; seat.dataset.seat = String(n); opponents.dataset.players = String(game.players.length); seat.classList.toggle('is-turn', !game.over && game.turn === n + 1);
+    seat.classList.toggle('is-winner', game.over && game.winners.includes(n + 1));
     seat.innerHTML = `<span class="cg-avatar" aria-hidden="true">${p.name[0]}</span><div><strong>${p.name}</strong><small>${game instanceof Poker ? (game.dealer === n + 1 ? 'Dealer' : '') : `${p.hand.length} Karten`}</small></div>`;
     const cards = document.createElement('div'); cards.className = 'cg-backs';
     if (game instanceof Poker && game.showdown) p.hand.forEach(c => cards.append(cardElement(c)));
@@ -96,24 +98,27 @@ function render() {
     const section = document.createElement('div'); section.className = 'cg-table-group';
     const label = document.createElement('p'); label.textContent = group.label; section.append(label);
     const row = document.createElement('div'); row.className = 'cg-table-cards';
-    if (game instanceof President && group.cards.length) {
-      const president = game;
-      row.classList.add('cg-play-pile');
-      const currentStart = group.cards.length - president.top.length;
+    if ((game instanceof President || game instanceof Nines) && group.cards.length) {
+      const president = game instanceof President ? game : null;
+      const isPresident = Boolean(president);
+      row.classList.add('cg-card-pile', isPresident ? 'cg-play-pile' : 'cg-discard-pile');
+      const currentStart = president ? group.cards.length - president.top.length : group.cards.length - 1;
       group.cards.forEach((card, index) => {
         const node = cardElement(card);
         const currentIndex = index - currentStart;
         const isCurrent = index >= currentStart;
-        const x = isCurrent ? (currentIndex - (president.top.length - 1) / 2) * 22 : ((index % 5) - 2) * 2.5;
-        const y = isCurrent ? 0 : Math.max(-12, (index - currentStart) * 1.6);
+        const currentCount = president ? president.top.length : 1;
+        const x = isCurrent ? (currentIndex - (currentCount - 1) / 2) * (isPresident ? 19 : 0) : ((index % 5) - 2) * (isPresident ? 3.5 : 2.4);
+        const y = isCurrent ? 0 : (index - currentStart) * (isPresident ? 2.2 : 2.8);
         node.style.setProperty('--pile-x', `${x}px`);
         node.style.setProperty('--pile-y', `${y}px`);
-        node.style.setProperty('--pile-rotate', `${((index * 7) % 9) - 4}deg`);
+        node.style.setProperty('--pile-rotate', `${((index * 7) % (isPresident ? 11 : 7)) - (isPresident ? 5 : 3)}deg`);
         node.style.zIndex = String(index + 1);
         node.classList.toggle('is-current-play', isCurrent);
         row.append(node);
       });
-      const count = document.createElement('span'); count.className = 'cg-pile-count'; count.textContent = String(group.cards.length); count.setAttribute('aria-label', `${group.cards.length} Karten im Ausspiel`); row.append(count);
+      const pileSize = isPresident ? group.cards.length : game.discard.length + game.board.length;
+      const count = document.createElement('span'); count.className = 'cg-pile-count'; count.textContent = String(pileSize); count.setAttribute('aria-label', `${pileSize} Karten auf dem Stapel`); row.append(count);
     } else group.cards.forEach(c => row.append(cardElement(c)));
     if (game instanceof Poker) { for (let i = group.cards.length; i < 5; i++) { const slot = document.createElement('span'); slot.className = 'cg-card-slot'; slot.textContent = '♠'; slot.setAttribute('aria-label', 'Noch verdeckte Gemeinschaftskarte'); row.append(slot); } }
     else if (!group.cards.length) { const slot = document.createElement('span'); slot.className = 'cg-card-slot'; slot.textContent = '↓'; slot.setAttribute('aria-label', 'Hier werden Karten abgelegt'); row.append(slot); }
@@ -158,10 +163,23 @@ function render() {
   });
   layoutHand();
   const result = el('result'); result.hidden = !game.over; result.replaceChildren();
+  if (!game.over) { delete result.dataset.outcome; delete table.dataset.outcome; }
   if (game.over) {
+    const outcome = game.winners.includes(0) ? game.winners.length > 1 ? 'draw' : 'win' : 'loss';
+    result.dataset.outcome = outcome; table.dataset.outcome = outcome;
+    const emblem = document.createElement('span'); emblem.className = 'cg-result-emblem'; emblem.setAttribute('aria-hidden','true');
+    emblem.innerHTML = `<i class="ph ${outcome === 'win' ? 'ph-trophy' : outcome === 'loss' ? 'ph-handshake' : 'ph-scales'}"></i>`;
+    result.append(emblem);
+    const kicker = document.createElement('p'); kicker.className = 'cg-result-kicker'; kicker.textContent = outcome === 'win' ? 'Dein Sieg' : outcome === 'loss' ? 'Gute Runde' : 'Punkteteilung'; result.append(kicker);
     const title = document.createElement('h2');
     title.textContent = game.winners.length > 1 ? 'Geteilter Sieg' : `${game.players[game.winners[0]!]!.name} gewinnt`;
     result.append(title);
+    const mood = document.createElement('p'); mood.className = 'cg-result-mood'; mood.textContent = outcome === 'win' ? 'Sauber gespielt.' : outcome === 'loss' ? 'Die nächste Runde wartet schon.' : 'Dieses Mal auf Augenhöhe.'; result.append(mood);
+    if (outcome === 'win' && !prefersReducedMotion()) {
+      const celebration = document.createElement('span'); celebration.className = 'cg-celebration'; celebration.setAttribute('aria-hidden','true');
+      for (let index = 0; index < 12; index++) { const piece = document.createElement('i'); piece.style.setProperty('--i', String(index)); celebration.append(piece); }
+      result.append(celebration);
+    }
     if (game instanceof Poker) {
       const meta = document.createElement('p'); meta.className = 'cg-result-meta';
       meta.textContent = game.showdown ? `Showdown · Pot ${game.lastPot}` : `Ohne Showdown · Pot ${game.lastPot}`;
@@ -196,14 +214,18 @@ function renderActions() {
   const actions = el('actions'); actions.dataset.kind = kind; actions.replaceChildren();
   if (game.over || game.turn !== 0) return;
   const legal = game.legal();
-  const selectedMove = legal.find(m => m.cards?.length === selected.length && selected.length && m.cards.every(id => selected.includes(id)));
+  const selectedMoves = legal.filter(m => m.cards?.length === selected.length && selected.length && m.cards.every(id => selected.includes(id)));
   const suitMoves = legal.filter(m => m.suit && m.cards?.[0] === selected[0]);
   if (suitMoves.length) {
     const chooser = document.createElement('div'); chooser.className = 'cg-suit-choice'; chooser.setAttribute('aria-label','Farbe wählen');
     suitMoves.forEach(m => { const b = actionButton(symbols[m.suit!], () => play(m)); b.setAttribute('aria-label', `${m.label} wählen`); b.classList.toggle('is-red', m.suit === 'hearts' || m.suit === 'diamonds'); chooser.append(b); }); actions.append(chooser);
   } else if (legal.some(m => m.cards?.length) && selected.length) {
-    const button = actionButton(selectedMove?.label ?? (selected.length ? 'Diese Auswahl passt nicht' : 'Karte auswählen'), () => { if (selectedMove) play(selectedMove); }, true);
-    button.disabled = !selectedMove; actions.append(button);
+    if (selectedMoves.length > 1) selectedMoves.forEach((move,index) => actions.append(actionButton(move.label, () => play(move), index === 0)));
+    else {
+      const move = selectedMoves[0];
+      const button = actionButton(move?.label ?? 'Diese Auswahl passt nicht', () => { if (move) play(move); }, true);
+      button.disabled = !move; actions.append(button);
+    }
   }
   legal.filter(m => !m.cards && m.type !== 'raise').forEach(m => actions.append(actionButton(game instanceof Poker && m.type === 'fold' ? 'Aussteigen' : m.label, () => play(m), m.type === 'call' || m.type === 'check' || m.type === 'knock')));
   if (game instanceof Poker) {

@@ -22,7 +22,17 @@ export class Durak extends Game {
     const hand = this.players[this.turn]!.hand;
     if (this.phase === 'defend') {
       const attack = this.pairs.find(p => !p.defense)!.attack;
-      return [...hand.filter(c => this.beats(c, attack)).map(c => ({ type: 'defend', cards: [c.id], label: 'Decken' })), { type: 'take', label: 'Aufnehmen' }];
+      const nextDefender = this.attacker;
+      const canTransfer = this.pairs.every(pair => !pair.defense && pair.attack.rank === attack.rank)
+        && this.pairs.length < Math.min(6, this.players[nextDefender]!.hand.length);
+      const transfers = canTransfer
+        ? hand.filter(card => card.rank === attack.rank).map(card => ({ type: 'transfer', cards: [card.id], label: 'Angriff schieben' }))
+        : [];
+      return [
+        ...hand.filter(c => this.beats(c, attack)).map(c => ({ type: 'defend', cards: [c.id], label: 'Decken' })),
+        ...transfers,
+        { type: 'take', label: 'Aufnehmen' },
+      ];
     }
     const ranks = new Set(this.board.map(c => c.rank));
     const attacks = this.pairs.length < this.limit ? hand.filter(c => !this.board.length || ranks.has(c.rank)).map(c => ({ type: 'attack', cards: [c.id], label: this.board.length ? 'Nachwerfen' : 'Angreifen' })) : [];
@@ -36,7 +46,16 @@ export class Durak extends Game {
       this.log(`${this.players[who]!.name} legt ${cardName(card)}.`);
     } else if (move.type === 'defend') {
       const card = this.take(who, move.cards!)[0]!; this.board.push(card); this.pairs.find(p => !p.defense)!.defense = card;
-      this.phase = 'attack'; this.turn = this.attacker; this.log(`${this.players[who]!.name} deckt mit ${cardName(card)}.`);
+      if (this.pairs.some(pair => !pair.defense)) { this.phase = 'defend'; this.turn = who; }
+      else { this.phase = 'attack'; this.turn = this.attacker; }
+      this.log(`${this.players[who]!.name} deckt mit ${cardName(card)}.`);
+    } else if (move.type === 'transfer') {
+      const card = this.take(who, move.cards!)[0]!;
+      const previousAttacker = this.attacker;
+      this.board.push(card); this.pairs.push({ attack: card });
+      this.attacker = who; this.turn = previousAttacker; this.phase = 'defend';
+      this.limit = Math.min(6, this.players[previousAttacker]!.hand.length);
+      this.log(`${this.players[who]!.name} schiebt den Angriff mit ${cardName(card)} weiter.`);
     } else if (move.type === 'take') {
       this.taking = true; this.phase = 'attack'; this.turn = this.attacker;
       this.log(`${this.players[who]!.name} nimmt auf. Passende Werte dürfen noch nachgeworfen werden.`);
@@ -64,6 +83,7 @@ export class Durak extends Game {
         const cost = c.rank + (c.suit === this.trump.suit ? 12 : 0);
         score = 15 - cost * 0.6 + hand.filter(other => other.rank === c.rank).length;
         if (move.type === 'defend') score += 4;
+        if (move.type === 'transfer') score += 7;
         if (this.stock.length === 0) score += 9;
         if (this.taking) score += 12;
       }
@@ -246,6 +266,6 @@ export class Nines extends Game {
     this.roundPoints = this.players.map((p,i) => winners.includes(i) ? 0 : p.hand.length * (this.doubled ? 2 : 1));
     this.scores = this.scores.map((score,i) => score + this.roundPoints[i]!);
   }
-  groups() { return [{label: suitNames[this.activeSuit], cards:this.board}]; }
+  groups() { return [{label: suitNames[this.activeSuit], cards:[...this.discard.slice(-6), ...this.board]}]; }
   info() { return this.penalty ? `+${this.penalty}` : suitNames[this.activeSuit]; }
 }

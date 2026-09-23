@@ -50,6 +50,33 @@ test('Durak: every card-versus-card trump comparison follows the beating rule', 
     }
   }
 });
+test('Durak: an undefended attack can be passed with the same rank and the new defender covers every card', () => {
+  const game = new Durak(seeded(8));
+  game.trump = c(6, 'spades'); game.stock = []; game.discard = []; game.board = []; game.pairs = [];
+  game.over = false; game.winners = []; game.attacker = 0; game.turn = 0; game.phase = 'attack'; game.taking = false;
+  game.players[0].hand = [c(7), c(8), c(8, 'clubs'), c(9, 'diamonds')];
+  game.players[1].hand = [c(7, 'clubs'), c(10, 'spades'), c(11, 'diamonds')];
+
+  game.play({ type: 'attack', cards: ['hearts-7'], label: '' });
+  const transfer = game.legal().find(move => move.type === 'transfer');
+  assert.equal(transfer?.cards?.[0], 'clubs-7');
+  game.play(transfer);
+  assert.equal(game.attacker, 1); assert.equal(game.turn, 0); assert.equal(game.pairs.length, 2);
+
+  game.play({ type: 'defend', cards: ['hearts-8'], label: '' });
+  assert.equal(game.phase, 'defend'); assert.equal(game.turn, 0);
+  assert.ok(!game.legal().some(move => move.type === 'transfer'));
+  game.play({ type: 'defend', cards: ['clubs-8'], label: '' });
+  assert.equal(game.phase, 'attack'); assert.equal(game.turn, 1);
+});
+test('Durak: a same-rank trump offers both defend and transfer, unless the next defender lacks cards', () => {
+  const game=new Durak(seeded(4));game.trump=c(6,'clubs');game.attacker=0;game.turn=0;game.phase='attack';game.board=[];game.pairs=[];
+  game.players[0].hand=[c(7),c(8),c(9)];game.players[1].hand=[c(7,'clubs'),c(10,'diamonds')];
+  game.play({type:'attack',cards:['hearts-7'],label:''});
+  assert.deepEqual(game.legal().filter(m=>m.cards?.[0]==='clubs-7').map(m=>m.type),['defend','transfer']);
+  game.players[0].hand=[];
+  assert.ok(!game.legal().some(m=>m.type==='transfer'));
+});
 test('Arschloch: equal count, higher rank, pass reset and next-round exchange', () => {
   const game = new President(seeded(11));
   game.top = [c(6), c(6, 'clubs')];

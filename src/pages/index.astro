@@ -413,7 +413,7 @@ const structuredData = createProfilePageSchema({
         if (trainingSetCounter) trainingSetCounter.textContent = step.counter;
         if (trainingMoveStatus) trainingMoveStatus.textContent = step.status;
       },
-      { duration: 190, offset: 4, stagger: 12 },
+      { duration: 300, offset: 4, stagger: 18 },
     );
     trainingStep += 1;
   });
@@ -573,7 +573,7 @@ const structuredData = createProfilePageSchema({
       if (!prefersReducedMotion()) {
         card.animate(
           [{ transform: from }, { transform: card.style.transform }],
-          { duration: 420, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
+        { duration: 560, easing: "cubic-bezier(0.4, 0, 0.2, 1)" },
         );
       }
       pointerId = null;
@@ -617,7 +617,7 @@ const structuredData = createProfilePageSchema({
     if (!prefersReducedMotion()) {
       const gather = tableCards.map((card, index) => card.animate(
         [{ transform: card.style.transform }, { transform: centerTransform }],
-        { duration: 180, delay: index * 18, easing: "cubic-bezier(0.77, 0, 0.175, 1)", fill: "forwards" },
+        { duration: 260, delay: index * 28, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" },
       ));
       await Promise.allSettled(gather.map((animation) => animation.finished));
     }
@@ -636,7 +636,7 @@ const structuredData = createProfilePageSchema({
         const destination = position ? cardTransform(position.x, position.y, position.rotation) : centerTransform;
         return card.animate(
           [{ transform: centerTransform }, { transform: destination }],
-          { duration: 280, delay: index * 25, easing: "cubic-bezier(0.23, 1, 0.32, 1)", fill: "forwards" },
+          { duration: 420, delay: index * 38, easing: "cubic-bezier(0.23, 1, 0.32, 1)", fill: "forwards" },
         );
       });
       await Promise.allSettled(deal.map((animation) => animation.finished));

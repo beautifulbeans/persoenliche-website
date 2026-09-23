@@ -44,7 +44,7 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
 .journey-card .journey-card-inner,
 .journey-card-education .journey-card-inner,
 .thesis-card .thesis-card-inner {
-  transition: height 360ms var(--ease-touch), transform 440ms var(--ease-touch);
+  transition: height 480ms cubic-bezier(0.4, 0, 0.2, 1), transform 620ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .cards-action-row { flex-wrap: wrap; gap: 0.7rem; }
 .cards-play-link { background: var(--accent-strong); color: var(--on-accent); text-decoration: none; }
@@ -144,7 +144,7 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
   color: var(--tone-cards-strong);
   font-size: 0.72rem;
   font-weight: 720;
-  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease, background-color 180ms ease;
+  transition: transform 260ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 260ms ease, background-color 260ms ease;
 }
 
 .cards-launch .cards-play-link:hover {

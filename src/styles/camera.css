@@ -45,7 +45,7 @@
 
 #fotografie .camera-frames { border-radius: 0.65rem; }
 #fotografie .camera-photo img {
-  transition: filter 260ms ease;
+  transition: filter 360ms ease;
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -221,7 +221,7 @@
 }
 #fotografie .camera-info summary > i {
   font-size: 1.1rem;
-  transition: transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform 360ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 #fotografie .camera-info[open] summary > i { transform: rotate(45deg); }
 #fotografie .camera-info-body { padding: 0.25rem 0 1.25rem; }
@@ -313,7 +313,7 @@
   letter-spacing: -0.025em;
 }
 #fotografie .camera-gallery-end > span { display: flex; align-items: center; gap: 0.8rem; font-size: 0.85rem; }
-#fotografie .camera-gallery-end i { transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1); }
+#fotografie .camera-gallery-end i { transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1); }
 #fotografie .is-gallery-frame .camera-image-caption { visibility: hidden; }
 @media (hover: hover) and (pointer: fine) {
   #fotografie .camera-gallery-slide:hover .camera-gallery-end i { transform: translate(3px, -3px); }

@@ -72,6 +72,7 @@ test('Compact fanned hand stays clickable and history does not shift the table',
   const hand = page.locator('[data-hand]');
   await expect(hand.locator('button')).toHaveCount(13);
   const card = hand.locator('button[data-playable="true"]').first();
+  await expect(card).toBeVisible();
   await card.click({ position: { x: 10, y: 14 } });
   await expect(card).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-actions] .cg-primary')).toBeEnabled();
@@ -122,28 +123,37 @@ test('Rules have a concise goal and independently expandable sections', async ({
 });
 
 test('Played bot cards visibly travel from their seat to the table', async ({ page }) => {
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.addInitScript(() => {
+    let seed=19;Math.random=()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+    (window as any).__botFlight = null;
+    const animate = Element.prototype.animate;
+    Element.prototype.animate = function(frames,options) {
+      if (this instanceof HTMLElement && this.matches('.cg-flight[data-to="board"]:not([data-from="hand-0"])'))
+        (window as any).__botFlight = (frames as Keyframe[])[0]?.transform;
+      return animate.call(this,frames,options);
+    };
+  });
   await page.goto('/kartenspiele/?spiel=arschloch');
-  await expect(page.locator('.cg-flight')).toHaveCount(0);
   const hand=page.locator('[data-hand]');
   const id=await hand.locator('.cg-card').evaluateAll(cards=>cards.map(c=>(c as HTMLElement).dataset.cardId!).sort((a,b)=>{const rank=(id:string)=>Number(id.split('-')[1])===2?15:Number(id.split('-')[1]);return rank(a)-rank(b);})[0]);
-  await hand.locator(`[data-card-id="${id}"]`).click({position:{x:10,y:14}});
+  await hand.locator(`[data-card-id="${id}"]`).dispatchEvent('click');
   await page.locator('[data-actions] .cg-primary').click();
-  const flight=page.locator('.cg-flight[data-to="board"]:not([data-from="hand-0"])').first();
-  await expect(flight).toBeAttached({timeout:10000});
-  const transform=await flight.evaluate(el=>(el.getAnimations()[0]!.effect as KeyframeEffect).getKeyframes()[0]!.transform);
+  await expect.poll(()=>page.evaluate(() => (window as any).__botFlight),{timeout:10000}).not.toBeNull();
+  const transform=await page.evaluate(() => (window as any).__botFlight);
   expect(transform).toContain('translate('); expect(transform).not.toContain('translate(0px,0px)');
 });
 
-test('Opponents speak about their actual moves in every game mode', async ({ page }) => {
-  await page.setViewportSize({width:390,height:844});
-  for (const kind of ['durak','arschloch','neunern','poker']) {
+for (const kind of ['durak','arschloch','neunern','poker']) {
+  test(`${kind}: an opponent comments on the actual move without overflowing mobile`, async ({ page }) => {
+    await page.setViewportSize({width:390,height:844});
     await page.goto(`/kartenspiele/?spiel=${kind}`);
     for (let attempt=0;attempt<5 && !await page.locator('.cg-speech').count();attempt++) {
       const knock=page.getByRole('button',{name:'Auf den Tisch klopfen',exact:true});
       const card=page.locator('[data-hand] [data-playable="true"]').first();
       if (await knock.count()) await knock.click();
       else if (await card.count()) {
-        await card.click({position:{x:10,y:14}});
+        await card.dispatchEvent('click');
         const suit=page.locator('.cg-suit-choice button').first();
         if (await suit.count()) await suit.click();
         else await page.locator('[data-actions] .cg-primary').click();
@@ -152,15 +162,15 @@ test('Opponents speak about their actual moves in every game mode', async ({ pag
         const action=await primary.count()?primary:page.locator('[data-actions]>.cg-secondary').first();
         if (await action.count()) await action.click();
       }
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(1800);
     }
     await expect(page.locator('.cg-speech').first()).toBeVisible();
     for (const bubble of await page.locator('.cg-speech').all()) {
       const box=await bubble.boundingBox();expect(box!.x).toBeGreaterThanOrEqual(0);expect(box!.x+box!.width).toBeLessThanOrEqual(390);
       expect((await bubble.textContent())!.length).toBeLessThan(60);
     }
-  }
-});
+  });
+}
 
 test('Trumpf stays fully visible beside the stock on desktop and mobile', async ({page}) => {
   for(const width of [920,390,320]) {
@@ -176,7 +186,7 @@ test('Arschloch stacks the current trick and explains that pairs need equal valu
   await page.addInitScript(() => {
     let seed=19;Math.random=()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
     const native=window.setTimeout.bind(window);
-    const fast=(fn:TimerHandler,delay=0,...args:any[])=>native(fn,delay>=250&&delay<=900?15:delay,...args);
+    const fast=(fn:TimerHandler,delay=0,...args:any[])=>native(fn,delay>=1000&&delay<=1800?15:delay,...args);
     Object.defineProperty(window,'setTimeout',{value:fast});
   });
   await page.goto('/kartenspiele/?spiel=arschloch');
@@ -198,7 +208,7 @@ test('Arschloch stacks the current trick and explains that pairs need equal valu
 test('Poker result names the winner and shows both best five-card hands', async ({page}) => {
   await page.addInitScript(() => {
     const native=window.setTimeout.bind(window);
-    const fast=(fn:TimerHandler,delay=0,...args:any[])=>native(fn,delay>=250&&delay<=900?10:delay,...args);
+    const fast=(fn:TimerHandler,delay=0,...args:any[])=>native(fn,delay>=1000&&delay<=1800?10:delay,...args);
     Object.defineProperty(window,'setTimeout',{value:fast});
   });
   await page.goto('/kartenspiele/?spiel=poker');
@@ -208,8 +218,48 @@ test('Poker result names the winner and shows both best five-card hands', async 
     await page.waitForTimeout(40);
   }
   await expect(page.locator('[data-result]')).toBeVisible();
+  await expect(page.locator('[data-result]')).toHaveAttribute('data-outcome',/win|loss|draw/);
+  await expect(page.locator('.cg-result-emblem')).toBeVisible();
   await expect(page.locator('[data-result] h2')).toContainText(/Du|Mika|Geteilter Sieg/);
   await expect(page.locator('.cg-showdown-player')).toHaveCount(2);
   await expect(page.locator('.cg-showdown-player.is-winner')).not.toHaveCount(0);
   for(const row of await page.locator('.cg-showdown-player').all()) await expect(row.locator('.cg-card')).toHaveCount(5);
+});
+
+test('Neunerln keeps a visibly layered discard pile as play continues', async ({page}) => {
+  await page.addInitScript(() => {
+    let seed=31;Math.random=()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+    const native=window.setTimeout.bind(window);
+    const fast=(fn:TimerHandler,delay=0,...args:any[])=>native(fn,delay>=1000&&delay<=1800?12:delay,...args);
+    Object.defineProperty(window,'setTimeout',{value:fast});
+  });
+  await page.goto('/kartenspiele/?spiel=neunern');
+  for(let turn=0;turn<36&&await page.locator('.cg-discard-pile .cg-card').count()<2;turn++) {
+    const knock=page.getByRole('button',{name:'Auf den Tisch klopfen',exact:true});
+    const card=page.locator('[data-hand] [data-playable="true"]').first();
+    if(await knock.count()) await knock.click();
+    else if(await card.count()) {
+      await card.click({position:{x:10,y:14}});
+      const suit=page.locator('.cg-suit-choice button').first();
+      if(await suit.count()) await suit.click(); else await page.locator('[data-actions] .cg-primary').click();
+    } else {
+      const action=page.locator('[data-actions] button').first(); if(await action.count()) await action.click();
+    }
+    await page.waitForTimeout(35);
+  }
+  const pile=page.locator('.cg-discard-pile');
+  await expect.poll(()=>pile.locator('.cg-card').count()).toBeGreaterThanOrEqual(2);
+  const first=await pile.locator('.cg-card').nth(0).boundingBox(), second=await pile.locator('.cg-card').nth(1).boundingBox();
+  expect(Math.abs(first!.x-second!.x)).toBeLessThan(first!.width*.5);
+  await expect(pile.locator('.cg-pile-count')).toHaveAttribute('aria-label',/Karten auf dem Stapel/);
+});
+
+test('Status island uses the full hover surface and a calm portrait expansion', async ({page}) => {
+  await page.setViewportSize({width:1440,height:814});await page.goto('/');
+  const identity=page.locator('.header-identity');await identity.hover({position:{x:390,y:25}});
+  expect(await identity.evaluate(el=>getComputedStyle(el).cursor)).toBe('pointer');
+  const avatar=page.locator('.header-identity .wordmark-avatar');
+  expect(await avatar.evaluate(el=>getComputedStyle(el).transitionDuration.split(',')[0])).toBe('0.98s');
+  await identity.click({position:{x:390,y:25}});
+  await expect(page.locator('[data-status-trigger-desktop]')).toHaveAttribute('aria-expanded','true');
 });

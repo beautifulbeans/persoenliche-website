@@ -27,7 +27,7 @@ export const setPressedState = (
 export const animateContentSwap = (
   candidates: Array<HTMLElement | null | undefined>,
   update: () => void,
-  { duration = 210, offset = 4, stagger = 12 }: SwapOptions = {},
+  { duration = 300, offset = 4, stagger = 18 }: SwapOptions = {},
 ) => {
   const elements = candidates.filter((element): element is HTMLElement => Boolean(element));
   elements.forEach((element) => runningSwaps.get(element)?.cancel());
@@ -91,6 +91,6 @@ export const syncSelectionIndicator = (group: HTMLElement, animate = true) => {
   const animation = indicator.animate([
     { transform: `translate3d(${previous.x - next.x}px, ${previous.y - next.y}px, 0) scale(${previous.width / next.width}, ${previous.height / next.height})` },
     { transform: 'translate3d(0, 0, 0) scale(1)' },
-  ], { duration: 300, easing: 'cubic-bezier(0.32, 0.72, 0, 1)' });
+  ], { duration: 420, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
   selectionAnimations.set(group, animation);
 };
