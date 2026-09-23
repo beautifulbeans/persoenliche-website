@@ -72,11 +72,19 @@ function render() {
   const legal = ourTurn ? game.legal() : [];
   const playable = new Set(legal.flatMap(m => m.cards ?? []));
   const table = document.querySelector<HTMLElement>('.cg-table')!;
+  table.dataset.game = kind;
+  table.dataset.turn = game.over ? 'over' : ourTurn ? 'you' : 'bot';
   table.classList.toggle('is-knockable', legal.some(m=>m.type==='knock'));
   el('message').textContent = game.over ? 'Runde beendet' : !ourTurn ? `${game.players[game.turn]!.name} überlegt …` : game instanceof Durak ? game.phase === 'defend' ? legal.some(move => move.type === 'transfer') ? 'Decken, schieben oder aufnehmen' : 'Decken oder aufnehmen' : game.board.length ? 'Nachlegen oder beenden' : 'Lege eine Karte' : game instanceof President ? presidentPrompt(game, legal) : game instanceof Nines ? game.missedKnock[0] ? 'Klopfen vergessen: erst Strafkarten ziehen' : game.knocked[0] ? 'Geklopft. Jetzt Karte ablegen.' : game.players[0]!.hand.length === 2 && legal.some(m=>m.type === 'knock') ? 'Vor der vorletzten Karte klopfen' : game.penalty ? `7 legen oder ${game.penalty} ziehen` : legal.some(m => m.cards) ? 'Gleiche Farbe oder gleicher Wert' : 'Ziehe eine Karte' : 'Wähle deinen Einsatz';
   el('game-info').replaceChildren();
   if (game instanceof Poker) el('game-info').append(chipStack(game.pot, 'Pot'));
-  else if (game instanceof Nines) { el('game-info').textContent = `${symbols[game.activeSuit]}${game.penalty ? ` +${game.penalty}` : ''}`; }
+  else if (game instanceof Nines) {
+    const state = document.createElement('span');
+    state.className = `cg-active-suit ${['hearts', 'diamonds'].includes(game.activeSuit) ? 'is-red' : ''}`;
+    state.setAttribute('aria-label', `Aktive Farbe: ${game.activeSuit}${game.penalty ? `, ${game.penalty} Strafkarten` : ''}`);
+    state.innerHTML = `<small>Farbe</small><b>${symbols[game.activeSuit]}</b>${game.penalty ? `<em>+${game.penalty}</em>` : ''}`;
+    el('game-info').append(state);
+  }
   el('hand-count').textContent = `· ${game.players[0]!.hand.length}`;
   el('player-meta').replaceChildren();
   if (game instanceof Poker) el('player-meta').append(chipStack(game.players[0]!.chips,'Du'));
@@ -128,9 +136,12 @@ function render() {
   if (!stock.hidden) {
     const pile = document.createElement('button'); pile.className = 'cg-stock-stack'; pile.setAttribute('aria-label', `Nachziehstapel: ${game.stock.length} Karten`);
     pile.disabled = !(ourTurn && legal.some(m => m.type === 'draw'));
+    pile.classList.toggle('is-drawable', !pile.disabled);
     for (let i=0; i<Math.min(5,game.stock.length); i++) { const back = document.createElement('span'); back.className='cg-back'; back.style.setProperty('--i',String(i)); pile.append(back); }
     pile.addEventListener('click', () => { const draw = game.legal().find(m => m.type === 'draw'); if (draw && game.turn === 0) play(draw); });
-    const count = document.createElement('small'); count.textContent = String(game.stock.length); pile.append(count); stock.append(pile);
+    const count = document.createElement('small'); count.textContent = String(game.stock.length); pile.append(count);
+    const caption = document.createElement('span'); caption.className = 'cg-stock-caption'; caption.textContent = pile.disabled ? 'Stapel' : 'Ziehen'; caption.setAttribute('aria-hidden','true'); pile.append(caption);
+    stock.append(pile);
     if (game instanceof Durak) {
       const trump = document.createElement('div'); trump.className = 'cg-trump'; trump.setAttribute('aria-label',`Trumpf: ${symbols[game.trump.suit]}`);
       if (game.stock.some(c => c.id === (game as Durak).trump.id)) trump.append(cardElement(game.trump));
@@ -138,7 +149,7 @@ function render() {
       const label=document.createElement('small'); label.textContent='Trumpf'; trump.append(label); stock.prepend(trump);
     }
   }
-  const hand = el('hand'); hand.dataset.kind = kind; hand.replaceChildren();
+  const hand = el('hand'); hand.dataset.kind = kind; hand.dataset.selected = String(selected.length > 0); hand.replaceChildren();
   const current = game.players[0]!.hand;
   handOrder = handOrder.filter(id => current.some(c => c.id === id));
   current.forEach(c => { if (!handOrder.includes(c.id)) handOrder.push(c.id); });
@@ -155,6 +166,7 @@ function render() {
       if (game instanceof President) selected = game.selectionFor(c.id, selected);
       else if (selected.includes(c.id)) selected = selected.filter(id => id !== c.id);
       else selected = [c.id];
+      hand.dataset.selected = String(selected.length > 0);
       // Keep the hand DOM (and focus/scroll position) stable during selection.
       hand.querySelectorAll<HTMLButtonElement>('[data-card-id]').forEach(b => b.setAttribute('aria-pressed', String(selected.includes(b.dataset.cardId!))));
       renderActions();
