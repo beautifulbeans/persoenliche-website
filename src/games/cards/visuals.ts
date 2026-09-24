@@ -4,7 +4,7 @@ import { type Card, rankName, symbols } from './core';
 export function cardFace(card: Card): string {
   const symbol = symbols[card.suit];
   const rank = rankName(card.rank);
-  const corner = `<text x="10" y="20" font-size="17" font-weight="700">${rank}</text><text x="12" y="35" font-size="17">${symbol}</text>`;
+  const corner = `<text data-card-rank x="10" y="20" font-size="17" font-weight="700">${rank}</text><text x="12" y="35" font-size="17">${symbol}</text>`;
   let center = '';
   if (card.rank > 10 && card.rank < 14) {
     const crown = card.rank === 13 ? 'M35 42L31 30L42 35L50 27L58 35L69 30L65 42Z' : card.rank === 12 ? 'M36 42L34 33L44 36L50 29L56 36L66 33L64 42Z' : 'M34 42Q43 29 60 34L68 42Z';

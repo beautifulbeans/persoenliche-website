@@ -537,8 +537,6 @@ const translations: Record<string, string> = {
   "Wähle Karo": "Choose diamonds",
   "Wähle Kreuz": "Choose clubs",
   "Wähle Pik": "Choose spades",
-  "B": "J",
-  "D": "Q",
   "Noch verdeckte Gemeinschaftskarte": "Face-down community card",
   "Ohne Showdown": "Without showdown",
   "Showdown": "Showdown",
@@ -1037,7 +1035,7 @@ const patterns: Array<[RegExp, (...matches: string[]) => string]> = [
   [/^(\d+) Karten im Stapel$/, (count) => `${count} cards in the pile`],
   [/^Nachziehstapel: (\d+) Karten$/, (count) => `Draw pile: ${count} cards`],
   [/^Trumpf: (.+)$/, (suit) => `Trump: ${translateString(suit)}`],
-  [/^([BDKA]|\d+) (Kreuz|Karo|Herz|Pik)$/, (rank, suit) => `${translateString(rank)} of ${translateString(suit).toLowerCase()}`],
+  [/^([BDKA]|\d+) (Kreuz|Karo|Herz|Pik)$/, (rank, suit) => `${translateCardRank(rank)} of ${translateString(suit).toLowerCase()}`],
   [/^Stapel: (\d+)$/, (count) => `Pile: ${count}`],
   [/^Pot (\d+)$/, (amount) => `Pot ${amount}`],
   [/^Du: (\d+) Chips$/, (amount) => `You: ${amount} chips`],
@@ -1126,6 +1124,10 @@ const patterns: Array<[RegExp, (...matches: string[]) => string]> = [
   [/^(\d+) % zum Teetisch$/, (progress) => `${progress}% to the tea table`],
 ];
 
+function translateCardRank(rank: string): string {
+  return rank === "B" ? "J" : rank === "D" ? "Q" : rank;
+}
+
 function translateString(value: string): string {
   const normalized = value.trim().replace(/\s+/g, " ");
   if (!normalized) return value;
@@ -1150,13 +1152,15 @@ function withWhitespace(original: string, translated: string): string {
 function isTranslatable(node: Node): boolean {
   const parent = node.parentElement;
   if (!parent) return true;
-  return !parent.closest("script, style, noscript, [data-no-translate]");
+  return !parent.closest('script, style, noscript, [data-no-translate], [translate="no"]');
 }
 
 function translateTextNode(node: Text): void {
   if (!isTranslatable(node)) return;
   const source = node.data;
-  const translated = translateString(source);
+  const translated = node.parentElement?.hasAttribute("data-card-rank")
+    ? translateCardRank(source.trim())
+    : translateString(source);
   if (translated !== source.trim().replace(/\s+/g, " ")) {
     node.data = withWhitespace(source, translated);
   }
@@ -1165,7 +1169,7 @@ function translateTextNode(node: Text): void {
 const translatedAttributes = ["aria-label", "title", "placeholder", "alt"] as const;
 
 function translateElement(element: Element): void {
-  if (element.closest("[data-no-translate]")) return;
+  if (element.closest('[data-no-translate], [translate="no"]')) return;
   translatedAttributes.forEach((attribute) => {
     const source = element.getAttribute(attribute);
     if (!source) return;

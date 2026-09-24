@@ -39,10 +39,10 @@ for (const kind of ['durak', 'arschloch', 'neunern', 'poker']) {
 }
 test('Site copy, contact, card launcher and one gallery end card', async ({ page }) => {
   await page.goto('/');
-  const identity = page.locator('.header-identity');
+  const identity = page.locator('[data-status-trigger]');
   const compactIdentity = await identity.boundingBox();
   await identity.click({ position: { x: 20, y: 20 } });
-  await expect(page.locator('[data-status-trigger-desktop]')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('[data-status-trigger]')).toHaveAttribute('aria-expanded', 'true');
   await expect.poll(async () => (await identity.boundingBox())!.height).toBeGreaterThan(compactIdentity!.height + 20);
   await identity.click({ position: { x: 20, y: 20 } });
   await expect(page.locator('a[href="mailto:info@fabianderagisch.com"]')).toHaveCount(1);
@@ -254,28 +254,35 @@ test('Neunerln keeps a visibly layered discard pile as play continues', async ({
   await expect(pile.locator('.cg-pile-count')).toHaveAttribute('aria-label',/Karten auf dem Stapel/);
 });
 
-test('Status island uses the full hover surface and keeps its copy anchored while expanding', async ({page}) => {
-  await page.setViewportSize({width:1440,height:814});await page.goto('/');
-  const identity=page.locator('.header-identity');await identity.hover({position:{x:390,y:25}});
-  expect(await identity.evaluate(el=>getComputedStyle(el).cursor)).toBe('pointer');
-  const avatar=page.locator('.header-identity .wordmark-avatar');
-  expect(await avatar.evaluate(el=>getComputedStyle(el).transitionDuration.split(',')[0])).toBe('0.58s');
-  const name=page.locator('.wordmark-name');
-  const nameStart=await name.boundingBox();
-  const expanded=page.locator('.status-desktop-expanded');
-  const fixedStart=await expanded.boundingBox();
-  await identity.click({position:{x:390,y:25}});
-  await expect(page.locator('[data-status-trigger-desktop]')).toHaveAttribute('aria-expanded','true');
-  await page.waitForTimeout(180);
-  const moving=await expanded.boundingBox();
-  await page.waitForTimeout(560);
-  const settled=await expanded.boundingBox();
-  expect(Math.abs(moving!.x-fixedStart!.x)).toBeLessThan(.5);
-  expect(Math.abs(settled!.x-fixedStart!.x)).toBeLessThan(.5);
-  await expect(expanded).toHaveCSS('transform','none');
-  await expect(name).toBeVisible();
-  await expect(name).toHaveCSS('opacity','1');
-  expect(Math.abs((await name.boundingBox())!.x-nameStart!.x)).toBeLessThan(.5);
+test('Status island keeps its name, detail text and navigation anchored during motion', async ({page}) => {
+  await page.setViewportSize({width:1440,height:814});
+  await page.goto('/');
+  await page.evaluate(()=>document.fonts.ready);
+  const island=page.locator('[data-status-trigger]');
+  const name=page.locator('.status-name');
+  const copy=page.locator('.status-copy');
+  const nav=page.locator('.site-header nav');
+  const before={name:await name.boundingBox(),copy:await copy.boundingBox(),nav:await nav.boundingBox()};
+  await island.hover();
+  expect(await island.evaluate(el=>getComputedStyle(el).cursor)).toBe('pointer');
+  await island.click({position:{x:20,y:20}});
+  await expect(island).toHaveAttribute('aria-expanded','true');
+  for(const delay of [80,160,350]) {
+    await page.waitForTimeout(delay);
+    for(const [key,element] of [['name',name],['copy',copy],['nav',nav]] as const) {
+      const rect=await element.boundingBox();
+      expect(Math.abs(rect!.x-before[key]!.x)).toBeLessThan(.5);
+      expect(Math.abs(rect!.y-before[key]!.y)).toBeLessThan(.5);
+    }
+    await expect(name).toHaveCSS('opacity','1');
+  }
+  await page.keyboard.press('Escape');
+  await expect(island).toHaveAttribute('aria-expanded','false');
+  await expect(island).toBeFocused();
+  await island.press('Enter');
+  await expect(island).toHaveAttribute('aria-expanded','true');
+  await island.press('Enter');
+  await expect(island).toHaveAttribute('aria-expanded','false');
 });
 
 test('Mobile status island settles quickly and flipped card copy reveals by whole lines', async ({page}) => {
@@ -284,12 +291,13 @@ test('Mobile status island settles quickly and flipped card copy reveals by whol
   await page.goto('/');
   await expect(page.locator('.site-header nav .nav-contact')).toBeHidden();
   await expect(page.locator('[data-mobile-contact]')).toBeVisible();
-  const status=page.locator('[data-status-trigger-mobile]');
+  const status=page.locator('[data-status-trigger]');
   await status.click();
   await expect(status).toHaveAttribute('aria-expanded','true');
-  expect(await status.evaluate(el=>getComputedStyle(el).animationName)).toContain('status-mobile-settle');
   expect(await status.evaluate(el=>getComputedStyle(el).transitionDuration.split(',')[0])).toBe('0.5s');
-  await expect(status.locator('.status-panel-copy')).toHaveCSS('text-align','left');
+  await expect(status.locator('.status-copy')).toHaveCSS('text-align','left');
+  await expect(status.locator('.status-name')).toHaveText('Fabian Deragisch');
+  await expect(status.locator('.status-name')).toHaveCSS('opacity','1');
 
   const card=page.locator('.journey-card.has-flip').first();
   await card.scrollIntoViewIfNeeded();
@@ -328,6 +336,54 @@ test('Every mobile game keeps table cards readable when several cards are showin
   expect(Math.min(...pokerWidths)).toBeGreaterThanOrEqual(43);
 });
 
+test('The visible name stays Fabian Deragisch in both languages, including its separate animated letters', async ({page}) => {
+  await page.setViewportSize({width:484,height:814});
+  for(const locale of ['de','en']) {
+    await page.goto(`/?lang=${locale}`);
+    await expect(page.locator('html')).toHaveAttribute('data-i18n-ready','true');
+    await expect(page.locator('.opening-name-base').nth(0)).toHaveText('Fabian');
+    await expect(page.locator('.opening-name-base').nth(1)).toHaveText('Deragisch');
+    await expect(page.locator('.opening-name-line-2 [data-opening-letter]').first()).toHaveText('D');
+    await page.locator('[data-status-trigger]').click();
+    await expect(page.locator('.status-name')).toHaveText('Fabian Deragisch');
+    await expect(page.locator('.status-name')).toHaveCSS('opacity','1');
+  }
+});
+
+test('English card ranks translate only inside playing cards, including cards rendered after load', async ({page}) => {
+  await page.addInitScript(()=>{ Math.random=()=>0.999; });
+  await page.goto('/kartenspiele/?spiel=arschloch&lang=en');
+  for(const [rank,label] of [[11,'J'],[12,'Q']] as const) {
+    const card=page.locator(`[data-hand] [data-card-id$="-${rank}"]`).first();
+    await expect(card.locator('[data-card-rank]').first()).toHaveText(label);
+    await expect(card).toHaveAttribute('aria-label',new RegExp(`^${label} of `));
+  }
+  await page.locator('[data-new-game]').click();
+  await page.locator('[data-restart-confirm]').click();
+  await expect(page.locator('[data-hand] [data-card-id$="-12"] [data-card-rank]').first()).toHaveText('Q');
+});
+
+test('Status remains usable at narrow widths and honors reduced motion', async ({page}) => {
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.goto('/?lang=en');
+  for(const width of [320,390,768,820,1024]) {
+    await page.setViewportSize({width,height:844});
+    const status=page.locator('[data-status-trigger]');
+    const nav=page.locator('.site-header nav');
+    const navBefore=await nav.boundingBox();
+    await status.click();
+    await expect(status).toHaveAttribute('aria-expanded','true');
+    const rect=await status.boundingBox();
+    expect(rect!.x+rect!.width).toBeLessThanOrEqual(width);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+    await expect(status).toHaveCSS('transition-duration','0s');
+    const navAfter=await nav.boundingBox();
+    expect(navAfter!.x).toBe(navBefore!.x);
+    await page.keyboard.press('Escape');
+    await expect(status).toHaveAttribute('aria-expanded','false');
+  }
+});
+
 test('Every non-German browser language selects English and the footer switch keeps a manual German choice', async ({page}) => {
   await page.addInitScript(() => {
     if (!sessionStorage.getItem('language-test-initialized')) {
@@ -343,7 +399,7 @@ test('Every non-German browser language selects English and the footer switch ke
   await expect(page.locator('#journey-title')).toHaveText('Work and studies.');
   await expect(page.locator('.site-header [data-language-switch]')).toHaveCount(0);
   await expect(page.locator('.site-footer [data-language-switch]')).toHaveAttribute('aria-label','Auf Deutsch wechseln');
-  await expect(page.locator('[data-status-trigger-desktop]')).toHaveAttribute('aria-label',/^Open status: Probably /);
+  await expect(page.locator('[data-status-trigger]')).toHaveAttribute('aria-label',/^Open status: Probably /);
 
   await page.goto('/kartenspiele/?spiel=durak');
   await expect(page.locator('html')).toHaveAttribute('lang','en');

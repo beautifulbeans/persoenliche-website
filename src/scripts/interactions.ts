@@ -70,7 +70,7 @@ function pressure(node: HTMLElement, pressed: boolean) {
 document.addEventListener('pointerdown', event => {
   if (event.button !== 0 || !event.isPrimary) return;
   const node = pressTarget(event.target);
-  if (!node || node.matches('.cg-card, .playing-card, .teapot, .vinyl-button, .tt-joystick') || node.closest('[data-joystick]')) return;
+  if (!node || node.matches('.cg-card, .playing-card, .teapot, .vinyl-button, .tt-joystick, .status-island') || node.closest('[data-joystick]')) return;
   // Inline text links keep a stable reading baseline.
   if (getComputedStyle(node).display === 'inline') return;
   node.dataset.pressFeedback = '';
