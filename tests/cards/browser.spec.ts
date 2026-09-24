@@ -213,14 +213,14 @@ test('Poker result names the winner and shows both best five-card hands', async 
   });
   await page.goto('/kartenspiele/?spiel=poker');
   for(let turn=0;turn<30&&!await page.locator('[data-result]').isVisible();turn++) {
-    const check=page.getByRole('button',{name:'Check',exact:true});const call=page.getByRole('button',{name:/Mitgehen/});
+    const check=page.getByRole('button',{name:'Checken',exact:true});const call=page.getByRole('button',{name:/Mitgehen/});
     if(await check.count())await check.click();else if(await call.count())await call.click();
     await page.waitForTimeout(40);
   }
   await expect(page.locator('[data-result]')).toBeVisible();
   await expect(page.locator('[data-result]')).toHaveAttribute('data-outcome',/win|loss|draw/);
   await expect(page.locator('.cg-result-emblem')).toBeVisible();
-  await expect(page.locator('[data-result] h2')).toContainText(/Du|Mika|Geteilter Sieg/);
+  await expect(page.locator('[data-result] h2')).toHaveText(/^(Du hast gewonnen|Mika hat gewonnen|Unentschieden)$/);
   await expect(page.locator('.cg-showdown-player')).toHaveCount(2);
   await expect(page.locator('.cg-showdown-player.is-winner')).not.toHaveCount(0);
   for(const row of await page.locator('.cg-showdown-player').all()) await expect(row.locator('.cg-card')).toHaveCount(5);
@@ -262,4 +262,52 @@ test('Status island uses the full hover surface and a calm portrait expansion', 
   expect(await avatar.evaluate(el=>getComputedStyle(el).transitionDuration.split(',')[0])).toBe('0.98s');
   await identity.click({position:{x:390,y:25}});
   await expect(page.locator('[data-status-trigger-desktop]')).toHaveAttribute('aria-expanded','true');
+});
+
+test('Mobile status island settles quickly and flipped card copy reveals by whole lines', async ({page}) => {
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/');
+  const status=page.locator('[data-status-trigger-mobile]');
+  await status.click();
+  await expect(status).toHaveAttribute('aria-expanded','true');
+  expect(await status.evaluate(el=>getComputedStyle(el).animationName)).toContain('status-mobile-settle');
+  expect(await status.evaluate(el=>getComputedStyle(el).transitionDuration.split(',')[0])).toBe('0.5s');
+  await expect(status.locator('.status-panel-copy')).toHaveCSS('text-align','left');
+
+  const card=page.locator('.journey-card.has-flip').first();
+  await card.scrollIntoViewIfNeeded();
+  await card.locator('[data-flip-open]').click();
+  const copy=card.locator('.journey-copy-line');
+  await expect(copy).not.toHaveCount(0);
+  expect(await copy.nth(0).evaluate(el=>getComputedStyle(el).animationName)).toContain('journey-copy-line-reveal');
+  const firstDelay=parseFloat(await copy.nth(0).evaluate(el=>getComputedStyle(el).animationDelay));
+  const secondDelay=parseFloat(await copy.nth(1).evaluate(el=>getComputedStyle(el).animationDelay));
+  expect(secondDelay).toBeGreaterThan(firstDelay);
+});
+
+test('Every mobile game keeps table cards readable when several cards are showing', async ({page}) => {
+  await page.setViewportSize({width:320,height:844});
+
+  await page.goto('/kartenspiele/?spiel=durak');
+  await page.locator('.cg-board').evaluate(board=>{
+    board.innerHTML=Array.from({length:6},(_,index)=>`<section class="cg-table-group"><div class="cg-table-cards"><span class="cg-card">${index+6}</span><span class="cg-card">${index+7}</span></div></section>`).join('');
+  });
+  const durakWidths=await page.locator('.cg-board .cg-card').evaluateAll(cards=>cards.map(card=>card.getBoundingClientRect().width));
+  expect(Math.min(...durakWidths)).toBeGreaterThanOrEqual(40);
+  const durakRows=await page.locator('.cg-table-group').evaluateAll(groups=>new Set(groups.map(group=>Math.round(group.getBoundingClientRect().y))).size);
+  expect(durakRows).toBe(2);
+
+  await page.goto('/kartenspiele/?spiel=arschloch');
+  await page.locator('.cg-board').evaluate(board=>{
+    board.innerHTML='<div class="cg-card-pile cg-play-pile"><span class="cg-card">A</span><span class="cg-card">A</span></div>';
+  });
+  expect(await page.locator('.cg-card-pile .cg-card').first().evaluate(el=>el.getBoundingClientRect().width)).toBeGreaterThanOrEqual(48);
+
+  await page.goto('/kartenspiele/?spiel=neunern');
+  expect(await page.locator('.cg-discard-pile .cg-card').last().evaluate(el=>el.getBoundingClientRect().width)).toBeGreaterThanOrEqual(50);
+
+  await page.goto('/kartenspiele/?spiel=poker');
+  const pokerWidths=await page.locator('.cg-board .cg-card-slot').evaluateAll(cards=>cards.map(card=>card.getBoundingClientRect().width));
+  expect(Math.min(...pokerWidths)).toBeGreaterThanOrEqual(43);
 });

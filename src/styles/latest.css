@@ -4469,12 +4469,13 @@ body.gallery-dialog-open {
       0 0.55rem 1.5rem rgb(42 49 35 / 0.08);
     transform-origin: top left;
     transition:
-      width 760ms cubic-bezier(0.22, 0.65, 0.28, 1),
-      height 760ms cubic-bezier(0.22, 0.65, 0.28, 1),
-      border-radius 480ms cubic-bezier(0.4, 0, 0.2, 1),
+      width 500ms cubic-bezier(0.22, 0.78, 0.24, 1),
+      height 500ms cubic-bezier(0.22, 0.78, 0.24, 1),
+      border-radius 380ms cubic-bezier(0.4, 0, 0.2, 1),
       background-color 300ms ease,
       box-shadow 360ms ease,
       transform 140ms cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: width, height, transform;
   }
 
   .header-note-mobile.is-open {
@@ -4482,6 +4483,7 @@ body.gallery-dialog-open {
     height: 5.9rem;
     border-radius: 1.3rem;
     box-shadow: 0 1rem 2.8rem rgb(42 49 35 / 0.16);
+    animation: status-mobile-settle 560ms cubic-bezier(0.22, 0.78, 0.24, 1);
   }
 
   .status-mobile-portrait {
@@ -4498,8 +4500,8 @@ body.gallery-dialog-open {
     transform: translate3d(-0.3rem, -0.3rem, 0) scale(0.44);
     transform-origin: top left;
     transition:
-      border-radius 680ms cubic-bezier(0.22, 0.65, 0.28, 1),
-      transform 980ms 50ms cubic-bezier(0.22, 0.65, 0.28, 1);
+      border-radius 430ms cubic-bezier(0.22, 0.78, 0.24, 1),
+      transform 540ms 15ms cubic-bezier(0.2, 0.82, 0.28, 1.08);
     will-change: transform;
   }
 
@@ -4560,17 +4562,66 @@ body.gallery-dialog-open {
   }
 
   .status-mobile-expanded .status-panel-copy {
-    display: grid;
+    display: flex;
     height: 100%;
-    align-content: center;
-    gap: 0.16rem;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.34rem;
+    text-align: left;
+  }
+
+  .status-mobile-expanded .status-panel-label {
+    color: var(--accent-strong);
+    font-size: 0.54rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    line-height: 1;
+    text-transform: uppercase;
   }
 
   .status-mobile-expanded .status-panel-copy strong {
-    font-size: clamp(0.9rem, 4vw, 1.02rem);
-    line-height: 1.15;
+    max-width: 12ch;
+    font-size: clamp(0.92rem, 4vw, 1.05rem);
+    font-weight: 670;
+    line-height: 1.12;
+    text-wrap: balance;
   }
 
+}
+
+@keyframes status-mobile-settle {
+  0% { transform: scale(0.985); }
+  68% { transform: scale(1.012, 1.018); }
+  86% { transform: scale(0.997); }
+  100% { transform: scale(1); }
+}
+
+/* Ganze Textzeilen tauchen ruhig auf; es werden keine einzelnen Zeichen getippt. */
+.journey-card-back .journey-copy-line {
+  display: block;
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+  transform: translate3d(0, 0.5em, 0);
+}
+
+.journey-card.is-flipped .journey-card-back .journey-copy-line {
+  animation: journey-copy-line-reveal 560ms cubic-bezier(0.22, 0.78, 0.24, 1) forwards;
+  animation-delay: calc(270ms + (var(--copy-index) * 58ms));
+}
+
+@keyframes journey-copy-line-reveal {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translate3d(0, 0.5em, 0);
+  }
+  42% { opacity: 1; }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4578,6 +4629,17 @@ body.gallery-dialog-open {
   .status-mobile-compact,
   .status-mobile-expanded {
     transition: none;
+  }
+
+  .header-note-mobile.is-open,
+  .journey-card.is-flipped .journey-card-back .journey-copy-line {
+    animation: none;
+  }
+
+  .journey-card-back .journey-copy-line {
+    opacity: 1;
+    clip-path: none;
+    transform: none;
   }
 }
 

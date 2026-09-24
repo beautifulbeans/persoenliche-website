@@ -20,7 +20,7 @@ const voices: Record<number, Record<string, string[]>> = {
   2: {
     play: ['Das sollte reichen.', 'Sauber abgelegt.', 'Genau die.'],
     pass: ['Keine passende Antwort.', 'Ich passe diesmal.', 'Da geh ich nicht drüber.'],
-    defend: ['Korrekt gedeckt.', 'Der Angriff steht.', 'Gelöst.'],
+    defend: ['Korrekt gedeckt.', 'Der Angriff ist abgewehrt.', 'Gelöst.'],
     take: ['Keine Deckung. Ich nehme.', 'Dann eben aufnehmen.', 'Die Rechnung geht nicht auf.'],
     transfer: ['Weitergeschoben.', 'Der kommt zurück.', 'Passender Wert. Du deckst.'],
     check: ['Check.', 'Noch kein Grund zu setzen.', 'Ich schau mir die nächste an.'],

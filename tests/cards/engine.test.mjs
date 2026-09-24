@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const { deck, sameMove } = require(`${process.env.CARD_ENGINE_DIR}/core.js`);
+const { deck, sameMove, conjugatePlayerText } = require(`${process.env.CARD_ENGINE_DIR}/core.js`);
 const { Durak, President, Nines } = require(`${process.env.CARD_ENGINE_DIR}/shedding.js`);
 const { Poker, evaluate, equity, handLabels, bestFive } = require(`${process.env.CARD_ENGINE_DIR}/poker.js`);
 const seeded = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
@@ -13,6 +13,12 @@ const invariant = (game, count) => {
   assert.ok(game.players.every(p => p.chips >= 0));
   if (game instanceof Poker) assert.equal(game.players.reduce((sum, p) => sum + p.chips, 0) + game.pot, 2000);
 };
+test('German player text conjugates every verb that belongs to “Du”', () => {
+  assert.equal(conjugatePlayerText('Du erhält die höchste Karte und gibt eine Karte zurück.'), 'Du erhältst die höchste Karte und gibst eine Karte zurück.');
+  assert.equal(conjugatePlayerText('Du legt 9 Herz und wählt Pik.'), 'Du legst 9 Herz und wählst Pik.');
+  assert.equal(conjugatePlayerText('Du hat das Klopfen vergessen und zieht zwei Karten.'), 'Du hast das Klopfen vergessen und ziehst zwei Karten.');
+  assert.equal(conjugatePlayerText('Mika gewinnt. Du ist das Arschloch.'), 'Mika gewinnt. Du bist das Arschloch.');
+});
 for (const [Class, count] of [[Durak, 36], [President, 52], [Nines, 36], [Poker, 52]]) {
   test(`${Class.name}: 1,000 full matches conserve cards and finish legally`, () => {
     for (let seed = 1; seed <= 1000; seed++) {

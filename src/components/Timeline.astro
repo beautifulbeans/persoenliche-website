@@ -138,16 +138,16 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
                 {entry.backDetails && (
                   <div class="journey-card-face journey-card-back" data-flip-back aria-hidden="true" inert>
                     <div class="journey-back-top">
-                      <span><i class="ph ph-list-magnifying-glass" aria-hidden="true"></i>Ein Blick dahinter</span>
+                      <span class="journey-copy-line" style="--copy-index: 0"><i class="ph ph-list-magnifying-glass" aria-hidden="true"></i>Ein Blick dahinter</span>
                     </div>
-                    <h4>{entry.backTitle}</h4>
-                    <p class="journey-back-intro">{entry.backIntro}</p>
+                    <h4><span class="journey-copy-line" style="--copy-index: 1">{entry.backTitle}</span></h4>
+                    <p class="journey-back-intro"><span class="journey-copy-line" style="--copy-index: 2">{entry.backIntro}</span></p>
                     <div class="journey-back-grid">
                       {entry.backDetails.map((detail, index) => (
                         <article style={`--detail-index: ${index}`}>
                           <i class:list={["ph", detail.icon]} aria-hidden="true"></i>
-                          <h5>{detail.title}</h5>
-                          <p>{detail.text}</p>
+                          <h5><span class="journey-copy-line" style={`--copy-index: ${3 + index * 2}`}>{detail.title}</span></h5>
+                          <p><span class="journey-copy-line" style={`--copy-index: ${4 + index * 2}`}>{detail.text}</span></p>
                         </article>
                       ))}
                     </div>
@@ -231,16 +231,16 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
                 {entry.backDetails && (
                   <div class="journey-card-face journey-card-back" data-flip-back aria-hidden="true" inert>
                     <div class="journey-back-top">
-                      <span><i class="ph ph-list-magnifying-glass" aria-hidden="true"></i>Ein Blick dahinter</span>
+                      <span class="journey-copy-line" style="--copy-index: 0"><i class="ph ph-list-magnifying-glass" aria-hidden="true"></i>Ein Blick dahinter</span>
                     </div>
-                    <h4>{entry.backTitle}</h4>
-                    <p class="journey-back-intro">{entry.backIntro}</p>
+                    <h4><span class="journey-copy-line" style="--copy-index: 1">{entry.backTitle}</span></h4>
+                    <p class="journey-back-intro"><span class="journey-copy-line" style="--copy-index: 2">{entry.backIntro}</span></p>
                     <div class="journey-back-grid">
                       {entry.backDetails.map((detail, index) => (
                         <article style={`--detail-index: ${index}`}>
                           <i class:list={["ph", detail.icon]} aria-hidden="true"></i>
-                          <h5>{detail.title}</h5>
-                          <p>{detail.text}</p>
+                          <h5><span class="journey-copy-line" style={`--copy-index: ${3 + index * 2}`}>{detail.title}</span></h5>
+                          <p><span class="journey-copy-line" style={`--copy-index: ${4 + index * 2}`}>{detail.text}</span></p>
                         </article>
                       ))}
                     </div>

@@ -17,6 +17,17 @@ export const shuffle = <T>(input: T[], random = Math.random): T[] => {
 };
 export const sameMove = (a: Move, b: Move) => a.type === b.type && a.amount === b.amount && a.suit === b.suit && [...a.cards ?? []].sort().join() === [...b.cards ?? []].sort().join();
 export const strength = (card: Card) => card.rank === 2 ? 15 : card.rank;
+export const conjugatePlayerText = (text: string) => {
+  const verbs: Record<string, string> = {
+    greift:'greifst', legt:'legst', deckt:'deckst', schiebt:'schiebst', nimmt:'nimmst', beginnt:'beginnst',
+    spielt:'spielst', hat:'hast', muss:'musst', gewinnt:'gewinnst', erhält:'erhältst', gibt:'gibst',
+    erhöht:'erhöhst', geht:'gehst', checkt:'checkst', ist:'bist', eröffnet:'eröffnest', klopft:'klopfst',
+    zieht:'ziehst', wählt:'wählst',
+  };
+  return text.split(/(?<=[.!?])\s+/).map(sentence => sentence.startsWith('Du ')
+    ? sentence.replace(/[\p{L}]+/gu, verb => verbs[verb] ?? verb)
+    : sentence).join(' ');
+};
 export abstract class Game {
   abstract kind: Kind;
   players: Player[];
@@ -41,8 +52,7 @@ export abstract class Game {
     this.apply(move);
   }
   log(text: string) {
-    const verbs: Record<string, string> = { greift: 'greifst', legt: 'legst', deckt: 'deckst', schiebt: 'schiebst', nimmt: 'nimmst', beginnt: 'beginnst', spielt: 'spielst', hat: 'hast', muss: 'musst', gewinnt: 'gewinnst', erhält: 'erhältst', gibt: 'gibst', erhöht: 'erhöhst', geht: 'gehst', checkt: 'checkst', ist: 'bist' };
-    text = text.replace(/\bDu (\w+)/g, (match, verb: string) => verbs[verb] ? `Du ${verbs[verb]}` : match);
+    text = conjugatePlayerText(text);
     this.message = text; this.history.push(text); this.history = this.history.slice(-12);
   }
   take(player: number, ids: string[]): Card[] {

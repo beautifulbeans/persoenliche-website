@@ -78,7 +78,7 @@ export class Poker extends Game {
   }
   legal(): Move[] {
     if (this.over) return [];
-    const moves: Move[] = this.price > 0 ? [{ type: 'fold', label: 'Passen' }, { type: 'call', label: `Mitgehen · ${Math.min(this.price, this.players[this.turn]!.chips)}` }] : [{ type: 'check', label: 'Check' }];
+    const moves: Move[] = this.price > 0 ? [{ type: 'fold', label: 'Passen' }, { type: 'call', label: `Mitgehen · ${Math.min(this.price, this.players[this.turn]!.chips)}` }] : [{ type: 'check', label: 'Checken' }];
     const { available, min, max } = this.raiseBounds();
     if (available) for (const amount of new Set([min, Math.min(max, Math.max(min, Math.max(...this.bets) + Math.floor((this.pot + this.price) / 2))), Math.min(max, Math.max(min, Math.max(...this.bets) + this.pot + this.price)), max])) {
       moves.push({ type: 'raise', amount, label: amount === max ? `All-in · ${amount}` : `${Math.max(...this.bets) ? 'Erhöhen auf' : 'Setzen'} ${amount}` });

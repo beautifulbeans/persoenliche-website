@@ -1,4 +1,4 @@
-import { type Card, type Game, type Kind, type Move, cardName, symbols } from './core';
+import { type Card, type Game, type Kind, type Move, cardName, symbols, suitNames } from './core';
 import { Durak, President, Nines } from './shedding';
 import { Poker, bestFive, handLabel } from './poker';
 import { rules } from './rules';
@@ -75,20 +75,20 @@ function render() {
   table.dataset.game = kind;
   table.dataset.turn = game.over ? 'over' : ourTurn ? 'you' : 'bot';
   table.classList.toggle('is-knockable', legal.some(m=>m.type==='knock'));
-  el('message').textContent = game.over ? 'Runde beendet' : !ourTurn ? `${game.players[game.turn]!.name} überlegt …` : game instanceof Durak ? game.phase === 'defend' ? legal.some(move => move.type === 'transfer') ? 'Decken, schieben oder aufnehmen' : 'Decken oder aufnehmen' : game.board.length ? 'Nachlegen oder beenden' : 'Lege eine Karte' : game instanceof President ? presidentPrompt(game, legal) : game instanceof Nines ? game.missedKnock[0] ? 'Klopfen vergessen: erst Strafkarten ziehen' : game.knocked[0] ? 'Geklopft. Jetzt Karte ablegen.' : game.players[0]!.hand.length === 2 && legal.some(m=>m.type === 'knock') ? 'Vor der vorletzten Karte klopfen' : game.penalty ? `7 legen oder ${game.penalty} ziehen` : legal.some(m => m.cards) ? 'Gleiche Farbe oder gleicher Wert' : 'Ziehe eine Karte' : 'Wähle deinen Einsatz';
+  el('message').textContent = game.over ? 'Runde beendet' : !ourTurn ? `${game.players[game.turn]!.name} überlegt …` : game instanceof Durak ? game.phase === 'defend' ? legal.some(move => move.type === 'transfer') ? 'Decken, schieben oder aufnehmen' : 'Decken oder aufnehmen' : game.board.length ? 'Nachlegen oder beenden' : 'Lege eine Karte' : game instanceof President ? presidentPrompt(game, legal) : game instanceof Nines ? game.missedKnock[0] ? 'Klopfen vergessen: erst Strafkarten ziehen' : game.knocked[0] ? 'Geklopft. Jetzt Karte ablegen.' : game.players[0]!.hand.length === 2 && legal.some(m=>m.type === 'knock') ? 'Vor der vorletzten Karte klopfen' : game.penalty ? `7 legen oder ${game.penalty} ziehen` : legal.some(m => m.cards) ? 'Lege dieselbe Farbe oder denselben Wert' : 'Ziehe eine Karte' : 'Wähle deine Aktion';
   el('game-info').replaceChildren();
   if (game instanceof Poker) el('game-info').append(chipStack(game.pot, 'Pot'));
   else if (game instanceof Nines) {
     const state = document.createElement('span');
     state.className = `cg-active-suit ${['hearts', 'diamonds'].includes(game.activeSuit) ? 'is-red' : ''}`;
-    state.setAttribute('aria-label', `Aktive Farbe: ${game.activeSuit}${game.penalty ? `, ${game.penalty} Strafkarten` : ''}`);
+    state.setAttribute('aria-label', `Aktive Farbe: ${suitNames[game.activeSuit]}${game.penalty ? `, ${game.penalty} Strafkarten` : ''}`);
     state.innerHTML = `<small>Farbe</small><b>${symbols[game.activeSuit]}</b>${game.penalty ? `<em>+${game.penalty}</em>` : ''}`;
     el('game-info').append(state);
   }
   el('hand-count').textContent = `· ${game.players[0]!.hand.length}`;
   el('player-meta').replaceChildren();
   if (game instanceof Poker) el('player-meta').append(chipStack(game.players[0]!.chips,'Du'));
-  el('hand-hint').textContent = 'Ziehen zum Sortieren · Karte antippen zum Auswählen';
+  el('hand-hint').textContent = 'Karten zum Sortieren verschieben · antippen zum Auswählen';
   const opponents = el('opponents'); opponents.replaceChildren();
   game.players.slice(1).forEach((p, n) => {
     const seat = document.createElement('div'); seat.className = 'cg-seat'; seat.dataset.seat = String(n); opponents.dataset.players = String(game.players.length); seat.classList.toggle('is-turn', !game.over && game.turn === n + 1);
@@ -158,7 +158,7 @@ function render() {
     const button = cardElement(c, true) as HTMLButtonElement;
     button.dataset.playable = String(ourTurn && !(game instanceof Poker) && playable.has(c.id));
     button.setAttribute('aria-disabled', String(button.dataset.playable !== 'true'));
-    button.title = 'Ziehen zum Sortieren · Alt + Pfeiltasten verschiebt die Karte';
+    button.title = 'Zum Sortieren verschieben · Alt + Pfeiltasten verschiebt die Karte';
     enableSorting(button); 
     button.setAttribute('aria-pressed', String(selected.includes(c.id))); button.classList.toggle('is-playable', playable.has(c.id));
     button.addEventListener('click', () => {
@@ -182,9 +182,10 @@ function render() {
     const emblem = document.createElement('span'); emblem.className = 'cg-result-emblem'; emblem.setAttribute('aria-hidden','true');
     emblem.innerHTML = `<i class="ph ${outcome === 'win' ? 'ph-trophy' : outcome === 'loss' ? 'ph-handshake' : 'ph-scales'}"></i>`;
     result.append(emblem);
-    const kicker = document.createElement('p'); kicker.className = 'cg-result-kicker'; kicker.textContent = outcome === 'win' ? 'Dein Sieg' : outcome === 'loss' ? 'Gute Runde' : 'Punkteteilung'; result.append(kicker);
+    const kicker = document.createElement('p'); kicker.className = 'cg-result-kicker'; kicker.textContent = outcome === 'win' ? 'Dein Sieg' : outcome === 'loss' ? 'Gute Runde' : 'Gleichstand'; result.append(kicker);
     const title = document.createElement('h2');
-    title.textContent = game.winners.length > 1 ? 'Geteilter Sieg' : `${game.players[game.winners[0]!]!.name} gewinnt`;
+    const winner = game.winners[0]!;
+    title.textContent = game.winners.length > 1 ? 'Unentschieden' : winner === 0 ? 'Du hast gewonnen' : `${game.players[winner]!.name} hat gewonnen`;
     result.append(title);
     const mood = document.createElement('p'); mood.className = 'cg-result-mood'; mood.textContent = outcome === 'win' ? 'Sauber gespielt.' : outcome === 'loss' ? 'Die nächste Runde wartet schon.' : 'Dieses Mal auf Augenhöhe.'; result.append(mood);
     if (outcome === 'win' && !prefersReducedMotion()) {
@@ -201,19 +202,22 @@ function render() {
         game.players.forEach((player, index) => {
           const cards = bestFive([...player.hand, ...game.board]);
           const row = document.createElement('div'); row.className = 'cg-showdown-player'; row.classList.toggle('is-winner', game.winners.includes(index));
-          const copy = document.createElement('div'); copy.innerHTML = `<strong>${game.winners.includes(index) ? 'Gewinner · ' : ''}${player.name}</strong><span>${handLabel(cards)}</span>`;
+          const copy = document.createElement('div');
+          const playerResult = game.winners.includes(index) ? index === 0 ? 'Du hast gewonnen' : `${player.name} hat gewonnen` : player.name;
+          copy.innerHTML = `<strong>${playerResult}</strong><span>${handLabel(cards)}</span>`;
           const hand = document.createElement('div'); hand.className = 'cg-showdown-hand'; cards.forEach(card => hand.append(cardElement(card)));
           row.append(copy, hand); summary.append(row);
         });
         result.append(summary);
       } else {
-        const note = document.createElement('p'); note.textContent = `${game.players[1 - game.winners[0]!]!.name} ist ausgestiegen.`; result.append(note);
+        const folded = 1 - game.winners[0]!;
+        const note = document.createElement('p'); note.textContent = folded === 0 ? 'Du bist ausgestiegen.' : `${game.players[folded]!.name} ist ausgestiegen.`; result.append(note);
       }
     }
     if (game instanceof President) { const ranks = document.createElement('p'); ranks.textContent = game.ranking.map((i, n) => `${n + 1}. ${game.players[i]!.name}`).join(' · '); result.append(ranks); }
     if (game instanceof Nines) {
       const points=document.createElement('div');points.className='cg-round-points';
-      const heading=document.createElement('p');heading.textContent=game.doubled ? 'Mit einer 9 beendet · doppelte Minuspunkte' : 'Minuspunkte dieser Runde';points.append(heading);
+      const heading=document.createElement('p');heading.textContent=game.doubled ? 'Mit einer 9 gewonnen · doppelte Minuspunkte' : 'Minuspunkte dieser Runde';points.append(heading);
       game.players.forEach((p,i)=>{const row=document.createElement('p');row.textContent=`${p.name}: −${(game as Nines).roundPoints[i]} · Gesamt −${(game as Nines).scores[i]}`;points.append(row);});result.append(points);
     }
     result.append(actionButton(game instanceof Poker && game.players.some(p => !p.chips) ? 'Neues Match' : 'Nächste Runde', () => start(kind, true), true));
