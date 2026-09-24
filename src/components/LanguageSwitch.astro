@@ -1,0 +1,18 @@
+---
+interface Props {
+  class?: string;
+}
+
+const className = Astro.props.class;
+---
+
+<button
+  class:list={["language-switch", className]}
+  type="button"
+  data-language-switch
+  aria-label="Switch to English"
+>
+  <span data-language-option="de">DE</span>
+  <i aria-hidden="true"></i>
+  <span data-language-option="en">EN</span>
+</button>

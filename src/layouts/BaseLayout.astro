@@ -56,6 +56,24 @@ const serializedStructuredData = structuredData
     <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
     <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <script is:inline>
+      (() => {
+        let saved = null;
+        try { saved = localStorage.getItem("fabian-language"); } catch {}
+        const requested = new URLSearchParams(location.search).get("lang");
+        const detected = navigator.languages?.[0] || navigator.language || "de";
+        const locale = requested === "de" || requested === "en"
+          ? requested
+          : saved === "de" || saved === "en"
+            ? saved
+            : detected.toLowerCase().startsWith("de") ? "de" : "en";
+        if (requested === "de" || requested === "en") {
+          try { localStorage.setItem("fabian-language", requested); } catch {}
+        }
+        document.documentElement.lang = locale;
+        document.documentElement.dataset.locale = locale;
+      })();
+    </script>
     {serializedStructuredData && (
       <script is:inline type="application/ld+json" set:html={serializedStructuredData}></script>
     )}
@@ -69,4 +87,5 @@ const serializedStructuredData = structuredData
 
 <script>
   import "../scripts/interactions";
+  import "../scripts/i18n";
 </script>

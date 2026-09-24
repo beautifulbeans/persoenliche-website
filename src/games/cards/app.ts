@@ -36,7 +36,10 @@ function start(next: Kind, continuation = false) {
   else if (continuation && game instanceof President) game = new President(Math.random, game.ranking);
   else if (continuation && game instanceof Nines) game = new Nines(Math.random, game.scores);
   else game = create(kind);
-  history.replaceState(null, '', `/kartenspiele/?spiel=${kind}`);
+  const url = new URL(location.href);
+  url.pathname = '/kartenspiele/';
+  url.searchParams.set('spiel', kind);
+  history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
   el('game-title').textContent = rules[kind].name; el('game-subtitle').textContent = rules[kind].subtitle;
   document.querySelectorAll<HTMLButtonElement>('[data-game-kind]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.gameKind === kind)));
   const tabs = document.querySelector<HTMLElement>('.cg-game-tabs')!; tabs.dataset.slidingSelection = ''; syncSelectionIndicator(tabs);

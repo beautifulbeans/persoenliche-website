@@ -5035,17 +5035,12 @@ a[data-anchor-travelling="true"] {
   }
 }
 
-@media (max-width: 72rem) {
-  .wordmark-name {
-    display: none;
-  }
-
-  .site-header nav a:last-child {
-    display: none;
-  }
-}
-
 @media (max-width: 48rem) {
+  .wordmark-name,
+  .site-header nav .nav-contact {
+    display: none;
+  }
+
   .section-shell {
     width: auto;
     max-width: none;

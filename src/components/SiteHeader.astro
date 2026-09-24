@@ -128,7 +128,7 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
         <span class="nav-label-clone" aria-hidden="true"><span class="nav-long">Persönlich</span><span class="nav-short">Privat</span></span>
       </span>
     </a>
-    <a href="#kontakt">
+    <a class="nav-contact" href="#kontakt">
       <span class="nav-label">
         <span class="nav-label-primary">Kontakt</span>
         <span class="nav-label-clone" aria-hidden="true">Kontakt</span>
@@ -304,37 +304,36 @@ import portrait from "../assets/portrait/fabian-deragisch.jpg";
     if (!document.hidden) syncStatus(true);
   });
 
+  const setStatusActionLabel = (trigger: HTMLElement | null | undefined, open: boolean) => {
+    if (!trigger) return;
+    const current = trigger.getAttribute("aria-label") ?? "";
+    const separator = current.indexOf(":");
+    const detail = separator >= 0 ? current.slice(separator) : "";
+    const action = document.documentElement.lang === "en"
+      ? `${open ? "Close" : "Open"} status`
+      : `Status ${open ? "schließen" : "öffnen"}`;
+    trigger.setAttribute("aria-label", `${action}${detail}`);
+  };
+
   const setMobileStatusOpen = (open: boolean) => {
     if (!mobileStatusTrigger) return;
     mobileStatusTrigger.setAttribute("aria-expanded", String(open));
-    mobileStatusTrigger.setAttribute(
-      "aria-label",
-      mobileStatusTrigger.getAttribute("aria-label")?.replace(open ? "öffnen" : "schließen", open ? "schließen" : "öffnen") ?? "",
-    );
+    setStatusActionLabel(mobileStatusTrigger, open);
     mobileStatusTrigger.classList.toggle("is-open", open);
     mobileStatusTrigger.closest(".header-identity")?.classList.toggle("is-status-open", open);
     siteHeader?.classList.toggle("is-status-open", open);
     identityStatusTrigger?.setAttribute("aria-expanded", String(open));
-    identityStatusTrigger?.setAttribute(
-      "aria-label",
-      identityStatusTrigger.getAttribute("aria-label")?.replace(open ? "öffnen" : "schließen", open ? "schließen" : "öffnen") ?? "",
-    );
+    setStatusActionLabel(identityStatusTrigger, open);
   };
 
   const setDesktopStatusOpen = (open: boolean) => {
     if (!desktopStatusTrigger) return;
     desktopStatusTrigger.setAttribute("aria-expanded", String(open));
-    desktopStatusTrigger.setAttribute(
-      "aria-label",
-      desktopStatusTrigger.getAttribute("aria-label")?.replace(open ? "öffnen" : "schließen", open ? "schließen" : "öffnen") ?? "",
-    );
+    setStatusActionLabel(desktopStatusTrigger, open);
     desktopStatusTrigger.classList.toggle("is-open", open);
     desktopStatusExpanded?.setAttribute("aria-hidden", String(!open));
     identityStatusTrigger?.setAttribute("aria-expanded", String(open));
-    identityStatusTrigger?.setAttribute(
-      "aria-label",
-      identityStatusTrigger.getAttribute("aria-label")?.replace(open ? "öffnen" : "schließen", open ? "schließen" : "öffnen") ?? "",
-    );
+    setStatusActionLabel(identityStatusTrigger, open);
     headerIdentity?.classList.toggle("is-status-open", open);
   };
 

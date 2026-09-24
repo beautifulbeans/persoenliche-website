@@ -2,6 +2,7 @@
 .cg-shell { --gold:#edc777; --muted:#a7b9ad; width:min(1440px,100%); height:100svh; min-height:650px; margin:auto; padding:0 32px; display:flex; flex-direction:column; font-family:var(--font-sans); }
 .cg-header { height:72px; flex:none; display:flex; justify-content:space-between; align-items:center; gap:16px; }
 .cg-header a,.cg-header button,.cg-text-button { color:#c4cdc5; background:none; border:0; font:500 12px var(--font-sans); text-decoration:none; cursor:pointer; min-height:44px; display:inline-flex; align-items:center; gap:8px; }
+.cg-header-actions { display:flex; align-items:center; gap:8px; }
 .cg-brand { display:flex; align-items:center; gap:12px; color:var(--gold); font-size:24px; }
 .cg-brand b { font-size:12px; letter-spacing:.16em; color:#eeeade; }.cg-brand small { color:#889b91; font-size:12px; margin-left:12px; }
 .cg-shell main { flex:1; min-height:0; position:relative; display:flex; flex-direction:column; }
@@ -226,6 +227,7 @@
   .cg-shell { width:100%; height:100svh; min-height:0; padding:0 10px max(4px,env(safe-area-inset-bottom)); overflow:hidden; }
   .cg-header { height:48px; gap:8px; padding-inline:2px; }
   .cg-header a,.cg-header button { min-height:40px; gap:5px; font-size:10px; }
+  .cg-header-actions { gap:3px; }
   .cg-brand { gap:6px; font-size:19px; }
   .cg-brand b { font-size:10px; letter-spacing:.12em; }
   .cg-shell main { display:grid; grid-template-rows:46px minmax(260px,42svh) minmax(245px,1fr) 32px; min-height:0; }

@@ -254,20 +254,36 @@ test('Neunerln keeps a visibly layered discard pile as play continues', async ({
   await expect(pile.locator('.cg-pile-count')).toHaveAttribute('aria-label',/Karten auf dem Stapel/);
 });
 
-test('Status island uses the full hover surface and a calm portrait expansion', async ({page}) => {
+test('Status island uses the full hover surface and keeps its copy anchored while expanding', async ({page}) => {
   await page.setViewportSize({width:1440,height:814});await page.goto('/');
   const identity=page.locator('.header-identity');await identity.hover({position:{x:390,y:25}});
   expect(await identity.evaluate(el=>getComputedStyle(el).cursor)).toBe('pointer');
   const avatar=page.locator('.header-identity .wordmark-avatar');
-  expect(await avatar.evaluate(el=>getComputedStyle(el).transitionDuration.split(',')[0])).toBe('0.98s');
+  expect(await avatar.evaluate(el=>getComputedStyle(el).transitionDuration.split(',')[0])).toBe('0.58s');
+  const name=page.locator('.wordmark-name');
+  const nameStart=await name.boundingBox();
+  const expanded=page.locator('.status-desktop-expanded');
+  const fixedStart=await expanded.boundingBox();
   await identity.click({position:{x:390,y:25}});
   await expect(page.locator('[data-status-trigger-desktop]')).toHaveAttribute('aria-expanded','true');
+  await page.waitForTimeout(180);
+  const moving=await expanded.boundingBox();
+  await page.waitForTimeout(560);
+  const settled=await expanded.boundingBox();
+  expect(Math.abs(moving!.x-fixedStart!.x)).toBeLessThan(.5);
+  expect(Math.abs(settled!.x-fixedStart!.x)).toBeLessThan(.5);
+  await expect(expanded).toHaveCSS('transform','none');
+  await expect(name).toBeVisible();
+  await expect(name).toHaveCSS('opacity','1');
+  expect(Math.abs((await name.boundingBox())!.x-nameStart!.x)).toBeLessThan(.5);
 });
 
 test('Mobile status island settles quickly and flipped card copy reveals by whole lines', async ({page}) => {
   await page.emulateMedia({reducedMotion:'no-preference'});
   await page.setViewportSize({width:390,height:844});
   await page.goto('/');
+  await expect(page.locator('.site-header nav .nav-contact')).toBeHidden();
+  await expect(page.locator('[data-mobile-contact]')).toBeVisible();
   const status=page.locator('[data-status-trigger-mobile]');
   await status.click();
   await expect(status).toHaveAttribute('aria-expanded','true');
@@ -310,4 +326,54 @@ test('Every mobile game keeps table cards readable when several cards are showin
   await page.goto('/kartenspiele/?spiel=poker');
   const pokerWidths=await page.locator('.cg-board .cg-card-slot').evaluateAll(cards=>cards.map(card=>card.getBoundingClientRect().width));
   expect(Math.min(...pokerWidths)).toBeGreaterThanOrEqual(43);
+});
+
+test('Every non-German browser language selects English and the footer switch keeps a manual German choice', async ({page}) => {
+  await page.addInitScript(() => {
+    if (!sessionStorage.getItem('language-test-initialized')) {
+      localStorage.removeItem('fabian-language');
+      sessionStorage.setItem('language-test-initialized','true');
+    }
+    Object.defineProperty(navigator, 'language', {configurable:true, get:()=> 'fr-FR'});
+    Object.defineProperty(navigator, 'languages', {configurable:true, get:()=> ['fr-FR','fr']});
+  });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('lang','en');
+  await expect(page.getByRole('link',{name:'Work experience',exact:true})).toBeVisible();
+  await expect(page.locator('#journey-title')).toHaveText('Work and studies.');
+  await expect(page.locator('.site-header [data-language-switch]')).toHaveCount(0);
+  await expect(page.locator('.site-footer [data-language-switch]')).toHaveAttribute('aria-label','Auf Deutsch wechseln');
+  await expect(page.locator('[data-status-trigger-desktop]')).toHaveAttribute('aria-label',/^Open status: Probably /);
+
+  await page.goto('/kartenspiele/?spiel=durak');
+  await expect(page.locator('html')).toHaveAttribute('lang','en');
+  await expect(page.locator('.cg-hand-heading h2')).toContainText('Your hand');
+  await page.locator('[data-rules-open]').click();
+  await expect(page.locator('[data-rules-body]')).toContainText('Get rid of all your cards');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('[data-language-switch]')).toHaveCount(0);
+
+  await page.goto('/');
+  await page.locator('.site-footer [data-language-switch]').click();
+  await expect(page).toHaveURL(/lang=de/);
+  await expect(page.locator('html')).toHaveAttribute('lang','de');
+  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('fabian-language'))).toBe('de');
+  await page.goto('/datenschutz/');
+  await expect(page.locator('html')).toHaveAttribute('lang','de');
+  await expect(page.getByRole('heading',{name:'Datenschutz'})).toBeVisible();
+});
+
+test('Explicit English choice translates secondary pages without horizontal overflow', async ({page}) => {
+  await page.setViewportSize({width:390,height:844});
+  for(const path of ['/galerie/?lang=en','/impressum/?lang=en','/datenschutz/?lang=en','/tea-trail/?lang=en']) {
+    await page.goto(path);
+    await expect(page.locator('html')).toHaveAttribute('lang','en');
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+  }
+  await page.goto('/galerie/?lang=en');
+  await expect(page.getByRole('heading',{name:'Favorite Shots – photography by Fabian Deragisch'})).toBeAttached();
+  await page.goto('/impressum/?lang=en');
+  await expect(page.getByRole('link',{name:/Back to website/})).toBeVisible();
+  await page.goto('/datenschutz/?lang=en');
+  await expect(page.getByText('Fabian Deragisch, Vienna, Austria')).toBeVisible();
 });

@@ -1,4 +1,6 @@
 ---
+import LanguageSwitch from "./LanguageSwitch.astro";
+
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -57,10 +59,13 @@ const base = import.meta.env.BASE_URL;
       <p class="footer-built-note">Meine Idee. Mein Feinschliff. Mit Codex umgesetzt.</p>
     </div>
     <p class="privacy-note">Kein Tracking. Keine Werbung. Keine Cookies durch diese Website.</p>
-    <nav aria-label="Rechtliche Hinweise">
-      <a href={`${base}impressum/`}>Impressum</a>
-      <a href={`${base}datenschutz/`}>Datenschutz</a>
-    </nav>
+    <div class="footer-utilities">
+      <LanguageSwitch class="language-switch-footer" />
+      <nav aria-label="Rechtliche Hinweise">
+        <a href={`${base}impressum/`}>Impressum</a>
+        <a href={`${base}datenschutz/`}>Datenschutz</a>
+      </nav>
+    </div>
   </div>
 </footer>
 
