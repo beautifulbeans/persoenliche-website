@@ -307,7 +307,8 @@ const structuredData = createProfilePageSchema({
   const companionKind = companion?.querySelector<HTMLElement>("[data-companion-kind]");
   const companionPeriod = companion?.querySelector<HTMLElement>("[data-companion-period]");
   const companionTitle = companion?.querySelector<HTMLElement>("[data-companion-title]");
-  const companionOrganization = companion?.querySelector<HTMLElement>("[data-companion-organization]");
+  const companionTitleMain = companion?.querySelector<HTMLElement>("[data-companion-title-main]");
+  const companionTitleDetail = companion?.querySelector<HTMLElement>("[data-companion-title-detail]");
 
   if ("IntersectionObserver" in window && companion) {
     const storyObserver = new IntersectionObserver(
@@ -317,12 +318,15 @@ const structuredData = createProfilePageSchema({
           storyCards.forEach((card) => card.classList.toggle("is-active", card === entry.target));
           const card = entry.target as HTMLElement;
           animateContentSwap(
-            [companionKind, companionPeriod, companionTitle, companionOrganization],
+            [companionKind, companionPeriod, companionTitle],
             () => {
               if (companionKind) companionKind.textContent = card.dataset.storyKind ?? "Laufbahn";
               if (companionPeriod) companionPeriod.textContent = card.dataset.storyPeriod ?? "";
-              if (companionTitle) companionTitle.textContent = card.dataset.storyTitle ?? "";
-              if (companionOrganization) companionOrganization.textContent = card.dataset.storyOrganization ?? "";
+              if (companionTitleMain) companionTitleMain.textContent = card.dataset.storyCompanionTitle ?? card.dataset.storyTitle ?? "";
+              if (companionTitleDetail) {
+                companionTitleDetail.textContent = card.dataset.storyCompanionDetail ?? "";
+                companionTitleDetail.hidden = !card.dataset.storyCompanionDetail;
+              }
               companion.dataset.mode = card.dataset.storyKind === "Studium" ? "study" : "work";
             },
             { duration: 180, offset: 3, stagger: 0 },

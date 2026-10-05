@@ -14,14 +14,21 @@ export type TimelineEntry = {
   }[];
   current?: boolean;
   icon: string;
+  companionTitle: string;
+  companionDetail?: string;
   logoKey?: string;
   logoAlt?: string;
   logoMonogram?: string;
+  roleProgression?: {
+    period: string;
+    title: string;
+    current?: boolean;
+  }[];
 };
 
 export const profile = {
   name: "Fabian Deragisch",
-  role: "Mitarbeiter im Marketing und E-Commerce",
+  role: "Specialist E-Commerce",
   currentOrganization: "DERTOUR Austria GmbH",
   statement:
     "Portfolio, Lebenslauf und ein kleiner Einblick in die Person dahinter.",
@@ -63,10 +70,22 @@ export const profile = {
 export const work: TimelineEntry[] = [
   {
     period: "August 2024 - heute",
-    title: "Mitarbeiter im Marketing und E-Commerce",
+    title: "Specialist E-Commerce",
     organization: "DERTOUR Austria GmbH",
+    companionTitle: "DERTOUR Austria",
+    roleProgression: [
+      {
+        period: "Seit Oktober 2026",
+        title: "Specialist E-Commerce",
+        current: true,
+      },
+      {
+        period: "August 2024 - September 2026",
+        title: "Mitarbeiter im Marketing und E-Commerce",
+      },
+    ],
     description:
-      "Zwischen Website, SEO, Newsletter und CRM, mit Blick auf Zahlen und Gestaltung.",
+      "Im E-Commerce arbeite ich an Website, SEO, Newslettern und CRM – mit Blick auf Performance und Gestaltung.",
     details: [
       "SEO-Maßnahmen und Website-Content",
       "Monitoring mit Search Console und SISTRIX",
@@ -108,6 +127,8 @@ export const work: TimelineEntry[] = [
     period: "März 2022 - Februar 2024",
     title: "Werkstudent externe Kommunikation und Marketing",
     organization: "Landkreis Passau Gesundheitseinrichtungen",
+    companionTitle: "Landkreis Passau",
+    companionDetail: "Gesundheitseinrichtungen",
     description:
       "Digitale Kommunikation, redaktionelle Website-Arbeit und Gestaltung für unterschiedliche interne und externe Berührungspunkte.",
     details: [
@@ -154,6 +175,7 @@ export const education: TimelineEntry[] = [
     period: "Oktober 2020 - Mai 2024",
     title: "Medien und Kommunikation (B.A.)",
     organization: "Universität Passau",
+    companionTitle: "Universität Passau",
     description:
       "Bachelorstudium mit Schwerpunkten in Medien, Kommunikation und digitaler Öffentlichkeit. 2024 mit der Gesamtnote 2,3 abgeschlossen.",
     context: "Bachelor of Arts · Abschluss 2024",
@@ -191,6 +213,7 @@ export const education: TimelineEntry[] = [
     period: "Juni 2019",
     title: "Abitur",
     organization: "Adalbert-Stifter-Gymnasium Passau",
+    companionTitle: "Adalbert-Stifter-Gymnasium",
     description: "Allgemeine Hochschulreife in Bayern.",
     icon: "ph-certificate",
     logoKey: "asg-passau",

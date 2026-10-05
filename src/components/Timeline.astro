@@ -58,8 +58,9 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
         <p class="companion-kind" data-companion-kind>Beruf</p>
         <p class="companion-period" data-companion-period>{work[0].period}</p>
       </div>
-      <h3 data-companion-title>{work[0].title}</h3>
-      <p class="companion-organization" data-companion-organization>{work[0].organization}</p>
+      <h3 data-companion-title>
+        <span data-companion-title-main>{work[0].companionTitle}</span>{" "}<span class="companion-title-detail" data-companion-title-detail hidden={!work[0].companionDetail}>{work[0].companionDetail}</span>
+      </h3>
     </aside>
 
     <div class="journey-stories">
@@ -68,7 +69,7 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
           <span class="group-icon"><i class="ph ph-briefcase" aria-hidden="true"></i></span>
           <div>
             <p>Beruf</p>
-            <h3 id="work-title">Marketing und Kommunikation</h3>
+            <h3 id="work-title">Marketing und E-Commerce</h3>
           </div>
         </header>
 
@@ -84,7 +85,8 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
               data-story-kind="Beruf"
               data-story-period={entry.period}
               data-story-title={entry.title}
-              data-story-organization={entry.organization}
+              data-story-companion-title={entry.companionTitle}
+              data-story-companion-detail={entry.companionDetail}
               data-timeline-point
               data-reveal="up"
             >
@@ -118,8 +120,30 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
                   {entry.context && (
                     <p class="journey-context"><i class="ph ph-link-simple-horizontal" aria-hidden="true"></i>{entry.context}</p>
                   )}
-                  <h4>{entry.title}</h4>
-                  {entry.organization && <p class="journey-organization">{entry.organization}</p>}
+                  <h4>{entry.roleProgression ? entry.organization : entry.title}</h4>
+                  {entry.organization && !entry.roleProgression && <p class="journey-organization">{entry.organization}</p>}
+                  {entry.roleProgression && (
+                    <ol class="journey-role-progression" aria-label="Rollen bei DERTOUR Austria, neueste zuerst">
+                      {entry.roleProgression.map((role) => (
+                        <li class:list={["journey-role-step", role.current && "is-latest"]}>
+                          {role.current && (
+                            <button
+                              class="journey-level-up"
+                              type="button"
+                              data-level-up
+                              aria-label="Level-up-Klang abspielen"
+                            >
+                              <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+                            </button>
+                          )}
+                          <span class="journey-role-copy">
+                            <span class="journey-role-period">{role.period}</span>
+                            <strong data-level-up-target={role.current ? "true" : undefined}>{role.title}</strong>
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
                   <p class="journey-description">{entry.description}</p>
                   {entry.details && (
                     <ul class="journey-details">
@@ -184,7 +208,8 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
               data-story-kind="Studium"
               data-story-period={entry.period}
               data-story-title={entry.title}
-              data-story-organization={entry.organization}
+              data-story-companion-title={entry.companionTitle}
+              data-story-companion-detail={entry.companionDetail}
               data-timeline-point
               data-reveal="up"
             >
@@ -260,6 +285,17 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
 </section>
 
 <style is:global>
+  .journey .journey-companion h3 {
+    overflow-wrap: break-word;
+  }
+
+  .journey .journey-companion .companion-title-detail:not([hidden]) {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.68em;
+    line-height: 1.2;
+  }
+
   /* The uploaded logos use different canvas sizes. These presentation tokens keep
      the marks visually balanced without modifying the source files. */
   .journey .journey-card-icon.journey-organization-logo {
@@ -314,6 +350,93 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
     background: color-mix(in srgb, var(--surface-2) 78%, transparent);
   }
 
+  .journey-role-progression {
+    display: grid;
+    gap: 0;
+    margin: 1.65rem 0 0;
+    padding: 0.55rem 0;
+    border-block: 1px solid var(--line);
+    list-style: none;
+  }
+
+  .journey-role-step {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 0;
+  }
+
+  .journey-role-step + .journey-role-step {
+    border-top: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+  }
+
+  .journey-role-step:not(.is-latest)::before {
+    width: 0.43rem;
+    height: 0.43rem;
+    margin-inline: auto;
+    border-radius: 50%;
+    background: var(--line-strong);
+    content: "";
+  }
+
+  .journey-role-copy {
+    display: grid;
+    min-width: 0;
+    gap: 0.25rem;
+  }
+
+  .journey-role-period {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 570;
+    line-height: 1.35;
+  }
+
+  .journey-role-copy strong {
+    display: inline-block;
+    color: var(--ink);
+    font-size: clamp(0.83rem, 1.35vw, 0.96rem);
+    font-weight: 590;
+    line-height: 1.35;
+  }
+
+  .journey-role-step.is-latest .journey-role-copy strong {
+    color: var(--accent-strong);
+    font-size: clamp(1rem, 1.8vw, 1.22rem);
+    font-weight: 760;
+    letter-spacing: -0.025em;
+    transform-origin: left center;
+  }
+
+  .journey-level-up {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--on-accent);
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: transform 220ms var(--ease-out), background-color 220ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .journey-level-up:hover {
+      background: var(--accent-strong);
+      transform: scale(1.13);
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .journey-role-progression {
+      margin-top: 1.35rem;
+    }
+  }
+
   @media (hover: hover) and (pointer: fine) {
     .journey .journey-card:hover .journey-organization-logo img {
       transform: translate(var(--organization-logo-shift-x), var(--organization-logo-shift-y)) scale(var(--organization-logo-scale));
@@ -344,13 +467,75 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .journey .journey-organization-logo img {
+    .journey .journey-organization-logo img,
+    .journey-level-up {
       transition: none;
     }
   }
 </style>
 
 <script>
+  const levelUpButton = document.querySelector<HTMLButtonElement>("[data-level-up]");
+  const levelUpTarget = document.querySelector<HTMLElement>("[data-level-up-target]");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let levelUpAudio: AudioContext | undefined;
+
+  levelUpButton?.addEventListener("click", async (event) => {
+    event.stopPropagation();
+
+    if (!reducedMotion.matches && levelUpTarget) {
+      levelUpTarget.getAnimations().forEach((animation) => animation.cancel());
+      levelUpTarget.animate(
+        [
+          { transform: "scale(1)" },
+          { transform: "scale(1.12)", offset: 0.48 },
+          { transform: "scale(1)" },
+        ],
+        { duration: 660, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+      );
+    }
+
+    try {
+      levelUpAudio ??= new AudioContext();
+      await levelUpAudio.resume();
+      const start = levelUpAudio.currentTime;
+      // NES PowerUpGrabFreqData, played in reverse order at one pitch per two 60 Hz frames.
+      // https://6502disassembly.com/nes-smb/SuperMarioBros.html
+      const notes = [
+        523, 391, 523, 658, 782, 1045, 782,
+        414, 523, 621, 829, 621, 829, 1045, 1243, 1645, 1243,
+        466, 586, 695, 932, 695, 932, 1165, 1381, 1864, 1381,
+      ];
+      const real = new Float32Array(33);
+      const imaginary = new Float32Array(33);
+      for (let harmonic = 1; harmonic < real.length; harmonic += 1) {
+        const phase = 2 * Math.PI * harmonic * 0.25;
+        real[harmonic] = (2 * Math.sin(phase)) / (Math.PI * harmonic);
+        imaginary[harmonic] = (2 * (1 - Math.cos(phase))) / (Math.PI * harmonic);
+      }
+      const pulseWave = levelUpAudio.createPeriodicWave(real, imaginary);
+      const noteLength = 2 / 60;
+      notes.forEach((frequency, index) => {
+        if (!levelUpAudio) return;
+        const oscillator = levelUpAudio.createOscillator();
+        const gain = levelUpAudio.createGain();
+        const noteStart = start + index * noteLength;
+        oscillator.setPeriodicWave(pulseWave);
+        oscillator.frequency.setValueAtTime(frequency, noteStart);
+        gain.gain.setValueAtTime(0, noteStart);
+        gain.gain.linearRampToValueAtTime(0.04, noteStart + 0.0015);
+        gain.gain.setValueAtTime(0.04, noteStart + noteLength - 0.003);
+        gain.gain.linearRampToValueAtTime(0, noteStart + noteLength);
+        oscillator.connect(gain);
+        gain.connect(levelUpAudio.destination);
+        oscillator.start(noteStart);
+        oscillator.stop(noteStart + noteLength);
+      });
+    } catch {
+      // The visual response still works when Web Audio is unavailable.
+    }
+  });
+
   document.querySelectorAll<HTMLElement>(".journey-card.has-flip").forEach((card) => {
     const openButton = card.querySelector<HTMLButtonElement>("[data-flip-open]");
     const closeButton = card.querySelector<HTMLButtonElement>("[data-flip-close]");

@@ -83,13 +83,16 @@ const translations: Record<string, string> = {
   "Mein Weg bisher": "My journey so far",
   "Beruf und Studium.": "Work and studies.",
   "Marketing und Kommunikation": "Marketing and communications",
+  "Marketing und E-Commerce": "Marketing and e-commerce",
   "Studium, Schule und Abschlussarbeit": "Studies, school, and thesis",
   "August 2024 - heute": "August 2024 - present",
+  "August 2024 - September 2026": "August 2024 - September 2026",
+  "Seit Oktober 2026": "Since October 2026",
   "März 2022 - Februar 2024": "March 2022 - February 2024",
   "Oktober 2020 - Mai 2024": "October 2020 - May 2024",
   "Juni 2019": "June 2019",
-  "Zwischen Website, SEO, Newsletter und CRM, mit Blick auf Zahlen und Gestaltung.":
-    "Working across websites, SEO, newsletters, and CRM, with an eye for both data and design.",
+  "Im E-Commerce arbeite ich an Website, SEO, Newslettern und CRM – mit Blick auf Performance und Gestaltung.":
+    "In e-commerce, I work on websites, SEO, newsletters, and CRM, with an eye for performance and design.",
   "SEO-Maßnahmen und Website-Content": "SEO initiatives and website content",
   "Monitoring mit Search Console und SISTRIX": "Monitoring with Search Console and SISTRIX",
   "KPI- und Performance-Reportings": "KPI and performance reporting",
@@ -132,7 +135,10 @@ const translations: Record<string, string> = {
   "Mitarbeiter-App": "Employee app",
   "An Layout, Inhalten und Funktionen einer internen Mitarbeiter-Info-App mitarbeiten.":
     "Contributing to the layout, content, and features of an internal employee information app.",
-  "Mitarbeiter im Marketing und E-Commerce": "Marketing & E-Commerce Specialist",
+  "Mitarbeiter im Marketing und E-Commerce": "Marketing & E-Commerce Associate",
+  "Specialist E-Commerce": "E-Commerce Specialist",
+  "Rollen bei DERTOUR Austria, neueste zuerst": "Roles at DERTOUR Austria, newest first",
+  "Level-up-Klang abspielen": "Play the level-up sound",
   "Werkstudent externe Kommunikation und Marketing":
     "Working Student, External Communications & Marketing",
   "Parallel zum Bachelorstudium": "Alongside my bachelor's degree",

@@ -31,7 +31,7 @@ export const createProfilePageSchema = ({ siteUrl, portraitUrl }: SiteSchemaOpti
   name: "Fabian Deragisch | Marketing, E-Commerce & Teeliebhaber",
   description: profile.statement,
   inLanguage: "de-AT",
-  dateModified: "2026-09-04",
+  dateModified: "2026-10-05",
   isPartOf: {
     "@type": "WebSite",
     "@id": absoluteUrl("/#website", siteUrl),
