@@ -3,9 +3,6 @@ type Locale = "de" | "en";
 const STORAGE_KEY = "fabian-language";
 
 const translations: Record<string, string> = {
-  "Fabian Deragisch | Marketing, E-Commerce & Teeliebhaber": "Fabian Deragisch | Marketing, E-Commerce & Tea Enthusiast",
-  "Portfolio von Fabian Deragisch: Marketing, E-Commerce und persönliche Einblicke – immer mit einer Tasse Tee in Reichweite.":
-    "Fabian Deragisch's portfolio: marketing, e-commerce, and personal interests—always with a cup of tea within reach.",
   // Global navigation and recurring interface copy
   "Zum Inhalt springen": "Skip to content",
   "Direkt zum Inhalt": "Skip to content",
@@ -36,8 +33,6 @@ const translations: Record<string, string> = {
   "Direkt zu den Kontaktmöglichkeiten": "Jump to contact options",
 
   // Hero and profile
-  "Portfolio · Wien": "Portfolio · Vienna",
-  "PORTFOLIO WIEN": "PORTFOLIO VIENNA",
   "Portfolio": "Portfolio",
   "Wien": "Vienna",
   "Portfolio, Lebenslauf und ein kleiner Einblick in die Person dahinter.":
@@ -391,7 +386,6 @@ const translations: Record<string, string> = {
   "Durak, Arschloch, Neunerln und Texas Hold’em gegen taktische Bots spielen. Ohne Echtgeld.":
     "Play Durak, President, Neunerln, and Texas Hold'em against tactical bots. No real money.",
   "Spielzimmer": "Card room",
-  "SPIELZIMMER": "CARD ROOM",
   "Eine Runde geht immer.": "There is always time for one more round.",
   "Spielregeln": "Rules",
   "Spielregeln öffnen": "Open rules",
@@ -1237,11 +1231,7 @@ const locale: Locale = document.documentElement.lang === "en" ? "en" : "de";
 setupSwitches(locale);
 
 if (locale === "en") {
-  document.title = translateString(document.title);
-  document.querySelectorAll<HTMLMetaElement>('meta[name="description"], meta[property="og:title"], meta[property="og:description"], meta[name="twitter:title"], meta[name="twitter:description"]').forEach((meta) => {
-    meta.content = translateString(meta.content);
-  });
-  document.querySelector<HTMLMetaElement>('meta[property="og:locale"]')?.setAttribute("content", "en_GB");
+  // SEO and social metadata stay in German; translate only the page interface.
   translateTree(document.body);
 
   const observer = new MutationObserver((mutations) => {

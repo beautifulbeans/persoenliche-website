@@ -96,40 +96,6 @@ body.gallery-transition-active {
   align-self: center;
 }
 
-.opening-eyebrow {
-  display: flex;
-  width: min(100%, 39rem);
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0 0 clamp(1.1rem, 2.8svh, 1.85rem);
-  color: #657057;
-  font: 650 0.66rem / 1 var(--font-sans);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  animation: opening-enter-small 720ms 360ms var(--ease-out) both;
-}
-
-.opening-eyebrow::before {
-  width: 2.8rem;
-  height: 1px;
-  background: currentcolor;
-  content: "";
-}
-
-.opening-eyebrow span:last-child {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.opening-eyebrow span:last-child::before {
-  width: 0.24rem;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: currentcolor;
-  content: "";
-}
-
 .opening-name {
   position: relative;
   display: grid;
@@ -247,9 +213,9 @@ body.gallery-transition-active {
   align-self: end;
   color: #626d56;
   font: 650 0.65rem / 1 var(--font-sans);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.01em;
   text-decoration: none;
-  text-transform: uppercase;
+  text-transform: none;
   animation: opening-enter-small 720ms 900ms var(--ease-out) both;
 }
 
@@ -313,7 +279,7 @@ body.gallery-transition-active {
 
 @media (max-width: 48rem) {
   .opening-stage {
-    min-height: max(100svh, 43rem);
+    min-height: max(86svh, 38rem);
     background:
       radial-gradient(
         circle 14rem at var(--opening-pointer-x) var(--opening-pointer-y),
@@ -326,16 +292,13 @@ body.gallery-transition-active {
   .opening-shell.section-shell {
     display: flex;
     width: 100%;
-    min-height: max(100svh, 43rem);
+    min-height: max(86svh, 38rem);
     margin: 0;
     padding: 6.6rem 1.1rem 1.25rem;
     flex-direction: column;
+    justify-content: center;
     gap: 0;
     align-items: stretch;
-  }
-
-  .opening-eyebrow {
-    margin-bottom: 0.9rem;
   }
 
   .opening-name {
@@ -352,7 +315,7 @@ body.gallery-transition-active {
 
   .opening-info {
     display: grid;
-    margin: auto 0 clamp(2.2rem, 8svh, 4rem);
+    margin: clamp(2rem, 6svh, 3.5rem) 0 clamp(2.2rem, 8svh, 4rem);
   }
 
   .opening-statement {
@@ -401,16 +364,12 @@ body.gallery-transition-active {
     padding-bottom: 0.85rem;
   }
 
-  .opening-eyebrow {
-    margin-bottom: 0.55rem;
-  }
-
   .opening-name {
     font-size: clamp(3.7rem, 17vw, 4.25rem);
   }
 
   .opening-info {
-    margin: auto 0 1.25rem;
+    margin: 1.5rem 0 1.25rem;
   }
 
   .opening-statement {
@@ -510,7 +469,6 @@ body.gallery-transition-active {
 
   .opening-name-line,
   .opening-info,
-  .opening-eyebrow,
   .opening-scroll {
     animation: none;
   }

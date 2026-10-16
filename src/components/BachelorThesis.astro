@@ -7,7 +7,6 @@ const { thesis } = profile;
 <section class="thesis-section" id="arbeit" aria-labelledby="thesis-title">
   <div class="section-shell thesis-layout">
     <div class="thesis-copy" data-reveal="left">
-      <p class="section-eyebrow">Abschluss im Bachelorstudium</p>
       <h2 id="thesis-title">Bachelorarbeit: Kreative Synergien.</h2>
       <p>{thesis.summary}</p>
 
@@ -16,7 +15,7 @@ const { thesis } = profile;
           <span><i class="ph ph-graduation-cap" aria-hidden="true"></i>B.A. Medien und Kommunikation</span>
           <span><i class="ph ph-buildings" aria-hidden="true"></i>Universität Passau · 2024</span>
         </div>
-        <a class="thesis-reader-link" href={thesis.readerUrl} aria-label="Bachelorarbeit in der Leseansicht öffnen">
+        <a class="thesis-reader-link site-action site-action-secondary" href={thesis.readerUrl} aria-label="Bachelorarbeit in der Leseansicht öffnen">
           <i class="ph ph-book-open-text" aria-hidden="true"></i>In der Leseansicht öffnen
         </a>
       </div>

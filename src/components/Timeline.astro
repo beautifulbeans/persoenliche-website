@@ -68,7 +68,6 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
         <header class="journey-group-heading">
           <span class="group-icon"><i class="ph ph-briefcase" aria-hidden="true"></i></span>
           <div>
-            <p>Beruf</p>
             <h3 id="work-title">Marketing und E-Commerce</h3>
           </div>
         </header>
@@ -153,7 +152,7 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
                     </ul>
                   )}
                   {entry.backDetails && (
-                    <button class="journey-flip-button" type="button" data-flip-open aria-expanded="false" aria-label={`Details zu ${entry.title} anzeigen`}>
+                    <button class="journey-flip-button site-action" type="button" data-flip-open aria-expanded="false" aria-label={`Details zu ${entry.title} anzeigen`}>
                       Genauer ansehen <i class="ph ph-arrow-clockwise" aria-hidden="true"></i>
                     </button>
                   )}
@@ -175,7 +174,7 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
                         </article>
                       ))}
                     </div>
-                    <button class="journey-flip-button journey-flip-back-button" type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
+                    <button class="journey-flip-button journey-flip-back-button site-action site-action-secondary" type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
                       Zur Vorderseite <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>
                     </button>
                   </div>
@@ -191,7 +190,6 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
         <header class="journey-group-heading">
           <span class="group-icon"><i class="ph ph-graduation-cap" aria-hidden="true"></i></span>
           <div>
-            <p>Studium</p>
             <h3 id="education-title">Studium, Schule und Abschlussarbeit</h3>
           </div>
         </header>
@@ -247,7 +245,7 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
                   {entry.organization && <p class="journey-organization">{entry.organization}</p>}
                   <p class="journey-description">{entry.description}</p>
                   {entry.backDetails && (
-                    <button class="journey-flip-button" type="button" data-flip-open aria-expanded="false" aria-label={`Details zu ${entry.title} anzeigen`}>
+                    <button class="journey-flip-button site-action" type="button" data-flip-open aria-expanded="false" aria-label={`Details zu ${entry.title} anzeigen`}>
                       Genauer ansehen <i class="ph ph-arrow-clockwise" aria-hidden="true"></i>
                     </button>
                   )}
@@ -269,7 +267,7 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
                         </article>
                       ))}
                     </div>
-                    <button class="journey-flip-button journey-flip-back-button" type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
+                    <button class="journey-flip-button journey-flip-back-button site-action site-action-secondary" type="button" data-flip-close aria-label={`Vorderseite von ${entry.title} anzeigen`}>
                       Zur Vorderseite <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>
                     </button>
                   </div>
@@ -561,8 +559,8 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
       if (!reduceMotion.matches) {
         flipMotion?.cancel();
         flipMotion = card.animate(
-          [{ opacity: 0.94 }, { opacity: 1 }],
-          { duration: flipped ? 420 : 340, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
+          [{ opacity: 0.65 }, { opacity: 1 }],
+          { duration: flipped ? 220 : 160, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
         );
         void flipMotion.finished
           .catch(() => undefined)

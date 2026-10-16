@@ -16,18 +16,18 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
   position: absolute;
   z-index: -1;
   pointer-events: none;
-  border-radius: 999px;
-  background: var(--accent-strong, #505b43);
+  border-radius: var(--radius-selection, 6px);
+  background: var(--choice-background, var(--accent-strong, #505b43));
   transform-origin: top left;
 }
 .has-selection-indicator > button { position: relative; }
 .has-selection-indicator > button,
 .has-selection-indicator > button:is(.is-selected, [aria-pressed="true"]) {
-  background: transparent !important;
-  border-color: transparent !important;
+  background: transparent;
+  border-color: transparent;
 }
-.has-selection-indicator > button[aria-pressed="true"] { color: #fff !important; }
-#fotografie .selection-indicator { background: var(--tone-camera-strong); }
+.has-selection-indicator > button[aria-pressed="true"] { color: var(--choice-ink, #fff); }
+#fotografie .selection-indicator { background: var(--choice-background, var(--tone-camera-strong)); }
 
 #fotografie :is(button, a, summary):focus-visible {
   outline: 2px solid var(--tone-camera-strong);
@@ -175,8 +175,8 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
   color: var(--tone-cards-strong);
   font-size: 0.62rem;
   font-weight: 680;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .cards-action-row [data-draw-card] {

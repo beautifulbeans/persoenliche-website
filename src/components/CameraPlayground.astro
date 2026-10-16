@@ -137,7 +137,7 @@ const galleryPhotoCount = importedPhotos.length;
     <div class="camera-control-deck">
       <div class="simulation-controls camera-simulation-dock">
         <span>Filmsimulation</span>
-        <div role="group" aria-label="Filmsimulation auswählen" data-sliding-selection>
+        <div class="content-choice" role="group" aria-label="Filmsimulation auswählen" data-sliding-selection>
           <button class="is-selected" type="button" data-film-simulation="provia" aria-pressed="true">Provia</button>
           <button type="button" data-film-simulation="classic" aria-pressed="false">Classic</button>
           <button type="button" data-film-simulation="acros" aria-pressed="false">Acros</button>
@@ -164,7 +164,7 @@ const galleryPhotoCount = importedPhotos.length;
     <p class="camera-personal">Eine kleine Auswahl meiner Fotos. Mehr davon liegt in der Galerie, und die wächst weiter.</p>
 
     <div class="camera-actions">
-      <a class="camera-gallery-link" href="/galerie/">
+      <a class="camera-gallery-link site-action" href="/galerie/">
         Galerie ansehen <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
       </a>
     </div>
@@ -175,13 +175,12 @@ const galleryPhotoCount = importedPhotos.length;
         <i class="ph ph-plus" aria-hidden="true"></i>
       </summary>
       <div class="camera-info-body">
-        <div class="camera-fact-switch" data-sliding-selection role="group" aria-label="Kamerafakt auswählen">
+        <div class="camera-fact-switch content-choice" data-sliding-selection role="group" aria-label="Kamerafakt auswählen">
           <button class="is-selected" type="button" data-camera-fact="model" aria-pressed="true">X-T30 III</button>
           <button type="button" data-camera-fact="mirrorless" aria-pressed="false">Spiegellos</button>
           <button type="button" data-camera-fact="simulation" aria-pressed="false">Filmsimulation</button>
         </div>
         <div class="camera-fact-panel">
-          <p class="fact-kicker" data-camera-kicker>Meine Kamera</p>
           <h4 data-camera-fact-title>Kompakt und bewusst analog bedienbar</h4>
           <p aria-live="polite" data-camera-fact-copy>Die spiegellose X-T30 III wiegt 378 Gramm und kombiniert einen 26,1-Megapixel-Sensor mit Fujifilms aktuellem X-Processor 5.</p>
         </div>
@@ -198,17 +197,14 @@ const galleryPhotoCount = importedPhotos.length;
 
   const cameraFacts = {
     model: {
-      kicker: "Meine Kamera",
       title: "Kompakt und bewusst analog bedienbar",
       copy: "Die spiegellose X-T30 III wiegt 378 Gramm und kombiniert einen 26,1-Megapixel-Sensor mit Fujifilms aktuellem X-Processor 5.",
     },
     mirrorless: {
-      kicker: "Spiegellos",
       title: "Das Ergebnis schon vor dem Auslösen sehen",
       copy: "Ohne Spiegel gelangt das Licht direkt zum Sensor. Der elektronische Sucher kann Belichtung, Weißabgleich und Farblook deshalb schon vor der Aufnahme zeigen.",
     },
     simulation: {
-      kicker: "Fujifilm-Farben",
       title: "Zwanzig Looks direkt in der Kamera",
       copy: "Die X-T30 III bietet 20 Filmsimulationen. Drei eigene Rezepte lassen sich zusätzlich auf FS1 bis FS3 am Film-Simulationsrad speichern.",
     },
@@ -233,7 +229,6 @@ const galleryPhotoCount = importedPhotos.length;
     const next = card.querySelector<HTMLButtonElement>("[data-camera-next]");
     const shutter = card.querySelector<HTMLButtonElement>("[data-camera-shutter]");
     const factButtons = card.querySelectorAll<HTMLButtonElement>("[data-camera-fact]");
-    const kicker = card.querySelector<HTMLElement>("[data-camera-kicker]");
     const title = card.querySelector<HTMLElement>("[data-camera-fact-title]");
     const copy = card.querySelector<HTMLElement>("[data-camera-fact-copy]");
     const simulationButtons = card.querySelectorAll<HTMLButtonElement>("[data-film-simulation]");
@@ -412,8 +407,7 @@ const galleryPhotoCount = importedPhotos.length;
         const fact = cameraFacts[key];
         if (!fact) return;
         setPressedState(factButtons, button);
-        animateContentSwap([kicker, title, copy], () => {
-          if (kicker) kicker.textContent = fact.kicker;
+        animateContentSwap([title, copy], () => {
           if (title) title.textContent = fact.title;
           if (copy) copy.textContent = fact.copy;
         });

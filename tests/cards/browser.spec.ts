@@ -198,9 +198,18 @@ test('Arschloch stacks the current trick and explains that pairs need equal valu
     await page.waitForTimeout(50);
   }
   const cards=page.locator('.cg-play-pile .cg-card');await expect(cards).not.toHaveCount(0);
-  await expect(page.locator('.cg-pile-count')).toContainText(String(await cards.count()));
-  if(await cards.count()>=2) {
-    const first=await cards.nth(0).boundingBox(),second=await cards.nth(1).boundingBox();
+  // Bot turns can replace the pile between Playwright calls. Read one DOM snapshot.
+  const pile = await page.locator('.cg-board').evaluate((board) => ({
+    label: board.querySelector('.cg-pile-count')?.textContent ?? '',
+    cards: Array.from(board.querySelectorAll('.cg-play-pile .cg-card'), (card) => {
+      const box = card.getBoundingClientRect();
+      return { x: box.x, width: box.width };
+    }),
+  }));
+  expect(pile.cards.length).toBeGreaterThan(0);
+  expect(pile.label).toContain(String(pile.cards.length));
+  if(pile.cards.length>=2) {
+    const [first,second] = pile.cards;
     expect(Math.abs(first!.x-second!.x)).toBeLessThan(first!.width*.7);
   }
 });
@@ -248,8 +257,15 @@ test('Neunerln keeps a visibly layered discard pile as play continues', async ({
     await page.waitForTimeout(35);
   }
   const pile=page.locator('.cg-discard-pile');
-  await expect.poll(()=>pile.locator('.cg-card').count()).toBeGreaterThanOrEqual(2);
-  const first=await pile.locator('.cg-card').nth(0).boundingBox(), second=await pile.locator('.cg-card').nth(1).boundingBox();
+  let visibleCards: Array<{ x: number; width: number }> = [];
+  await expect.poll(async () => {
+    visibleCards = await pile.locator('.cg-card').evaluateAll((cards) => cards.map((card) => {
+      const box = card.getBoundingClientRect();
+      return { x: box.x, width: box.width };
+    }));
+    return visibleCards.length;
+  }).toBeGreaterThanOrEqual(2);
+  const [first, second] = visibleCards;
   expect(Math.abs(first!.x-second!.x)).toBeLessThan(first!.width*.5);
   await expect(pile.locator('.cg-pile-count')).toHaveAttribute('aria-label',/Karten auf dem Stapel/);
 });
@@ -432,4 +448,146 @@ test('Explicit English choice translates secondary pages without horizontal over
   await expect(page.getByRole('link',{name:/Back to website/})).toBeVisible();
   await page.goto('/datenschutz/?lang=en');
   await expect(page.getByText('Fabian Deragisch, Vienna, Austria')).toBeVisible();
+});
+
+test('Site SEO stays German across language choices and initial HTML', async ({ page }) => {
+  const readMetadata = () => page.evaluate(() => ({
+    title: document.title,
+    values: Array.from(document.head.querySelectorAll<HTMLMetaElement>(
+      'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"]',
+    ), (meta) => [meta.name || meta.getAttribute('property'), meta.content]),
+  }));
+
+  for (const route of ['/', '/galerie/', '/bachelorarbeit/', '/kartenspiele/', '/tea-trail/', '/impressum/', '/datenschutz/', '/404/']) {
+    await page.goto(`${route}?lang=de`);
+    await expect(page.locator('html')).toHaveAttribute('data-i18n-ready', 'true');
+    const german = await readMetadata();
+    const response = await page.request.get(`${route}?lang=en`);
+    const html = await response.text();
+    const initial = await page.evaluate((source) => {
+      const document = new DOMParser().parseFromString(source, 'text/html');
+      return {
+        title: document.title,
+        values: Array.from(document.head.querySelectorAll<HTMLMetaElement>(
+          'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"]',
+        ), (meta) => [meta.name || meta.getAttribute('property'), meta.content]),
+      };
+    }, html);
+    expect(initial, `${route}: initial HTML`).toEqual(german);
+
+    await page.goto(`${route}?lang=en`);
+    await expect(page.locator('html')).toHaveAttribute('data-i18n-ready', 'true');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    expect(await readMetadata(), `${route}: English interface`).toEqual(german);
+  }
+
+  await page.goto('/?lang=de');
+  await expect(page.locator('html')).toHaveAttribute('data-i18n-ready', 'true');
+  const german = await readMetadata();
+  expect(german.title).toBe('Fabian Deragisch | Marketing, E-Commerce & Teeliebhaber');
+  await page.locator('[data-language-switch]').first().click();
+  await expect(page).toHaveURL(/lang=en/);
+  await expect(page.locator('html')).toHaveAttribute('data-i18n-ready', 'true');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('.opening-statement')).toHaveText('Portfolio, résumé, and a glimpse of the person behind it.');
+  expect(await readMetadata()).toEqual(german);
+
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-i18n-ready', 'true');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  expect(await readMetadata()).toEqual(german);
+});
+
+test('Approved mobile header and tea layout stay aligned and usable in both languages', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const width of [320, 390, 768]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const locale of ['de', 'en']) {
+      await page.goto(`/?lang=${locale}`);
+      await expect(page.locator('html')).toHaveAttribute('data-i18n-ready', 'true');
+      await page.evaluate(() => document.fonts.ready);
+      const status = page.locator('[data-status-trigger]');
+      const navigation = page.locator('.site-header nav');
+      const nav = (await navigation.boundingBox())!;
+      const identity = (await status.boundingBox())!;
+      expect(Math.abs(nav.height - identity.height)).toBeLessThan(0.5);
+      expect(Math.abs(nav.y - identity.y)).toBeLessThan(0.5);
+      await status.click();
+      await expect(status).toHaveAttribute('aria-expanded', 'true');
+      expect((await navigation.boundingBox())!.y).toBe(nav.y);
+      await page.keyboard.press('Escape');
+      await expect(status).toHaveAttribute('aria-expanded', 'false');
+
+      const tea = page.locator('.tea-ritual');
+      await tea.scrollIntoViewIfNeeded();
+      const intro = (await tea.locator('.tea-intro').boundingBox())!;
+      const pot = (await tea.locator('[data-teapot]').boundingBox())!;
+      const profile = (await tea.locator('.tea-profile-heading').boundingBox())!;
+      expect(pot.width).toBeGreaterThanOrEqual(220);
+      expect(pot.y).toBeGreaterThanOrEqual(intro.y + intro.height);
+      expect(profile.y).toBeGreaterThanOrEqual(pot.y + pot.height);
+      const choices = await tea.locator('[data-tea-kind]').evaluateAll((buttons) => buttons.map((button) => {
+        const box = button.getBoundingClientRect();
+        return { y: box.y, height: box.height };
+      }));
+      expect(new Set(choices.map((choice) => choice.y)).size).toBe(1);
+      expect(Math.min(...choices.map((choice) => choice.height))).toBeGreaterThanOrEqual(44);
+      await tea.locator('[data-tea-kind="jasmine"]').click();
+      await expect(tea.locator('[data-tea-kind="jasmine"]')).toHaveAttribute('aria-pressed', 'true');
+      await expect(tea.locator('[data-tea-value]')).toContainText(locale === 'de' ? 'Jasmin' : 'Jasmine');
+      await tea.locator('[data-teapot]').click();
+      await expect(tea.locator('[data-tea-kind="genmaicha"]')).toHaveAttribute('aria-pressed', 'true');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+    }
+  }
+});
+
+test('Photo and tea choices share geometry, readable states and a visible keyboard focus', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/?lang=de');
+  const photo = page.locator('#fotografie [data-film-simulation="classic"]');
+  const tea = page.locator('[data-tea-kind="jasmine"]');
+  for (const choice of [photo, tea]) {
+    await choice.click();
+    await expect(choice).toHaveAttribute('aria-pressed', 'true');
+    await expect(choice).toHaveCSS('font-weight', '750');
+    await expect(choice).toHaveCSS('border-radius', '6px');
+    await expect(choice.locator('..')).toHaveCSS('border-radius', '10px');
+    await choice.focus();
+    await expect(choice).toHaveCSS('outline-width', '3px');
+    const ratio = await choice.evaluate((button) => {
+      const color = getComputedStyle(button).color;
+      const indicator = button.parentElement!.querySelector('.selection-indicator')!;
+      const background = getComputedStyle(indicator).backgroundColor;
+      const luminance = (value: string) => {
+        const rgb = value.match(/[\d.]+/g)!.slice(0, 3).map(Number).map((channel) => {
+          const normalized = channel / 255;
+          return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+        });
+        return rgb[0]! * 0.2126 + rgb[1]! * 0.7152 + rgb[2]! * 0.0722;
+      };
+      const a = luminance(color), b = luminance(background);
+      return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    });
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
+  }
+  await expect(page.locator('.opening-threads')).toBeAttached();
+  await expect(page.locator('.opening-eyebrow, .section-eyebrow, .contact-eyebrow')).toHaveCount(0);
+});
+
+test('Work details settle without rotations or scaling and preserve their accessible toggle', async ({ page }) => {
+  await page.goto('/?lang=de');
+  const card = page.locator('.journey-card.has-flip').first();
+  for (let repeat = 0; repeat < 2; repeat++) {
+    await card.locator('[data-flip-open]').click();
+    await expect(card.locator('[data-flip-front]')).toHaveAttribute('aria-hidden', 'true');
+    await expect(card.locator('[data-flip-back]')).toHaveAttribute('aria-hidden', 'false');
+    await expect(card.locator('.journey-card-inner')).toHaveCSS('transform', 'none');
+    await expect(card.locator('[data-flip-back]')).toHaveCSS('transform', 'none');
+    await expect(card.locator('[data-flip-back]')).toHaveCSS('filter', 'none');
+    await expect(card.locator('[data-flip-close]')).toBeFocused();
+    await card.locator('[data-flip-close]').click();
+    await expect(card.locator('[data-flip-back]')).toHaveAttribute('inert', '');
+    await expect(card.locator('[data-flip-open]')).toBeFocused();
+  }
 });

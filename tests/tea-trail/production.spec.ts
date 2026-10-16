@@ -1,4 +1,7 @@
 import { test, expect } from "@playwright/test";
+
+// These assertions intentionally exercise the German interface.
+test.use({ locale: "de-AT" });
 test.skip(
   process.env.TEA_TRAIL_PRODUCTION !== "1",
   "Run against the static production preview.",
@@ -68,6 +71,7 @@ test("static release supports small touch screens and reduced motion", async ({
 }) => {
   const context = await browser.newContext({
     viewport: { width: 320, height: 740 },
+    locale: "de-AT",
     hasTouch: true,
     isMobile: true,
     deviceScaleFactor: 2,

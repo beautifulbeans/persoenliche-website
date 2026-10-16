@@ -1193,7 +1193,7 @@ body.intro-active {
   }
 
   .tea-copy h3 {
-    margin-top: 1.3rem;
+    margin-top: 0;
     font-size: clamp(2.5rem, 11vw, 3.7rem);
   }
 
@@ -1656,9 +1656,9 @@ body {
   border-top: 1px solid rgb(248 251 247 / 0.42);
   padding-top: 0.55rem;
   font: 600 0.62rem / 1.2 var(--font-sans);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.01em;
   opacity: 0;
-  text-transform: uppercase;
+  text-transform: none;
   transform: translate3d(0, 0.8rem, 0);
   transition: opacity 360ms 560ms ease, transform 560ms 520ms var(--ease-spring-soft);
 }
@@ -1819,8 +1819,8 @@ body {
   margin-bottom: clamp(1.1rem, 2vw, 1.8rem);
   color: var(--muted);
   font: 650 0.67rem / 1.2 var(--font-sans);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .hero-opening-line::before {
@@ -1891,8 +1891,8 @@ body {
 .hero-current-role > span {
   color: var(--accent-strong);
   font: 650 0.6rem / 1 var(--font-sans);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .hero-current-role strong {
@@ -1929,8 +1929,8 @@ body {
 .hero-scroll-loop text {
   fill: currentColor;
   font: 650 8.6px var(--font-sans);
-  letter-spacing: 1.25px;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .hero-scroll-loop > i {
@@ -2303,8 +2303,8 @@ body {
   background: var(--personal-accent-strong);
   color: var(--personal-on-accent);
   font: 680 0.56rem / 1 var(--font-sans);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -3004,8 +3004,8 @@ body.gallery-dialog-open {
   margin-top: 0;
   color: color-mix(in srgb, var(--on-accent) 82%, transparent);
   font: 560 0.67rem/1.25 var(--font-sans);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .companion-period {
@@ -3140,8 +3140,8 @@ body.gallery-dialog-open {
   border-bottom: 1px solid color-mix(in srgb, var(--on-accent) 52%, transparent);
   color: var(--on-accent);
   font: 620 0.62rem/1 var(--font-sans);
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .thesis-artwork {
@@ -3377,8 +3377,8 @@ body.gallery-dialog-open {
   color: color-mix(in srgb, var(--warm-strong) 78%, var(--muted));
   font-size: 0.67rem;
   font-weight: 650;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .album-library-controls {
@@ -4402,8 +4402,8 @@ body.gallery-dialog-open {
     color: var(--accent-strong);
     font-size: 0.55rem;
     font-weight: 680;
-    letter-spacing: 0.045em;
-    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    text-transform: none;
     white-space: nowrap;
   }
 
@@ -4596,9 +4596,9 @@ body.gallery-dialog-open {
     color: var(--accent-strong);
     font-size: 0.54rem;
     font-weight: 700;
-    letter-spacing: 0.11em;
+    letter-spacing: 0.01em;
     line-height: 1;
-    text-transform: uppercase;
+    text-transform: none;
   }
 
   .status-mobile-expanded .status-panel-copy strong {
@@ -4641,7 +4641,7 @@ body.gallery-dialog-open {
   100% {
     opacity: 1;
     clip-path: inset(0 0 0 0);
-    transform: translate3d(0, 0, 0);
+    transform: none;
   }
 }
 

@@ -1,0 +1,358 @@
+/* Approved graphite/red direction. Existing component tokens map to shared roles;
+   photos, the opening canvas and physical game objects keep their own rendering. */
+:root {
+  --canvas: #f5f5f3;
+  --panel: #fff;
+  --text: #262626;
+  --text-secondary: #595654;
+  --rule: #d3d1cf;
+  --control-rule: #99938f;
+  --action: #a34f4c;
+  --action-hover: #8d4140;
+  --action-soft: #f0dddd;
+  --action-ink: #713938;
+  --graphite: #292a2b;
+  --on-graphite: #fafafa;
+  --on-graphite-muted: #dedbd9;
+  --choice-background: var(--action-soft);
+  --choice-ink: var(--action-ink);
+  --radius-control: 8px;
+  --radius-selection: 6px;
+  --radius-group: 10px;
+  --radius-card: 12px;
+  --control-height: 44px;
+  --header-height: 56px;
+  --motion-ui: 200ms;
+  --shadow: none;
+  --shadow-small: none;
+
+  --professional-page: var(--canvas);
+  --professional-surface: var(--panel);
+  --professional-surface-2: #eeeae8;
+  --professional-surface-3: #ded9d6;
+  --professional-ink: var(--text);
+  --professional-muted: var(--text-secondary);
+  --professional-line: var(--rule);
+  --professional-line-strong: var(--control-rule);
+  --brand: var(--action);
+  --brand-strong: var(--action);
+  --brand-soft: var(--action-soft);
+  --on-brand: var(--on-graphite);
+  --on-brand-muted: var(--on-graphite-muted);
+  --study-canvas: #eeeae8;
+  --study: var(--action);
+  --study-strong: var(--action-ink);
+  --study-soft: #eee7e5;
+  --chapter-bridge: #ded9d6;
+
+  --personal-page: var(--canvas);
+  --personal-surface: var(--panel);
+  --personal-surface-2: #eeeae8;
+  --personal-surface-3: #ded9d6;
+  --personal-ink: var(--text);
+  --personal-muted: var(--text-secondary);
+  --personal-line: var(--rule);
+  --personal-line-strong: var(--control-rule);
+  --personal-accent: var(--action);
+  --personal-accent-strong: var(--action);
+  --personal-accent-soft: var(--action-soft);
+  --personal-on-accent: #fff;
+
+  --tone-tea: var(--graphite);
+  --tone-tea-strong: var(--action);
+  --tone-tea-soft: var(--action-soft);
+  --tone-camera: var(--action);
+  --tone-camera-strong: var(--action);
+  --tone-camera-soft: var(--action-soft);
+  --tone-training: var(--action);
+  --tone-training-strong: var(--action-ink);
+  --tone-training-soft: #eeeae8;
+  --tone-vinyl: var(--text-secondary);
+  --tone-vinyl-strong: var(--text);
+  --tone-vinyl-soft: #eeeae8;
+  --tone-cards: var(--action);
+  --tone-cards-strong: var(--graphite);
+  --tone-cards-soft: #eeeae8;
+}
+
+body { background: var(--canvas); }
+:focus-visible { outline: 3px solid var(--action); outline-offset: 4px; }
+#fotografie :is(button, a, summary):focus-visible { outline: 3px solid var(--action); }
+
+/* One geometry, three roles: navigation, action and connected content choice. */
+.site-header nav,
+.site-header .status-anchor .status-island {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--panel);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.site-header nav {
+  min-height: var(--header-height);
+  padding: 5px;
+  gap: 4px;
+  align-items: center;
+}
+.site-header nav a {
+  min-height: var(--control-height);
+  padding: 0 15px;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+  transition: background-color var(--motion-ui) ease, color var(--motion-ui) ease;
+}
+.site-header nav a[aria-current="location"] {
+  background: var(--action-soft);
+  color: var(--action-ink);
+  font-weight: 750;
+}
+.site-header nav a[aria-current="location"] .nav-label-primary { font-weight: 750; }
+.site-header nav a::after { content: none; }
+/* Keep readable labels still; the opening canvas carries the entrance motion. */
+.site-header .nav-label-clone { display: none; }
+.site-header .nav-label-primary { transform: none; }
+.site-header .status-island[aria-expanded="true"] { border-color: var(--control-rule); }
+.mobile-contact-shortcut { border-radius: var(--radius-control); background: var(--graphite); box-shadow: none; }
+
+:is(.site-action, #fotografie .site-action) {
+  display: inline-flex;
+  min-height: var(--control-height);
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--action);
+  box-shadow: none;
+  color: #fff;
+  font-weight: 650;
+  text-decoration: none;
+  transition: background-color var(--motion-ui) ease, color var(--motion-ui) ease;
+}
+:is(.site-action-secondary, #fotografie .site-action-secondary) {
+  border-color: var(--control-rule);
+  background: transparent;
+  color: var(--text);
+}
+:is(.content-choice, #fotografie.camera-card .content-choice) {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--control-rule);
+  border-radius: var(--radius-group);
+  background: transparent;
+  box-shadow: none;
+  isolation: isolate;
+}
+:is(.content-choice, #fotografie.camera-card .content-choice) > button {
+  position: relative;
+  width: auto;
+  min-width: 0;
+  min-height: var(--control-height);
+  padding: 9px 15px;
+  border: 0;
+  border-radius: var(--radius-selection);
+  background: transparent;
+  box-shadow: none;
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.3;
+  transition: background-color var(--motion-ui) ease, color var(--motion-ui) ease;
+}
+:is(.content-choice, #fotografie.camera-card .content-choice) > button[aria-pressed="true"] {
+  background: var(--choice-background);
+  color: var(--choice-ink);
+  font-weight: 750;
+}
+:is(.content-choice, #fotografie.camera-card .content-choice).has-selection-indicator > button { background: transparent; }
+:is(.content-choice, #fotografie.camera-card .content-choice) > button::after { content: none; }
+:is(.content-choice, #fotografie.camera-card .content-choice) > .selection-indicator {
+  border-radius: var(--radius-selection);
+  background: var(--choice-background);
+}
+@media (hover: hover) and (pointer: fine) {
+  .site-header nav a:not([aria-current="location"]):hover { background: #eeeae8; }
+  :is(.site-action, #fotografie .site-action):hover { background: var(--action-hover); color: #fff; box-shadow: none; }
+  :is(.site-action-secondary, #fotografie .site-action-secondary):hover { background: #eeeae8; color: var(--text); }
+  :is(.content-choice, #fotografie.camera-card .content-choice) > button:not([aria-pressed="true"]):hover { background: var(--action-soft); color: var(--action-ink); }
+}
+
+/* Preserve the interactive lines and name; remove the old olive tint only. */
+.opening-stage { min-height: 650px; background: var(--canvas); }
+.opening-stage::after { display: none; }
+.opening-shell.section-shell {
+  min-height: 650px;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 5rem;
+  padding-top: 9rem;
+  padding-bottom: 4rem;
+}
+.opening-name, .opening-letter { color: var(--text); }
+.opening-statement { max-width: 20ch; color: var(--text); }
+.opening-info { margin-top: 3rem; }
+.opening-scroll { color: var(--text-secondary); }
+
+/* Work gets quiet information surfaces and sharp, flat detail faces. */
+.journey { padding-block: 5rem; }
+.journey-layout { grid-template-columns: minmax(15rem, 0.7fr) minmax(0, 1.3fr); gap: 4rem; }
+.journey-companion { border-radius: var(--radius-card); background: var(--graphite); box-shadow: none; color: var(--on-graphite); }
+.companion-kind, .companion-period { color: var(--on-graphite); }
+.companion-art { opacity: 0.45; }
+.companion-wave-motion { animation: none; }
+.journey-group-heading { margin-bottom: 2rem; }
+.journey-group-heading .group-icon { width: 2rem; border: 0; border-radius: 0; background: transparent; color: var(--action); }
+.journey-card, .journey-card-inner, .journey-card-face { perspective: none; transform-style: flat; }
+.journey-card .journey-card-inner,
+.journey-card-education .journey-card-inner,
+.journey-card.is-flipped .journey-card-inner { transform: none; transition: height 220ms var(--ease-out); }
+.journey-card .journey-card-face {
+  padding: 2rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--panel);
+  box-shadow: none;
+  color: var(--text);
+  transform: none;
+}
+.journey-card.is-active .journey-card-face,
+.journey-card.is-flipping .journey-card-face { border-color: var(--rule); box-shadow: none; filter: none; }
+.journey-card-face[aria-hidden="true"] { visibility: hidden; }
+.journey-card-face[aria-hidden="false"] { visibility: visible; }
+.journey-card p, .journey-card li { color: var(--text-secondary); }
+.journey-card h4, .journey-card h5 { color: var(--text); }
+.journey-date, .journey-context { padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--text-secondary); }
+.journey-card::before, .journey-cards::before, .journey-cards::after { display: none; }
+.journey-cards { padding-left: 0; }
+.journey-card .journey-back-grid article,
+.journey-card.is-flipped .journey-back-grid article {
+  padding: 1rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+
+/* Broad photography break; the picture supplies color and visual weight. */
+.personal-section { background: var(--canvas); }
+.personal-grid { gap: 3.5rem; }
+#fotografie.camera-card { padding: 2.5rem 0; gap: 3rem; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+#fotografie .camera-frames { border-radius: var(--radius-group); }
+#fotografie .camera-control-deck { padding-top: 1rem; border-color: var(--rule); }
+#fotografie .camera-file-details { display: none; }
+#fotografie .camera-screen-bottom .camera-gallery-nav button { border: 1px solid var(--rule); border-radius: var(--radius-control); }
+#fotografie .camera-shutter-disc { border: 0; border-radius: 50%; background: var(--action); box-shadow: none; color: #fff; }
+#fotografie .camera-viewer-shutter { border-radius: 50%; box-shadow: none; }
+#fotografie .camera-info { border: 0; border-top: 1px solid var(--rule); border-radius: 0; background: transparent; }
+#fotografie .camera-personal { max-width: 33ch; font-size: 1rem; line-height: 1.7; }
+
+/* A single graphite object. The tea liquid keeps its natural green color. */
+.tea-ritual {
+  --choice-background: #eed8d7;
+  --choice-ink: #652e2d;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1.1fr) minmax(14rem, 0.9fr);
+  min-height: 0;
+  padding: 3rem;
+  gap: 3rem;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--graphite);
+  box-shadow: none;
+  color: var(--on-graphite);
+}
+.tea-copy h3 { max-width: none; margin-top: 0; color: var(--on-graphite); }
+.tea-copy > p,
+.tea-profile-heading .tea-fact-value,
+.tea-profile-heading span { color: var(--on-graphite); opacity: 1; }
+.tea-copy > .tea-intro { width: auto; max-width: 43ch; min-height: 0; font-size: 1rem; line-height: 1.6; }
+.tea-profile-heading { margin-top: 1.4rem; }
+.tea-profile-heading span { padding: 0; border: 0; }
+.tea-copy .tea-fact-copy { min-height: 0; margin-top: 0.75rem; }
+#persoenlich .tea-ritual .content-choice { margin-top: 1.75rem; border-color: #aaa9a7; }
+#persoenlich .tea-ritual .content-choice > button { color: var(--on-graphite); }
+#persoenlich .tea-ritual .content-choice > button[aria-pressed="true"] { color: var(--choice-ink); }
+.tea-tip { margin-top: 1rem; }
+.tea-tip summary { min-height: var(--control-height); border-color: #aaa9a7; border-radius: var(--radius-control); background: transparent; color: var(--on-graphite); }
+.tea-visual { position: relative; inset: auto; width: auto; align-self: center; margin: 0; border: 0; background: none; box-shadow: none; }
+.tea-visual::before, .tea-visual::after { display: none; }
+.teapot { width: min(100%, 24rem); filter: none; }
+/* Idle motion is quiet; clicking the object still brews/selects the next tea. */
+.teapot-vessel, .steam { animation: none; }
+
+/* Other hobbies belong to the same family, with their real objects kept intact. */
+.play-card, .minigame-panel, .pigeon-contact { border-radius: var(--radius-card); box-shadow: none; }
+.training-set { border-radius: var(--radius-control); box-shadow: none; }
+.play-icon { background: transparent; color: var(--action); }
+.sound-card, .cards-card { background: #eeeae8; border-color: var(--rule); }
+.cards-heading { align-items: center; }
+.cards-heading h3 { margin-top: 0; color: var(--text); }
+.cards-launch { border-radius: var(--radius-group); background: var(--graphite); box-shadow: none; }
+.cards-launch small { color: var(--on-graphite-muted); }
+.cards-preview-label { color: var(--text-secondary); }
+.album-choice, .spotify-link, .album-library-controls button, .language-switch { border-radius: var(--radius-control); box-shadow: none; }
+.thesis-card-face, .thesis-card, .thesis-card-inner { border-radius: var(--radius-card); }
+.thesis-card-face { box-shadow: none; }
+.thesis-cover-footer button, .thesis-back-actions :is(a, button) { min-height: var(--control-height); border-radius: var(--radius-control); box-shadow: none; }
+.contact-panel .contact-routes :is(a, button) { color: var(--text); }
+.chapter-orbits span { animation: none; }
+.interest-track { animation-play-state: paused; }
+@media (hover: hover) and (pointer: fine) {
+  .interest-marquee:hover .interest-track { animation-play-state: running; }
+  #persoenlich .tea-ritual .content-choice > button:not([aria-pressed="true"]):hover { background: #444142; color: var(--on-graphite); }
+}
+
+@media (max-width: 60rem) {
+  .journey-layout { grid-template-columns: minmax(13rem, 0.65fr) minmax(0, 1.35fr); gap: 2rem; }
+}
+@media (max-width: 48rem) {
+  .site-header .status-anchor { height: var(--header-height); }
+  .site-header .status-anchor .status-island[aria-expanded="false"] { height: var(--header-height); }
+  .site-header .status-anchor .status-island[aria-expanded="false"] .status-portrait { top: 9px; }
+  .site-header .status-anchor .status-island[aria-expanded="false"] .status-glance { top: 12px; }
+  .site-header nav { height: var(--header-height); }
+  .site-header nav a { padding: 0 10px; }
+  .opening-stage, .opening-shell.section-shell { min-height: 620px; }
+  .opening-shell.section-shell { gap: 0; padding-top: 7rem; }
+  .opening-info { margin-top: 2.5rem; }
+  .journey { padding-block: 3rem; }
+  .journey-layout { display: block; }
+  .journey-companion { display: none; }
+  .journey-card .journey-card-face { padding: 1.5rem; }
+  .personal-grid { gap: 2.5rem; }
+  #fotografie.camera-card { padding: 1.25rem 0; gap: 1.5rem; }
+
+  .tea-ritual { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.15rem; height: auto; padding: 1.5rem; overflow: visible; }
+  .tea-copy { display: contents; }
+  .tea-copy h3 { grid-row: 1; margin: 0; font-size: 3rem; }
+  .tea-copy > .tea-intro { grid-row: 2; max-width: 100%; margin: 0; }
+  .tea-ritual .tea-visual { grid-row: 3; width: 100%; height: auto; margin: 0; justify-self: center; }
+  .tea-visual .teapot { width: min(100%, 17rem); max-width: none; height: auto; aspect-ratio: 1; border: 0; border-radius: 0; background: transparent; color: var(--on-graphite); }
+  .tea-visual .teapot::before, .tea-visual .teapot::after { display: none; }
+  .tea-profile-heading { grid-row: 4; flex-wrap: wrap; gap: 0.6rem; margin: 0; }
+  .tea-copy > .tea-taste { grid-row: 5; margin: 0; }
+  .tea-copy > .tea-fact-copy { grid-row: 6; margin: 0; }
+  #persoenlich .tea-ritual .content-choice { grid-row: 7; width: 100%; flex-wrap: nowrap; margin: 0.3rem 0 0; }
+  #persoenlich .tea-ritual .content-choice > button { flex: 1 1 0; padding-inline: 6px; }
+  .tea-tip { grid-row: 8; width: fit-content; margin: 0; }
+}
+@media (max-width: 350px) {
+  .tea-ritual { padding: 1.25rem; }
+  .tea-visual .teapot { width: min(100%, 15rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header nav a,
+  :is(.site-action, #fotografie .site-action),
+  :is(.content-choice, #fotografie.camera-card .content-choice) > button,
+  .journey-card .journey-card-inner { transition: none; }
+  .interest-marquee:hover .interest-track { animation: none; }
+}

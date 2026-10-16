@@ -1220,7 +1220,7 @@ body.intro-complete .hero-scene {
 .thesis-cover-copy > p {
   color: color-mix(in srgb, var(--on-accent) 76%, transparent);
   font: 500 0.62rem var(--font-mono);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .thesis-cover-copy h3 {
@@ -1274,7 +1274,7 @@ body.intro-complete .hero-scene {
   gap: 0.5rem;
   color: var(--study-strong);
   font: 580 0.61rem var(--font-mono);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .thesis-back-heading h3 {
@@ -2963,8 +2963,8 @@ body.is-anchor-travelling {
   color: var(--warm-strong);
   font-size: var(--type-caption);
   font-weight: 650;
-  letter-spacing: 0.035em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .favorite-tracks ol {
@@ -3781,8 +3781,8 @@ body.is-anchor-travelling {
   flex: 0 0 auto;
   color: #b9c9c8;
   font: 560 0.58rem var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .camera-simulation-dock > div {
@@ -4107,7 +4107,7 @@ h4 {
   font-family: var(--font-sans);
   font-size: 0.62rem;
   font-variation-settings: "wght" 560;
-  letter-spacing: 0.015em;
+  letter-spacing: 0.01em;
   line-height: 1;
   text-transform: none;
 }
@@ -5427,9 +5427,9 @@ body.intro-active {
   left: clamp(1.2rem, 5vw, 4.5rem);
   font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.01em;
   line-height: 1.45;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .intro-folio-monogram {

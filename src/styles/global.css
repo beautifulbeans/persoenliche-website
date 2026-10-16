@@ -452,7 +452,7 @@ button:active,
   color: var(--muted);
   font-family: var(--font-mono);
   font-size: 0.66rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .hero-role-card strong {
@@ -552,7 +552,7 @@ button:active,
   font-family: var(--font-mono);
   font-size: 0.6rem;
   font-weight: 400;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .journey-layout {
@@ -608,7 +608,7 @@ button:active,
   margin-top: 4.5rem;
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .companion-period {
@@ -668,11 +668,11 @@ button:active,
   color: var(--accent-strong);
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .journey-group-heading h3 {
-  margin-top: 0.2rem;
+  margin-top: 0;
   font-size: clamp(1.5rem, 2.5vw, 2.2rem);
 }
 
@@ -924,7 +924,7 @@ button:active,
   margin-top: auto;
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .thesis-cover h3 {
@@ -1021,7 +1021,7 @@ button:active,
   gap: 0.55rem;
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .tea-copy {
@@ -1034,7 +1034,7 @@ button:active,
 
 .tea-copy h3 {
   max-width: 8ch;
-  margin-top: auto;
+  margin-top: 0;
   font-size: clamp(2.8rem, 5vw, 5rem);
 }
 
@@ -1416,7 +1416,7 @@ button:active,
   color: var(--accent-strong);
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .lab-playground h3 {
@@ -1458,7 +1458,7 @@ button:active,
 }
 
 .tea-copy h3 {
-  margin-top: 2.5rem;
+  margin-top: 0;
 }
 
 .tea-copy > .tea-intro {
@@ -1594,7 +1594,7 @@ button:active,
   font-family: var(--font-mono);
   font-size: 0.64rem;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .training-card > .training-fact {
@@ -1669,7 +1669,7 @@ button:active,
   font-family: var(--font-mono);
   font-size: 0.57rem;
   line-height: 1.45;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .sound-card > .fact-kicker {
@@ -1729,7 +1729,7 @@ button:active,
 
 .cards-heading {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
@@ -1741,7 +1741,7 @@ button:active,
 }
 
 .cards-heading h3 {
-  margin-top: 0.35rem;
+  margin-top: 0;
   color: var(--study-strong);
   font-size: clamp(3.5rem, 7vw, 6rem);
 }
@@ -1873,7 +1873,7 @@ button:active,
   color: var(--study-strong);
   font-family: var(--font-mono);
   font-size: 0.58rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .genealogy-teaser summary strong {
@@ -2171,7 +2171,7 @@ button:active,
   color: var(--accent-strong);
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .journey-card-education .journey-back-top > span {
@@ -2292,7 +2292,7 @@ button:active,
   color: var(--study-strong);
   font-family: var(--font-mono);
   font-size: 0.65rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .takeaway-statement h3 {
@@ -2757,7 +2757,7 @@ button:active,
   color: var(--muted);
   font-family: var(--font-mono);
   font-size: 0.58rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .simulation-controls button.is-selected {
@@ -2952,7 +2952,7 @@ button:active,
   color: color-mix(in srgb, var(--page) 68%, transparent);
   font-family: var(--font-mono);
   font-size: 0.64rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .contact-copy h2 {
@@ -3812,7 +3812,7 @@ button:active,
   }
 
   .tea-copy h3 {
-    margin-top: 2.5rem;
+    margin-top: 0;
   }
 
   .teapot {
@@ -4006,7 +4006,7 @@ body.intro-active {
   line-height: 0.85;
   letter-spacing: -0.04em;
   opacity: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .intro-type-first {
@@ -4085,8 +4085,8 @@ body.intro-active {
 .intro-mark p {
   margin-top: 1rem;
   font: 500 0.68rem var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .intro-reveal.is-running .intro-mark {
@@ -4442,7 +4442,7 @@ body.intro-complete .hero-scene {
   margin-bottom: 0.8rem;
   color: var(--study-strong);
   font: 600 0.68rem var(--font-mono);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .thesis-section {
@@ -4579,9 +4579,9 @@ body.intro-complete .hero-scene {
 .chapter-transition-center > p {
   margin-top: 1.4rem;
   font: 560 0.68rem var(--font-mono);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.01em;
   opacity: 0.76;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .chapter-transition-center h2 {
@@ -5273,8 +5273,8 @@ body.intro-complete .hero-scene {
 .header-note-copy small {
   color: var(--muted);
   font: 500 0.48rem / 1.1 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .header-note-copy strong {
@@ -5346,8 +5346,8 @@ body.intro-complete .hero-scene {
 .hero-role-index small {
   color: var(--muted);
   font: 500 0.5rem / 1 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .hero-role-index strong {
@@ -5727,8 +5727,8 @@ body.intro-complete .hero-scene {
   top: calc(100% + 0.25rem);
   color: color-mix(in srgb, var(--page) 54%, transparent);
   font: 500 0.48rem var(--font-mono);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .contact-panel .route-line {

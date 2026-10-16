@@ -34,7 +34,6 @@ const structuredData = createProfilePageSchema({
 
       <div class="opening-shell section-shell">
         <div class="opening-heading">
-          <p class="opening-eyebrow"><span>Portfolio</span><span>Wien</span></p>
           <h1
             class="opening-name"
             id="hero-title"
@@ -154,7 +153,6 @@ const structuredData = createProfilePageSchema({
               </span>
             </span>
             <span class="training-set-meta">
-              <small>Satz für Satz</small>
               <strong data-training-set-label>Aufwärmen</strong>
               <span data-training-set-counter>0 von 3</span>
             </span>
@@ -168,7 +166,7 @@ const structuredData = createProfilePageSchema({
               <p class="training-fact" aria-live="polite" data-training-copy>
                 Widerstand setzt nicht nur an den Muskeln, sondern auch an den Knochen einen Trainingsreiz.
               </p>
-              <div class="fact-switch" role="group" aria-label="Trainingsfakt auswählen">
+              <div class="fact-switch content-choice" role="group" aria-label="Trainingsfakt auswählen">
                 <button class="is-selected" type="button" data-training-fact="bone" aria-pressed="true">Knochen</button>
                 <button type="button" data-training-fact="neural" aria-pressed="false">Nerven</button>
                 <button type="button" data-training-fact="rhythm" aria-pressed="false">Rhythmus</button>
@@ -182,14 +180,12 @@ const structuredData = createProfilePageSchema({
         <article class="play-card cards-card" id="spielkarten" data-reveal="scale">
           <div class="cards-heading">
             <div>
-              <p class="fact-kicker">Spielbar gegen Bots</p>
               <h3 data-card-game-title>Durak</h3>
             </div>
-            <span class="cards-live-pill"><i class="ph ph-play" aria-hidden="true"></i> Vier Spiele</span>
           </div>
           <p class="cards-personal">Bei einer Runde Karten bin ich fast immer dabei. Am liebsten Durak, Neunerln oder Poker.</p>
           <p class="card-game-copy" aria-live="polite" data-card-game-copy>Angreifen, verteidigen, Trumpf im Blick behalten. Verloren hat, wer am Ende noch Karten hält.</p>
-          <div class="card-game-switch" role="group" aria-label="Kartenspiel auswählen">
+          <div class="card-game-switch content-choice" role="group" aria-label="Kartenspiel auswählen">
             <button class="is-selected" type="button" data-card-game="durak" aria-pressed="true">Durak</button>
             <button type="button" data-card-game="arschloch" aria-pressed="false">Arschloch</button>
             <button type="button" data-card-game="neunern" aria-pressed="false">Neunerln</button>
@@ -200,7 +196,7 @@ const structuredData = createProfilePageSchema({
               <span class="cards-launch-icon"><i class="ph ph-cards-three" aria-hidden="true"></i></span>
               <span><strong>Eine echte Runde starten</strong><small>Gegen taktische Bots · ohne Anmeldung</small></span>
             </span>
-            <a class="play-card-action cards-play-link" href="/kartenspiele/?spiel=durak" target="_blank" rel="noopener" aria-label="Durak spielen (neuer Tab)" data-play-cards><span data-play-label>Durak starten</span> <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
+            <a class="play-card-action cards-play-link site-action" href="/kartenspiele/?spiel=durak" target="_blank" rel="noopener" aria-label="Durak spielen (neuer Tab)" data-play-cards><span data-play-label>Durak starten</span> <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
           </div>
           <div class="card-table" data-card-table aria-label="Bewegliche Spielkarten">
             <span class="card-table-hint" aria-hidden="true"><i class="ph ph-hand-grabbing"></i> Karten anfassen und verschieben</span>
@@ -222,7 +218,7 @@ const structuredData = createProfilePageSchema({
           </div>
           <div class="cards-action-row">
             <span class="cards-preview-label">Spielvorschau</span>
-            <button class="play-card-action" type="button" data-draw-card>
+            <button class="play-card-action site-action site-action-secondary" type="button" data-draw-card>
               Neu mischen <i class="ph ph-arrows-clockwise" aria-hidden="true"></i>
             </button>
             <p class="sr-only" aria-live="polite" data-card-status>Die Karten können bewegt oder neu gemischt werden.</p>
@@ -236,7 +232,7 @@ const structuredData = createProfilePageSchema({
           <h3 id="minigame-title">Kleines Minigame.<br />Kurz abschalten.</h3>
           <p>{ROUND_SECONDS} Sekunden, eine Tasse Tee und ein paar kleine Umwege.</p>
         </div>
-        <a class="minigame-play" href="/tea-trail/" data-astro-prefetch="false">Tea Trail spielen<i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
+        <a class="minigame-play site-action" href="/tea-trail/" data-astro-prefetch="false">Tea Trail spielen<i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
       </section>
     </section>
   </main>

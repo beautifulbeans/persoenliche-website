@@ -91,6 +91,6 @@ export const syncSelectionIndicator = (group: HTMLElement, animate = true) => {
   const animation = indicator.animate([
     { transform: `translate3d(${previous.x - next.x}px, ${previous.y - next.y}px, 0) scale(${previous.width / next.width}, ${previous.height / next.height})` },
     { transform: 'translate3d(0, 0, 0) scale(1)' },
-  ], { duration: 420, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
+  ], { duration: 200, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
   selectionAnimations.set(group, animation);
 };

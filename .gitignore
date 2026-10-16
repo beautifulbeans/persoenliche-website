@@ -17,3 +17,6 @@ content-private/
 # Tea Trail browser test outputs
 test-results/
 playwright-report/
+
+# Local design comparisons and browser captures stay outside the release.
+design-review/
