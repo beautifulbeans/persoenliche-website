@@ -91,6 +91,7 @@ const { thesis } = profile;
 </section>
 
 <script>
+  import { initializeFlipCard } from "../scripts/flip-card";
   const thesisCard = document.querySelector<HTMLElement>("[data-thesis-card]");
 
   if (thesisCard) {
@@ -99,77 +100,6 @@ const { thesis } = profile;
     const back = thesisCard.querySelector<HTMLElement>("[data-thesis-back]");
     const openButton = thesisCard.querySelector<HTMLButtonElement>("[data-thesis-open]");
     const closeButton = thesisCard.querySelector<HTMLButtonElement>("[data-thesis-close]");
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let flipAnimation: Animation | undefined;
-    let flipRun = 0;
-
-    const setHeight = (flipped: boolean) => {
-      const face = flipped ? back : front;
-      if (!inner || !face) return;
-      inner.style.height = `${face.scrollHeight}px`;
-    };
-
-    const setFlipped = (flipped: boolean, moveFocus = false) => {
-      setHeight(flipped);
-      thesisCard.classList.toggle("is-flipped", flipped);
-      thesisCard.classList.add("is-flipping");
-      const currentRun = ++flipRun;
-
-      if (!reduceMotion.matches) {
-        flipAnimation?.cancel();
-        flipAnimation = thesisCard.animate(
-          [{ opacity: 0.94 }, { opacity: 1 }],
-          { duration: flipped ? 420 : 340, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
-        );
-        void flipAnimation.finished
-          .catch(() => undefined)
-          .finally(() => {
-            if (currentRun === flipRun) thesisCard.classList.remove("is-flipping");
-          });
-      } else {
-        queueMicrotask(() => thesisCard.classList.remove("is-flipping"));
-      }
-
-      openButton?.setAttribute("aria-expanded", String(flipped));
-      front?.setAttribute("aria-hidden", String(flipped));
-      back?.setAttribute("aria-hidden", String(!flipped));
-      front?.toggleAttribute("inert", flipped);
-      back?.toggleAttribute("inert", !flipped);
-
-      if (moveFocus) {
-        if (flipped) closeButton?.focus({ preventScroll: true });
-        else openButton?.focus({ preventScroll: true });
-      }
-    };
-
-    setHeight(false);
-
-    openButton?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      setFlipped(true, true);
-    });
-
-    closeButton?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      setFlipped(false, true);
-    });
-
-    thesisCard.addEventListener("click", (event) => {
-      const target = event.target as HTMLElement;
-      const selection = window.getSelection();
-      const selectedInsideCard =
-        selection && !selection.isCollapsed && selection.anchorNode && thesisCard.contains(selection.anchorNode);
-
-      if (target.closest("a, button") || selectedInsideCard) return;
-      setFlipped(!thesisCard.classList.contains("is-flipped"));
-    });
-
-    document.fonts?.ready.then(() => setHeight(thesisCard.classList.contains("is-flipped")));
-
-    const resizeObserver = new ResizeObserver(() => {
-      setHeight(thesisCard.classList.contains("is-flipped"));
-    });
-    if (front) resizeObserver.observe(front);
-    if (back) resizeObserver.observe(back);
+    initializeFlipCard({ card: thesisCard, inner, front, back, openButton, closeButton });
   }
 </script>

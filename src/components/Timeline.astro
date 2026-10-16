@@ -473,6 +473,7 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
 </style>
 
 <script>
+  import { initializeFlipCard } from "../scripts/flip-card";
   const levelUpButton = document.querySelector<HTMLButtonElement>("[data-level-up]");
   const levelUpTarget = document.querySelector<HTMLElement>("[data-level-up-target]");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -540,73 +541,7 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
     const inner = card.querySelector<HTMLElement>(".journey-card-inner");
     const front = card.querySelector<HTMLElement>("[data-flip-front]");
     const back = card.querySelector<HTMLElement>("[data-flip-back]");
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let flipMotion: Animation | undefined;
-    let flipRun = 0;
-
-    const setHeight = (flipped: boolean) => {
-      const face = flipped ? back : front;
-      if (!inner || !face) return;
-      inner.style.height = `${face.scrollHeight}px`;
-    };
-
-    const setFlipped = (flipped: boolean, moveFocus = false) => {
-      setHeight(flipped);
-      card.classList.toggle("is-flipped", flipped);
-      card.classList.add("is-flipping");
-      const currentRun = ++flipRun;
-
-      if (!reduceMotion.matches) {
-        flipMotion?.cancel();
-        flipMotion = card.animate(
-          [{ opacity: 0.65 }, { opacity: 1 }],
-          { duration: flipped ? 220 : 160, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
-        );
-        void flipMotion.finished
-          .catch(() => undefined)
-          .finally(() => {
-            if (currentRun === flipRun) card.classList.remove("is-flipping");
-          });
-      } else {
-        queueMicrotask(() => card.classList.remove("is-flipping"));
-      }
-      openButton?.setAttribute("aria-expanded", String(flipped));
-      front?.setAttribute("aria-hidden", String(flipped));
-      back?.setAttribute("aria-hidden", String(!flipped));
-      front?.toggleAttribute("inert", flipped);
-      back?.toggleAttribute("inert", !flipped);
-      if (moveFocus) {
-        if (flipped) closeButton?.focus({ preventScroll: true });
-        else openButton?.focus({ preventScroll: true });
-      }
-    };
-
-    setHeight(false);
-
-    openButton?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      setFlipped(true, true);
-    });
-    closeButton?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      setFlipped(false, true);
-    });
-    card.addEventListener("click", (event) => {
-      const target = event.target as HTMLElement;
-      const selection = window.getSelection();
-      const selectedInsideCard =
-        selection && !selection.isCollapsed && selection.anchorNode && card.contains(selection.anchorNode);
-      if (target.closest("a, button") || selectedInsideCard) return;
-      setFlipped(!card.classList.contains("is-flipped"));
-    });
-
-    document.fonts?.ready.then(() => setHeight(card.classList.contains("is-flipped")));
-
-    const cardResizeObserver = new ResizeObserver(() => {
-      setHeight(card.classList.contains("is-flipped"));
-    });
-    if (front) cardResizeObserver.observe(front);
-    if (back) cardResizeObserver.observe(back);
+    initializeFlipCard({ card, inner, front, back, openButton, closeButton });
   });
 
   document.querySelectorAll<HTMLElement>("[data-timeline-group]").forEach((group) => {

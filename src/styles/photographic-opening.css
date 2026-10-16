@@ -279,7 +279,7 @@ body.gallery-transition-active {
 
 @media (max-width: 48rem) {
   .opening-stage {
-    min-height: max(86svh, 38rem);
+    min-height: 100svh;
     background:
       radial-gradient(
         circle 14rem at var(--opening-pointer-x) var(--opening-pointer-y),
@@ -292,7 +292,7 @@ body.gallery-transition-active {
   .opening-shell.section-shell {
     display: flex;
     width: 100%;
-    min-height: max(86svh, 38rem);
+    min-height: 100svh;
     margin: 0;
     padding: 6.6rem 1.1rem 1.25rem;
     flex-direction: column;

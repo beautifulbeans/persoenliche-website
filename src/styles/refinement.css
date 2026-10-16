@@ -4160,22 +4160,11 @@ h4 {
 .nav-label {
   position: relative;
   display: block;
-  height: 1.1em;
-  overflow: hidden;
-  line-height: 1.1;
+  line-height: 1.45;
 }
 
-.nav-label-primary,
-.nav-label-clone {
+.nav-label-primary {
   display: block;
-  transition: transform 420ms var(--ease-spring-soft);
-}
-
-.nav-label-clone {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
 }
 
 .site-header nav a[aria-current="location"] {
@@ -4192,13 +4181,6 @@ h4 {
     transform: rotate(12deg) scale(1.08);
   }
 
-  .site-header nav a:hover .nav-label-primary {
-    transform: translateY(-100%);
-  }
-
-  .site-header nav a:hover .nav-label-clone {
-    transform: translateY(-100%);
-  }
 }
 
 /* Der Name reagiert über die echten Achsen der Schrift statt über einen Filter. */

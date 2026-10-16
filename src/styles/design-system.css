@@ -111,8 +111,6 @@ body { background: var(--canvas); }
 .site-header nav a[aria-current="location"] .nav-label-primary { font-weight: 750; }
 .site-header nav a::after { content: none; }
 /* Keep readable labels still; the opening canvas carries the entrance motion. */
-.site-header .nav-label-clone { display: none; }
-.site-header .nav-label-primary { transform: none; }
 .site-header .status-island[aria-expanded="true"] { border-color: var(--control-rule); }
 .mobile-contact-shortcut { border-radius: var(--radius-control); background: var(--graphite); box-shadow: none; }
 
@@ -185,10 +183,9 @@ body { background: var(--canvas); }
 }
 
 /* Preserve the interactive lines and name; remove the old olive tint only. */
-.opening-stage { min-height: 650px; background: var(--canvas); }
+.opening-stage { background: var(--canvas); }
 .opening-stage::after { display: none; }
 .opening-shell.section-shell {
-  min-height: 650px;
   grid-template-columns: 1.3fr 1fr;
   gap: 5rem;
   padding-top: 9rem;
@@ -199,19 +196,20 @@ body { background: var(--canvas); }
 .opening-info { margin-top: 3rem; }
 .opening-scroll { color: var(--text-secondary); }
 
-/* Work gets quiet information surfaces and sharp, flat detail faces. */
+/* Work gets quiet information surfaces. Card faces settle without transforms. */
 .journey { padding-block: 5rem; }
 .journey-layout { grid-template-columns: minmax(15rem, 0.7fr) minmax(0, 1.3fr); gap: 4rem; }
 .journey-companion { border-radius: var(--radius-card); background: var(--graphite); box-shadow: none; color: var(--on-graphite); }
 .companion-kind, .companion-period { color: var(--on-graphite); }
 .companion-art { opacity: 0.45; }
-.companion-wave-motion { animation: none; }
 .journey-group-heading { margin-bottom: 2rem; }
-.journey-group-heading .group-icon { width: 2rem; border: 0; border-radius: 0; background: transparent; color: var(--action); }
+:is(#beruf, #ausbildung) .journey-group-heading .group-icon { width: 2rem; height: 2rem; border: 0; border-radius: 0; background: transparent; color: var(--action); }
 .journey-card, .journey-card-inner, .journey-card-face { perspective: none; transform-style: flat; }
+.journey-card.is-flipping .journey-card-inner,
+.thesis-card.is-flipping .thesis-card-inner { perspective: 1400px; }
 .journey-card .journey-card-inner,
 .journey-card-education .journey-card-inner,
-.journey-card.is-flipped .journey-card-inner { transform: none; transition: height 220ms var(--ease-out); }
+.journey-card.is-flipped .journey-card-inner { transform: none; transition: none; }
 .journey-card .journey-card-face {
   padding: 2rem;
   border: 1px solid var(--rule);
@@ -223,11 +221,12 @@ body { background: var(--canvas); }
 }
 .journey-card.is-active .journey-card-face,
 .journey-card.is-flipping .journey-card-face { border-color: var(--rule); box-shadow: none; filter: none; }
-.journey-card-face[aria-hidden="true"] { visibility: hidden; }
-.journey-card-face[aria-hidden="false"] { visibility: visible; }
+:is(.journey-card-face, .thesis-card-face)[aria-hidden="true"] { visibility: hidden; }
+:is(.journey-card-face, .thesis-card-face):not([aria-hidden="true"]) { visibility: visible; }
 .journey-card p, .journey-card li { color: var(--text-secondary); }
 .journey-card h4, .journey-card h5 { color: var(--text); }
 .journey-date, .journey-context { padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--text-secondary); }
+.journey-card .journey-context { background: transparent; color: var(--text-secondary); }
 .journey-card::before, .journey-cards::before, .journey-cards::after { display: none; }
 .journey-cards { padding-left: 0; }
 .journey-card .journey-back-grid article,
@@ -259,11 +258,11 @@ body { background: var(--canvas); }
 .tea-ritual {
   --choice-background: #eed8d7;
   --choice-ink: #652e2d;
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1.1fr) minmax(14rem, 0.9fr);
+  grid-column: 1 / 9;
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, 0.8fr);
   min-height: 0;
-  padding: 3rem;
-  gap: 3rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  gap: 1.5rem;
   border: 0;
   border-radius: var(--radius-card);
   background: var(--graphite);
@@ -275,7 +274,7 @@ body { background: var(--canvas); }
 .tea-profile-heading .tea-fact-value,
 .tea-profile-heading span { color: var(--on-graphite); opacity: 1; }
 .tea-copy > .tea-intro { width: auto; max-width: 43ch; min-height: 0; font-size: 1rem; line-height: 1.6; }
-.tea-profile-heading { margin-top: 1.4rem; }
+.tea-profile-heading { flex-wrap: wrap; margin-top: 1.4rem; }
 .tea-profile-heading span { padding: 0; border: 0; }
 .tea-copy .tea-fact-copy { min-height: 0; margin-top: 0.75rem; }
 #persoenlich .tea-ritual .content-choice { margin-top: 1.75rem; border-color: #aaa9a7; }
@@ -285,15 +284,18 @@ body { background: var(--canvas); }
 .tea-tip summary { min-height: var(--control-height); border-color: #aaa9a7; border-radius: var(--radius-control); background: transparent; color: var(--on-graphite); }
 .tea-visual { position: relative; inset: auto; width: auto; align-self: center; margin: 0; border: 0; background: none; box-shadow: none; }
 .tea-visual::before, .tea-visual::after { display: none; }
-.teapot { width: min(100%, 24rem); filter: none; }
-/* Idle motion is quiet; clicking the object still brews/selects the next tea. */
-.teapot-vessel, .steam { animation: none; }
+.tea-visual .teapot { width: min(100%, 24rem); border: 0; border-radius: 0; background: transparent; filter: none; }
+.tea-visual .teapot::before, .tea-visual .teapot::after { display: none; }
 
 /* Other hobbies belong to the same family, with their real objects kept intact. */
 .play-card, .minigame-panel, .pigeon-contact { border-radius: var(--radius-card); box-shadow: none; }
 .training-set { border-radius: var(--radius-control); box-shadow: none; }
 .play-icon { background: transparent; color: var(--action); }
 .sound-card, .cards-card { background: #eeeae8; border-color: var(--rule); }
+/* Metal is independent of text colors so the arm stays visible on the record. */
+.turntable-arm { background: linear-gradient(90deg, #aaa69f, #e5e2dc 48%, #b2aea7); }
+.turntable-arm::before { border-color: #88847e; background: #dedbd5; }
+.turntable-arm > span { background: #dedbd5; }
 .cards-heading { align-items: center; }
 .cards-heading h3 { margin-top: 0; color: var(--text); }
 .cards-launch { border-radius: var(--radius-group); background: var(--graphite); box-shadow: none; }
@@ -301,16 +303,20 @@ body { background: var(--canvas); }
 .cards-preview-label { color: var(--text-secondary); }
 .album-choice, .spotify-link, .album-library-controls button, .language-switch { border-radius: var(--radius-control); box-shadow: none; }
 .thesis-card-face, .thesis-card, .thesis-card-inner { border-radius: var(--radius-card); }
-.thesis-card-face { box-shadow: none; }
+.thesis-card, .thesis-card-inner, .thesis-card-face { perspective: none; transform-style: flat; }
+.thesis-card .thesis-card-inner, .thesis-card.is-flipped .thesis-card-inner { transform: none; transition: none; }
+.thesis-card .thesis-card-face { transform: none; box-shadow: none; }
 .thesis-cover-footer button, .thesis-back-actions :is(a, button) { min-height: var(--control-height); border-radius: var(--radius-control); box-shadow: none; }
 .contact-panel .contact-routes :is(a, button) { color: var(--text); }
-.chapter-orbits span { animation: none; }
-.interest-track { animation-play-state: paused; }
 @media (hover: hover) and (pointer: fine) {
-  .interest-marquee:hover .interest-track { animation-play-state: running; }
   #persoenlich .tea-ritual .content-choice > button:not([aria-pressed="true"]):hover { background: #444142; color: var(--on-graphite); }
 }
 
+@media (min-width: 48.001rem) and (max-width: 64rem) {
+  .tea-ritual { grid-column: 1 / 8; }
+  #persoenlich .tea-ritual .content-choice { width: 100%; flex-wrap: nowrap; }
+  #persoenlich .tea-ritual .content-choice > button { flex: 1 1 0; padding-inline: 6px; }
+}
 @media (max-width: 60rem) {
   .journey-layout { grid-template-columns: minmax(13rem, 0.65fr) minmax(0, 1.35fr); gap: 2rem; }
 }
@@ -321,7 +327,6 @@ body { background: var(--canvas); }
   .site-header .status-anchor .status-island[aria-expanded="false"] .status-glance { top: 12px; }
   .site-header nav { height: var(--header-height); }
   .site-header nav a { padding: 0 10px; }
-  .opening-stage, .opening-shell.section-shell { min-height: 620px; }
   .opening-shell.section-shell { gap: 0; padding-top: 7rem; }
   .opening-info { margin-top: 2.5rem; }
   .journey { padding-block: 3rem; }
@@ -331,7 +336,7 @@ body { background: var(--canvas); }
   .personal-grid { gap: 2.5rem; }
   #fotografie.camera-card { padding: 1.25rem 0; gap: 1.5rem; }
 
-  .tea-ritual { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.15rem; height: auto; padding: 1.5rem; overflow: visible; }
+  .tea-ritual { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); gap: 1.15rem; height: auto; padding: 1.5rem; overflow: visible; }
   .tea-copy { display: contents; }
   .tea-copy h3 { grid-row: 1; margin: 0; font-size: 3rem; }
   .tea-copy > .tea-intro { grid-row: 2; max-width: 100%; margin: 0; }
@@ -353,6 +358,6 @@ body { background: var(--canvas); }
   .site-header nav a,
   :is(.site-action, #fotografie .site-action),
   :is(.content-choice, #fotografie.camera-card .content-choice) > button,
-  .journey-card .journey-card-inner { transition: none; }
-  .interest-marquee:hover .interest-track { animation: none; }
+  .journey-card .journey-card-inner,
+  .thesis-card .thesis-card-inner { transition: none; }
 }
