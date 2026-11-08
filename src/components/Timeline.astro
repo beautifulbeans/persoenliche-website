@@ -164,7 +164,9 @@ const getOrganizationMonogram = (entry: TimelineEntry) => {
                       <span class="journey-copy-line" style="--copy-index: 0"><i class="ph ph-list-magnifying-glass" aria-hidden="true"></i>Ein Blick dahinter</span>
                     </div>
                     <h4><span class="journey-copy-line" style="--copy-index: 1">{entry.backTitle}</span></h4>
-                    <p class="journey-back-intro"><span class="journey-copy-line" style="--copy-index: 2">{entry.backIntro}</span></p>
+                    {entry.backIntro && (
+                      <p class="journey-back-intro"><span class="journey-copy-line" style="--copy-index: 2">{entry.backIntro}</span></p>
+                    )}
                     <div class="journey-back-grid">
                       {entry.backDetails.map((detail, index) => (
                         <article style={`--detail-index: ${index}`}>

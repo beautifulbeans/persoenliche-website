@@ -108,9 +108,7 @@ body { background: var(--canvas); }
   color: var(--action-ink);
   font-weight: 750;
 }
-.site-header nav a[aria-current="location"] .nav-label-primary { font-weight: 750; }
 .site-header nav a::after { content: none; }
-/* Keep readable labels still; the opening canvas carries the entrance motion. */
 .site-header .status-island[aria-expanded="true"] { border-color: var(--control-rule); }
 .mobile-contact-shortcut { border-radius: var(--radius-control); background: var(--graphite); box-shadow: none; }
 
@@ -212,7 +210,7 @@ body { background: var(--canvas); }
 .journey-card.is-flipped .journey-card-inner { transform: none; transition: none; }
 .journey-card .journey-card-face {
   padding: 2rem;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--control-rule);
   border-radius: var(--radius-card);
   background: var(--panel);
   box-shadow: none;
@@ -220,22 +218,28 @@ body { background: var(--canvas); }
   transform: none;
 }
 .journey-card.is-active .journey-card-face,
-.journey-card.is-flipping .journey-card-face { border-color: var(--rule); box-shadow: none; filter: none; }
+.journey-card.is-flipping .journey-card-face { border-color: var(--control-rule); box-shadow: none; filter: none; }
 :is(.journey-card-face, .thesis-card-face)[aria-hidden="true"] { visibility: hidden; }
 :is(.journey-card-face, .thesis-card-face):not([aria-hidden="true"]) { visibility: visible; }
 .journey-card p, .journey-card li { color: var(--text-secondary); }
 .journey-card h4, .journey-card h5 { color: var(--text); }
-.journey-date, .journey-context { padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--text-secondary); }
-.journey-card .journey-context { background: transparent; color: var(--text-secondary); }
+.journey-date { border-color: var(--rule); color: var(--text-secondary); }
+.journey-card .journey-context {
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-secondary);
+}
 .journey-card::before, .journey-cards::before, .journey-cards::after { display: none; }
 .journey-cards { padding-left: 0; }
+.journey-card .journey-back-grid article {
+  border-color: var(--rule);
+  border-radius: var(--radius-group);
+  background: var(--canvas);
+}
 .journey-card .journey-back-grid article,
 .journey-card.is-flipped .journey-back-grid article {
-  padding: 1rem 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
   opacity: 1;
   transform: none;
   animation: none;

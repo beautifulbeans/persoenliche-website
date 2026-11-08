@@ -13,17 +13,21 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     expect((await page.locator('.opening-stage').boundingBox())!.height).toBeGreaterThanOrEqual(900);
     await expect(page.locator('.opening-threads')).toBeVisible();
     for (const link of await page.locator('.site-header nav a:visible').all()) {
-      await link.hover();
       const label = link.locator('.nav-label-primary');
+      const clone = link.locator('.nav-label-clone');
       await expect(label).toHaveCSS('transform', 'none');
-      const metrics = await label.evaluate(e => {
+      await link.hover();
+      await expect(label).not.toHaveCSS('transform', 'none');
+      const metrics = await clone.evaluate(e => {
         const s = getComputedStyle(e);
-        const b = e.getBoundingClientRect();
-        const a = e.closest('a')!.getBoundingClientRect();
-        return { line: parseFloat(s.lineHeight), font: parseFloat(s.fontSize), inside: b.top >= a.top && b.bottom <= a.bottom };
+        return { line: parseFloat(s.lineHeight), font: parseFloat(s.fontSize) };
       });
       expect(metrics.line).toBeGreaterThanOrEqual(metrics.font * 1.4);
-      expect(metrics.inside).toBe(true);
+      await expect.poll(() => clone.evaluate(e => {
+        const labelTop = e.parentElement!.getBoundingClientRect().top;
+        return Math.abs(e.getBoundingClientRect().top - labelTop);
+      })).toBeLessThan(0.5);
+      await expect(clone).toHaveAttribute('aria-hidden', 'true');
       await link.focus();
       await expect(link).toBeFocused();
     }
@@ -36,6 +40,48 @@ for (const width of [320, 390, 768, 1024, 1440]) {
   });
 }
 
+test.describe('touch navigation', () => {
+  test.use({ hasTouch: true, viewport: { width: 390, height: 900 } });
+
+  test('labels roll on tap and stay still with reduced motion', async ({ page }) => {
+    await openHome(page);
+    const work = page.getByRole('link', { name: 'Beruf', exact: true });
+    const label = work.locator('.nav-label-primary');
+    await work.tap();
+    await expect(label).not.toHaveCSS('transform', 'none');
+    await expect(page).toHaveURL(/#beruf$/);
+    await expect(work).toHaveAttribute('aria-current', 'location');
+    await expect(label).toHaveCSS('transform', 'none');
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await openHome(page);
+    await work.tap();
+    await expect(page).toHaveURL(/#beruf$/);
+    await expect(work).toHaveAttribute('aria-current', 'location');
+    await expect(label).toHaveCSS('transform', 'none');
+  });
+});
+
+test('sitemap.xml serves only the canonical indexable pages', async ({ page, request }) => {
+  const sitemap = await request.get('/sitemap.xml', { maxRedirects: 0 });
+  expect(sitemap.ok()).toBe(true);
+  expect(sitemap.headers()['content-type']).toMatch(/(?:application|text)\/xml/);
+  const urls = await page.evaluate(xml => {
+    const document = new DOMParser().parseFromString(xml, 'application/xml');
+    const namespace = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+    if (!document.documentElement.matches('urlset') || document.documentElement.namespaceURI !== namespace) return null;
+    return Array.from(document.getElementsByTagNameNS(namespace, 'loc'), loc => loc.textContent);
+  }, await sitemap.text());
+  const paths = ['/', '/bachelorarbeit/', '/galerie/', '/kartenspiele/', '/tea-trail/'];
+  expect(urls).toEqual(paths.map(path => `https://fabianderagisch.com${path}`));
+
+  const robots = await request.get('/robots.txt');
+  expect(await robots.text()).toContain('Sitemap: https://fabianderagisch.com/sitemap.xml');
+  await openHome(page);
+  await expect(page.locator('link[rel="sitemap"]')).toHaveAttribute('href', '/sitemap.xml');
+  await expect(page.locator('.site-footer').getByRole('link', { name: 'Sitemap', exact: true })).toHaveCount(0);
+});
+
 test('education symbols and degree metadata have neutral surfaces', async ({ page }) => {
   await openHome(page);
   await page.locator('#ausbildung').scrollIntoViewIfNeeded();
@@ -47,6 +93,29 @@ test('education symbols and degree metadata have neutral surfaces', async ({ pag
   await expect(degree).toContainText('Bachelor of Arts');
   await expect(degree).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(degree).toHaveCSS('color', 'rgb(89, 86, 84)');
+});
+
+test('timeline cards, context labels and detail tiles retain their borders', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const width of [320, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openHome(page);
+    const context = page.locator('#beruf .journey-context', { hasText: 'Parallel zum Bachelorstudium' });
+    await expect(context).toHaveCSS('border-top-style', 'solid');
+    await expect(context).toHaveCSS('border-top-width', '1px');
+    for (const group of ['beruf', 'ausbildung']) {
+      const card = page.locator(`#${group} .journey-card.has-flip`).first();
+      await expect(card.locator('[data-flip-front]')).toHaveCSS('border-top-color', 'rgb(153, 147, 143)');
+      await card.locator('[data-flip-open]').click();
+      const tiles = await card.locator('.journey-back-grid article').all();
+      expect(tiles.length).toBeGreaterThan(0);
+      for (const tile of tiles) {
+        await expect(tile).toBeVisible();
+        await expect(tile).toHaveCSS('border-top-style', 'solid');
+        await expect(tile).toHaveCSS('border-top-width', '1px');
+      }
+    }
+  }
 });
 
 test('tea and training share the desktop row while the mobile pot retains its space', async ({ page }) => {

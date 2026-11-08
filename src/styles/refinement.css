@@ -4160,11 +4160,35 @@ h4 {
 .nav-label {
   position: relative;
   display: block;
+  overflow: hidden;
   line-height: 1.45;
 }
 
-.nav-label-primary {
+.nav-label-primary,
+.nav-label-clone {
   display: block;
+}
+
+.nav-label-clone {
+  position: absolute;
+  top: 100%;
+  inset-inline: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-label > span {
+    transition: transform 320ms var(--ease-out);
+  }
+
+  .site-header nav a[data-anchor-travelling] .nav-label > span {
+    transform: translateY(-100%);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .site-header nav a:hover .nav-label > span {
+    transform: translateY(-100%);
+  }
 }
 
 .site-header nav a[aria-current="location"] {
@@ -4180,7 +4204,6 @@ h4 {
   .header-note:hover .header-note-mark {
     transform: rotate(12deg) scale(1.08);
   }
-
 }
 
 /* Der Name reagiert über die echten Achsen der Schrift statt über einen Filter. */
@@ -5161,9 +5184,7 @@ a[data-anchor-travelling="true"] {
 @media (prefers-reduced-motion: reduce) {
   .hero-letter,
   .hero-portrait-frame,
-  .hero-portrait-image,
-  .nav-label-primary,
-  .nav-label-clone {
+  .hero-portrait-image {
     transition: none !important;
   }
 

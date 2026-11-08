@@ -86,29 +86,32 @@ const translations: Record<string, string> = {
   "März 2022 - Februar 2024": "March 2022 - February 2024",
   "Oktober 2020 - Mai 2024": "October 2020 - May 2024",
   "Juni 2019": "June 2019",
-  "Im E-Commerce arbeite ich an Website, SEO, Newslettern und CRM – mit Blick auf Performance und Gestaltung.":
-    "In e-commerce, I work on websites, SEO, newsletters, and CRM, with an eye for performance and design.",
-  "SEO-Maßnahmen und Website-Content": "SEO initiatives and website content",
-  "Monitoring mit Search Console und SISTRIX": "Monitoring with Search Console and SISTRIX",
-  "KPI- und Performance-Reportings": "KPI and performance reporting",
-  "Newsletter, CRM-Mailings und CRM-Segmente": "Newsletters, CRM mailings, and CRM segments",
+  "Zentrale Anlaufstelle für Website-Content und operative Kampagnenumsetzung.":
+    "Main point of contact for website content and day-to-day campaign execution.",
+  "Website-Content und Kampagnen": "Website content and campaigns",
+  "SEO und GEO": "SEO and GEO",
+  "Webanalyse und KPI-Reporting": "Web analytics and KPI reporting",
+  "E-Mail-Marketing und CRM": "Email marketing and CRM",
   "Ein Blick dahinter": "A closer look",
   "Zur Vorderseite": "Back to front",
-  "Was ich konkret mache": "What I do in practice",
-  "Im Alltag wechselt es zwischen Website, Analyse, CRM und Gestaltung. Vieles entsteht im Austausch mit Kolleg:innen, einiges setze ich direkt selbst um.":
-    "My day-to-day work moves between websites, analytics, CRM, and design. Much of it grows from collaboration with colleagues, while I handle other parts directly myself.",
-  "SEO und Website": "SEO and website",
-  "SEO-Potenziale identifizieren und Maßnahmen umsetzen, vom Content bis zu ausgewählten technischen Themen. Website-Inhalte und Kampagnen pflege ich in Magnolia.":
-    "I identify SEO opportunities and implement improvements spanning content and selected technical topics. I maintain website content and campaigns in Magnolia.",
-  "Monitoring und Reporting": "Monitoring and reporting",
-  "Mit Google Search Console, SISTRIX und weiteren Tools beobachte ich Entwicklungen, erstelle regelmäßige KPI-Reports und präsentiere die Ergebnisse.":
-    "I use Google Search Console, SISTRIX, and other tools to monitor developments, create regular KPI reports, and present the results.",
-  "CRM und E-Mail": "CRM and email",
-  "In Microsoft Dynamics baue ich Segmente sowie CRM-Mailings und kümmere mich um das Newsletter-Marketing.":
-    "In Microsoft Dynamics, I build segments and CRM mailings and manage newsletter marketing.",
-  "Gestaltung und Austausch": "Design and collaboration",
-  "Grafiken und weitere Medien erstelle ich selbst und stimme Kampagnen mit den beteiligten Kolleg:innen ab.":
-    "I create graphics and other media and coordinate campaigns with the colleagues involved.",
+  "Schwerpunkte im E-Commerce": "E-commerce focus areas",
+  "Content-Management": "Content management",
+  "Content-Koordination, laufende Seitenpflege und Kampagnenumsetzung in Magnolia CMS.":
+    "Content coordination, ongoing page maintenance, and campaign execution in Magnolia CMS.",
+  "Keyword-Monitoring, Site Health sowie Ableitung und Umsetzung von SEO-Maßnahmen. Einordnung von Google-Updates und Monitoring der Sichtbarkeit in generativen Suchsystemen.":
+    "Keyword monitoring, site health, and identification and implementation of SEO improvements. Assessment of Google updates and visibility monitoring in generative search.",
+  "Webanalyse und Reporting": "Web analytics and reporting",
+  "Klick- und Trendanalysen sowie Auswertung von SEO-Projekten mit Adobe Analytics, SISTRIX und Google Search Console. KPI-Auswahl und regelmäßiges Reporting als Entscheidungsgrundlage.":
+    "Click and trend analysis and SEO project evaluation using Adobe Analytics, SISTRIX, and Google Search Console. KPI selection and regular reporting to inform decisions.",
+  "Newsletter-Marketing": "Newsletter marketing",
+  "Newsletter-Erstellung und Performance-Optimierung entlang der Customer Journey. Laufende Pflege der Versandverteiler.":
+    "Newsletter production and performance optimisation across the customer journey. Ongoing mailing list maintenance.",
+  "CRM und Segmentierung": "CRM and segmentation",
+  "Kundendatenanalyse, Zielgruppensegmentierung und CRM-Mailings in Microsoft Dynamics. Mitarbeit an der Kommunikationsstrategie für das Kundenkonto.":
+    "Customer data analysis, audience segmentation, and CRM emails in Microsoft Dynamics. Contribution to the customer account communications strategy.",
+  "Gestaltung und Abstimmung": "Design and coordination",
+  "Gestaltung von Kampagnensujets und digitalen Werbemitteln. Abstimmung mit den beteiligten Fachbereichen.":
+    "Design of campaign visuals and digital advertising assets. Coordination with the teams involved.",
   "Digitale Kommunikation, redaktionelle Website-Arbeit und Gestaltung für unterschiedliche interne und externe Berührungspunkte.":
     "Digital communications, editorial website work, and design across a range of internal and external touchpoints.",
   "Homepages, Unterseiten und SEO": "Homepages, landing pages, and SEO",
